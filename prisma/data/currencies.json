@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Indian Rupee",
+    "code": "INR",
+    "symbol": "₹",
+    "exchangeRate": 1.0,
+    "isDefault": true,
+    "status": true
+  },
+  {
+    "name": "US Dollar",
+    "code": "USD",
+    "symbol": "$",
+    "exchangeRate": 83.5,
+    "isDefault": false,
+    "status": true
+  },
+  {
+    "name": "Euro",
+    "code": "EUR",
+    "symbol": "€",
+    "exchangeRate": 90.2,
+    "isDefault": false,
+    "status": true
+  },
+  {
+    "name": "British Pound",
+    "code": "GBP",
+    "symbol": "£",
+    "exchangeRate": 105.4,
+    "isDefault": false,
+    "status": true
+  },
+  {
+    "name": "Japanese Yen",
+    "code": "JPY",
+    "symbol": "¥",
+    "exchangeRate": 0.55,
+    "isDefault": false,
+    "status": true
+  },
+  {
+    "name": "Australian Dollar",
+    "code": "AUD",
+    "symbol": "A$",
+    "exchangeRate": 55.4,
+    "isDefault": false,
+    "status": true
+  }
+]

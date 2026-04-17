@@ -1,5 +1,3 @@
-// backend/prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,69 +6,62 @@ datasource db {
   provider = "postgresql"
 }
 
-// 1. ai_generated_content
 model AIGeneratedContent {
-  id               BigInt    @id @default(autoincrement())
-  userId           BigInt    @map("user_id")
-  businessId       BigInt?   @map("business_id")
-  contentType      String?   @map("content_type")
-  inputData        String?   @map("input_data") @db.Text
-  generatedOutput  String?   @map("generated_output") @db.Text
-  isSaved          Boolean?  @default(false) @map("is_saved")
-  metadata         Json?
-  createdAt        DateTime? @default(now()) @map("created_at")
-  modelId          BigInt?   @map("model_id")
-  promptId         BigInt?   @map("prompt_id")
-  status           String?   @default("completed")
-  inputTokens      Int?      @default(0) @map("input_tokens")
-  outputTokens     Int?      @default(0) @map("output_tokens")
-  responseTimeMs   Int?      @map("response_time_ms")
-
-  user             User      @relation(fields: [userId], references: [id])
-  model            AIModel?  @relation(fields: [modelId], references: [id])
-  prompt           AIPrompt? @relation(fields: [promptId], references: [id])
+  id              BigInt    @id @default(autoincrement())
+  userId          BigInt    @map("user_id")
+  businessId      BigInt?   @map("business_id")
+  contentType     String?   @map("content_type")
+  inputData       String?   @map("input_data")
+  generatedOutput String?   @map("generated_output")
+  isSaved         Boolean?  @default(false) @map("is_saved")
+  metadata        Json?
+  createdAt       DateTime? @default(now()) @map("created_at")
+  modelId         BigInt?   @map("model_id")
+  promptId        BigInt?   @map("prompt_id")
+  status          String?   @default("completed")
+  inputTokens     Int?      @default(0) @map("input_tokens")
+  outputTokens    Int?      @default(0) @map("output_tokens")
+  responseTimeMs  Int?      @map("response_time_ms")
+  model           AIModel?  @relation(fields: [modelId], references: [id])
+  prompt          AIPrompt? @relation(fields: [promptId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
 
   @@map("ai_generated_content")
 }
 
-// 2. ai_models
 model AIModel {
-  id                BigInt    @id @default(autoincrement())
-  modelKey          String    @unique @map("model_key")
+  id                BigInt               @id @default(autoincrement())
+  modelKey          String               @unique @map("model_key")
   provider          String
-  modelType         String    @map("model_type")
-  isActive          Boolean?  @default(true) @map("is_active")
+  modelType         String               @map("model_type")
+  isActive          Boolean?             @default(true) @map("is_active")
   config            Json?
-  createdAt         DateTime? @default(now()) @map("created_at")
-  contextWindow     Int?      @map("context_window")
-  maxTokens         Int?      @map("max_tokens")
-  inputCostPer1k    Decimal?  @map("input_cost_per_1k") @db.Decimal
-  outputCostPer1k   Decimal?  @map("output_cost_per_1k") @db.Decimal
-
+  createdAt         DateTime?            @default(now()) @map("created_at")
+  contextWindow     Int?                 @map("context_window")
+  maxTokens         Int?                 @map("max_tokens")
+  inputCostPer1k    Decimal?             @map("input_cost_per_1k") @db.Decimal
+  outputCostPer1k   Decimal?             @map("output_cost_per_1k") @db.Decimal
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
 
   @@map("ai_models")
 }
 
-// 3. ai_prompts
 model AIPrompt {
-  id                 BigInt    @id @default(autoincrement())
-  promptKey          String    @unique @map("prompt_key")
-  systemInstruction  String?   @map("system_instruction") @db.Text
-  userPromptTemplate String?   @map("user_prompt_template") @db.Text
-  moduleName         String?   @map("module_name")
-  createdAt          DateTime? @default(now()) @map("created_at")
-  updatedAt          DateTime? @default(now()) @map("updated_at")
-  version            Int?      @default(1)
-  isActive           Boolean?  @default(true) @map("is_active")
-
+  id                 BigInt               @id @default(autoincrement())
+  promptKey          String               @unique @map("prompt_key")
+  systemInstruction  String?              @map("system_instruction")
+  userPromptTemplate String?              @map("user_prompt_template")
+  moduleName         String?              @map("module_name")
+  createdAt          DateTime?            @default(now()) @map("created_at")
+  updatedAt          DateTime?            @default(now()) @map("updated_at")
+  version            Int?                 @default(1)
+  isActive           Boolean?             @default(true) @map("is_active")
   generatedContents  AIGeneratedContent[]
 
   @@map("ai_prompts")
 }
 
-// 4. ai_usage_logs
 model AIUsageLog {
   id           BigInt    @id @default(autoincrement())
   userId       BigInt    @map("user_id")
@@ -82,31 +73,29 @@ model AIUsageLog {
   inputTokens  Int?      @default(0) @map("input_tokens")
   outputTokens Int?      @default(0) @map("output_tokens")
   cost         Decimal?  @default(0) @db.Decimal
-
-  user         User      @relation(fields: [userId], references: [id])
   business     Business? @relation(fields: [businessId], references: [id])
   model        AIModel?  @relation(fields: [modelId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
 
   @@map("ai_usage_logs")
 }
 
-// 5. app_configs
 model AppConfig {
   id                 BigInt    @id @default(autoincrement())
   appName            String    @map("app_name")
   maintenanceMode    Boolean?  @default(false) @map("maintenance_mode")
-  maintenanceMessage String?   @map("maintenance_message") @db.Text
+  maintenanceMessage String?   @map("maintenance_message")
   developerMode      Boolean?  @default(false) @map("developer_mode")
   globalAiEnabled    Boolean?  @default(true) @map("global_ai_enabled")
   apiBaseUrl         String?   @map("api_base_url")
   supportEmail       String?   @map("support_email")
   createdAt          DateTime? @default(now()) @map("created_at")
   updatedAt          DateTime? @default(now()) @map("updated_at")
+  freeTrialDays      Int?      @default(7) @map("free_trial_days")
 
   @@map("app_configs")
 }
 
-// 6. app_feature_flags
 model AppFeatureFlag {
   id         BigInt    @id @default(autoincrement())
   moduleName String    @map("module_name")
@@ -114,32 +103,31 @@ model AppFeatureFlag {
   isEnabled  Boolean?  @default(true) @map("is_enabled")
   createdAt  DateTime? @default(now()) @map("created_at")
 
+  @@unique([moduleName, featureKey])
   @@map("app_feature_flags")
 }
 
-// 7. app_platform_configs
 model AppPlatformConfig {
-  id                      BigInt    @id @default(autoincrement())
-  platform                String    @unique // check (platform = any(array['android', 'ios']))
-  appVersion              String    @map("app_version")
-  appVersionCode          Int       @map("app_version_code")
-  forceUpdateVersion      String?   @map("force_update_version")
-  forceUpdateVersionCode  Int?      @map("force_update_version_code")
-  storeUrl                String?   @map("store_url") @db.Text
-  updateDescription       String?   @map("update_description") @db.Text
-  createdAt               DateTime? @default(now()) @map("created_at")
-  updatedAt               DateTime? @default(now()) @map("updated_at")
+  id                     BigInt    @id @default(autoincrement())
+  platform               String    @unique
+  appVersion             String    @map("app_version")
+  appVersionCode         Int       @map("app_version_code")
+  forceUpdateVersion     String?   @map("force_update_version")
+  forceUpdateVersionCode Int?      @map("force_update_version_code")
+  storeUrl               String?   @map("store_url")
+  updateDescription      String?   @map("update_description")
+  createdAt              DateTime? @default(now()) @map("created_at")
+  updatedAt              DateTime? @default(now()) @map("updated_at")
 
   @@map("app_platform_configs")
 }
 
-// 8. app_translations
 model AppTranslation {
   id           BigInt    @id @default(autoincrement())
   languageCode String    @unique @map("language_code")
   countryCode  String?   @map("country_code")
   displayName  String?   @map("display_name")
-  flagUrl      String?   @map("flag_url") @db.Text
+  flagUrl      String?   @map("flag_url")
   isDefault    Boolean?  @default(false) @map("is_default")
   translations Json
   isActive     Boolean?  @default(true) @map("is_active")
@@ -149,7 +137,6 @@ model AppTranslation {
   @@map("app_translations")
 }
 
-// 9. audience_types
 model AudienceType {
   id         BigInt     @id @default(autoincrement())
   name       String
@@ -158,62 +145,56 @@ model AudienceType {
   @@map("audience_types")
 }
 
-// 11. businesses
 model Business {
-  id               BigInt    @id @default(autoincrement())
-  userId           BigInt    @map("user_id")
-  name             String
-  tagline          String?
-  phone            String?
-  email            String?
-  website          String?
-  address          String?   @db.Text
-  country          String?
-  state            String?
-  city             String?
-  pincode          String?
-  logo             String?   @db.Text
-  brandColor       String?   @map("brand_color")
-  description      String?   @db.Text
-  audienceTypeId   BigInt?   @map("audience_type_id")
-  targetRegionId   BigInt?   @map("target_region_id")
-  targetGender     String?   @default("all") @map("target_gender")
-  targetAgeGroupId BigInt?   @map("target_age_group_id")
-  modelEthnicityId BigInt?   @map("model_ethnicity_id")
-  ctaId            BigInt?   @map("cta_id")
-  createdAt        DateTime? @default(now()) @map("created_at")
-
-  user             User      @relation(fields: [userId], references: [id])
-  audienceType     AudienceType? @relation(fields: [audienceTypeId], references: [id])
-  targetRegion     TargetRegion? @relation(fields: [targetRegionId], references: [id])
-  targetAgeGroup   TargetAgeGroup? @relation(fields: [targetAgeGroupId], references: [id])
-  modelEthnicity   ModelEthnicity? @relation(fields: [modelEthnicityId], references: [id])
-  ctaButton        CTAButton? @relation(fields: [ctaId], references: [id])
-
+  id                 BigInt             @id @default(autoincrement())
+  userId             BigInt             @map("user_id")
+  name               String
+  tagline            String?
+  phone              String?
+  email              String?
+  website            String?
+  address            String?
+  country            String?
+  state              String?
+  city               String?
+  pincode            String?
+  logo               String?
+  brandColor         String?            @map("brand_color")
+  description        String?
+  audienceTypeId     BigInt?            @map("audience_type_id")
+  targetRegionId     BigInt?            @map("target_region_id")
+  targetGender       String?            @default("all") @map("target_gender")
+  targetAgeGroupId   BigInt?            @map("target_age_group_id")
+  modelEthnicityId   BigInt?            @map("model_ethnicity_id")
+  ctaId              BigInt?            @map("cta_id")
+  createdAt          DateTime?          @default(now()) @map("created_at")
+  usageLogs          AIUsageLog[]
   businessCategories BusinessCategory[]
-  feedbacks         Feedback[]
-  products          Product[]
-  services          Service[]
-  socialAccounts    SocialAccount[]
-  usageLogs         AIUsageLog[]
+  audienceType       AudienceType?      @relation(fields: [audienceTypeId], references: [id])
+  ctaButton          CTAButton?         @relation(fields: [ctaId], references: [id])
+  modelEthnicity     ModelEthnicity?    @relation(fields: [modelEthnicityId], references: [id])
+  targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
+  targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
+  user               User               @relation(fields: [userId], references: [id])
+  feedbacks          Feedback[]
+  products           Product[]
+  services           Service[]
+  socialAccounts     SocialAccount[]
 
   @@map("businesses")
 }
 
-// 10. business_categories
 model BusinessCategory {
   id         BigInt    @id @default(autoincrement())
   businessId BigInt    @map("business_id")
   categoryId BigInt    @map("category_id")
   createdAt  DateTime? @default(now()) @map("created_at")
-
-  business   Business @relation(fields: [businessId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
+  business   Business  @relation(fields: [businessId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id])
 
   @@map("business_categories")
 }
 
-// 12. categories
 model Category {
   id                 BigInt             @id @default(autoincrement())
   name               String             @unique
@@ -225,7 +206,6 @@ model Category {
   @@map("categories")
 }
 
-// 13. cta_buttons
 model CTAButton {
   id         BigInt     @id @default(autoincrement())
   name       String
@@ -234,7 +214,6 @@ model CTAButton {
   @@map("cta_buttons")
 }
 
-// 14. currencies
 model Currency {
   id           BigInt    @id @default(autoincrement())
   name         String?
@@ -242,46 +221,41 @@ model Currency {
   symbol       String?
   exchangeRate Decimal?  @map("exchange_rate") @db.Decimal
   status       Boolean?  @default(true)
-  isDefault    Boolean?  @default(false) @map("is_default")
   createdAt    DateTime? @default(now()) @map("created_at")
+  isDefault    Boolean?  @default(false) @map("is_default")
   users        User[]
 
   @@map("currencies")
 }
 
-// 15. device_tokens
 model DeviceToken {
   id         BigInt    @id @default(autoincrement())
   userId     BigInt    @map("user_id")
   deviceId   String    @unique @map("device_id")
   deviceType String?   @map("device_type")
-  fcmToken   String    @map("fcm_token") @db.Text
+  fcmToken   String    @map("fcm_token")
   isActive   Boolean?  @default(true) @map("is_active")
   createdAt  DateTime? @default(now()) @map("created_at")
-
   user       User      @relation(fields: [userId], references: [id])
 
   @@map("device_tokens")
 }
 
-// 16. feedbacks
 model Feedback {
   id         BigInt    @id @default(autoincrement())
   businessId BigInt?   @map("business_id")
   name       String?
   email      String?
-  message    String    @db.Text
+  message    String
   rating     Int?
   type       String?   @default("general")
   status     String?   @default("pending")
   createdAt  DateTime? @default(now()) @map("created_at")
-
   business   Business? @relation(fields: [businessId], references: [id])
 
   @@map("feedbacks")
 }
 
-// 17. model_ethnicities
 model ModelEthnicity {
   id         BigInt     @id @default(autoincrement())
   name       String
@@ -290,21 +264,19 @@ model ModelEthnicity {
   @@map("model_ethnicities")
 }
 
-// 18. notifications
 model Notifications {
-  id         BigInt    @id @default(autoincrement())
-  title      String
-  message    String    @db.Text
-  type       String?   @default("general")
-  image      String?   @db.Text
-  actionUrl  String?   @map("action_url") @db.Text
-  isGlobal   Boolean?  @default(false) @map("is_global")
-  createdAt  DateTime? @default(now()) @map("created_at")
+  id        BigInt    @id @default(autoincrement())
+  title     String
+  message   String
+  type      String?   @default("general")
+  image     String?
+  actionUrl String?   @map("action_url")
+  isGlobal  Boolean?  @default(false) @map("is_global")
+  createdAt DateTime? @default(now()) @map("created_at")
 
   @@map("notifications")
 }
 
-// 19. payment_methods
 model PaymentMethod {
   id          BigInt    @id @default(autoincrement())
   name        String    @unique
@@ -312,6 +284,7 @@ model PaymentMethod {
   type        String
   config      Json?
   mode        String?   @default("test")
+  image       String?   @map("image")
   isActive    Boolean?  @default(true) @map("is_active")
   isDefault   Boolean?  @default(false) @map("is_default")
   createdAt   DateTime? @default(now()) @map("created_at")
@@ -320,11 +293,10 @@ model PaymentMethod {
   @@map("payment_methods")
 }
 
-// 20. platforms
 model Platform {
   id             BigInt          @id @default(autoincrement())
   name           String          @unique
-  logo           String?         @db.Text
+  logo           String?
   url            String?
   nameKey        String?         @map("name_key")
   isActive       Boolean?        @default(true) @map("is_active")
@@ -333,54 +305,47 @@ model Platform {
   @@map("platforms")
 }
 
-// 21. product_categories
 model ProductCategory {
   id         BigInt    @id @default(autoincrement())
   productId  BigInt    @map("product_id")
   categoryId BigInt    @map("category_id")
   createdAt  DateTime? @default(now()) @map("created_at")
-
-  product    Product  @relation(fields: [productId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id])
+  product    Product   @relation(fields: [productId], references: [id])
 
   @@map("product_categories")
 }
 
-// 22. product_sub_categories
 model ProductSubCategory {
-  id            BigInt    @id @default(autoincrement())
-  productId     BigInt    @map("product_id")
-  subCategoryId BigInt    @map("sub_category_id")
-  createdAt     DateTime? @default(now()) @map("created_at")
-
+  id            BigInt      @id @default(autoincrement())
+  productId     BigInt      @map("product_id")
+  subCategoryId BigInt      @map("sub_category_id")
+  createdAt     DateTime?   @default(now()) @map("created_at")
   product       Product     @relation(fields: [productId], references: [id])
   subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
 
   @@map("product_sub_categories")
 }
 
-// 23. products
 model Product {
-  id                BigInt    @id @default(autoincrement())
-  businessId        BigInt    @map("business_id")
-  name              String
-  description       String?   @db.Text
-  price             Decimal   @default(0) @db.Decimal
-  stock             Int?      @default(0)
-  image             String?   @db.Text
-  tags              Json?
-  visibilityStatus  String?   @default("active") @map("visibility_status")
-  createdAt         DateTime? @default(now()) @map("created_at")
-  updatedAt         DateTime? @default(now()) @map("updated_at")
-
-  business          Business  @relation(fields: [businessId], references: [id])
-  productCategories ProductCategory[]
+  id                   BigInt               @id @default(autoincrement())
+  businessId           BigInt               @map("business_id")
+  name                 String
+  description          String?
+  price                Decimal              @default(0) @db.Decimal
+  stock                Int?                 @default(0)
+  image                String?
+  tags                 Json?
+  visibilityStatus     String?              @default("active") @map("visibility_status")
+  createdAt            DateTime?            @default(now()) @map("created_at")
+  updatedAt            DateTime?            @default(now()) @map("updated_at")
+  productCategories    ProductCategory[]
   productSubCategories ProductSubCategory[]
+  business             Business             @relation(fields: [businessId], references: [id])
 
   @@map("products")
 }
 
-// 24. roles
 model Role {
   id        BigInt    @id @default(autoincrement())
   name      String    @unique
@@ -390,76 +355,67 @@ model Role {
   @@map("roles")
 }
 
-// 25. service_categories
 model ServiceCategory {
-  id        BigInt @id @default(autoincrement())
-  serviceId BigInt @map("service_id")
-  categoryId BigInt @map("category_id")
-
-  service   Service  @relation(fields: [serviceId], references: [id])
-  category  Category @relation(fields: [categoryId], references: [id])
+  id         BigInt   @id @default(autoincrement())
+  serviceId  BigInt   @map("service_id")
+  categoryId BigInt   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+  service    Service  @relation(fields: [serviceId], references: [id])
 
   @@map("service_categories")
 }
 
-// 26. service_sub_categories
 model ServiceSubCategory {
-  id            BigInt    @id @default(autoincrement())
-  serviceId     BigInt    @map("service_id")
-  subCategoryId BigInt    @map("sub_category_id")
-  createdAt     DateTime? @default(now()) @map("created_at")
-
+  id            BigInt      @id @default(autoincrement())
+  serviceId     BigInt      @map("service_id")
+  subCategoryId BigInt      @map("sub_category_id")
+  createdAt     DateTime?   @default(now()) @map("created_at")
   service       Service     @relation(fields: [serviceId], references: [id])
   subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
 
   @@map("service_sub_categories")
 }
 
-// 27. services
 model Service {
-  id               BigInt    @id @default(autoincrement())
-  businessId       BigInt    @map("business_id")
-  name             String
-  description      String?   @db.Text
-  price            Decimal   @default(0) @db.Decimal
-  slots            Int?      @default(1)
-  image            String?   @db.Text
-  tags             Json?
-  visibilityStatus String?   @default("active") @map("visibility_status")
-  createdAt        DateTime? @default(now()) @map("created_at")
-  updatedAt        DateTime? @default(now()) @map("updated_at")
-
-  business         Business  @relation(fields: [businessId], references: [id])
-  serviceCategories ServiceCategory[]
+  id                   BigInt               @id @default(autoincrement())
+  businessId           BigInt               @map("business_id")
+  name                 String
+  description          String?
+  price                Decimal              @default(0) @db.Decimal
+  slots                Int?                 @default(1)
+  image                String?
+  tags                 Json?
+  visibilityStatus     String?              @default("active") @map("visibility_status")
+  createdAt            DateTime?            @default(now()) @map("created_at")
+  updatedAt            DateTime?            @default(now()) @map("updated_at")
+  serviceCategories    ServiceCategory[]
   serviceSubCategories ServiceSubCategory[]
+  business             Business             @relation(fields: [businessId], references: [id])
 
   @@map("services")
 }
 
-// 28. social_accounts
 model SocialAccount {
-  id          BigInt    @id @default(autoincrement())
-  businessId  BigInt    @map("business_id")
-  platformId  BigInt    @map("platform_id")
-  accountName String?   @map("account_name")
-  accountId   String?   @unique @map("account_id")
-  accessToken String?   @map("access_token") @db.Text
-  refreshToken String?  @map("refresh_token") @db.Text
-  createdAt   DateTime? @default(now()) @map("created_at")
-  isActive    Boolean?  @default(true) @map("is_active")
-
-  business    Business @relation(fields: [businessId], references: [id])
-  platform    Platform @relation(fields: [platformId], references: [id])
+  id           BigInt    @id @default(autoincrement())
+  businessId   BigInt    @map("business_id")
+  platformId   BigInt    @map("platform_id")
+  accountName  String?   @map("account_name")
+  accountId    String?   @unique @map("account_id")
+  accessToken  String?   @map("access_token")
+  refreshToken String?   @map("refresh_token")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  isActive     Boolean?  @default(true) @map("is_active")
+  business     Business  @relation(fields: [businessId], references: [id])
+  platform     Platform  @relation(fields: [platformId], references: [id])
 
   @@map("social_accounts")
 }
 
-// 29. static_pages
 model StaticPage {
   id        BigInt    @id @default(autoincrement())
   slug      String    @unique
   title     String
-  content   String?   @db.Text
+  content   String?
   isActive  Boolean?  @default(true) @map("is_active")
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @map("updated_at")
@@ -467,31 +423,28 @@ model StaticPage {
   @@map("static_pages")
 }
 
-// 30. sub_categories
 model SubCategory {
-  id         BigInt    @id @default(autoincrement())
-  categoryId BigInt    @map("category_id")
-  name       String
-  createdAt  DateTime? @default(now()) @map("created_at")
-
-  category   Category @relation(fields: [categoryId], references: [id])
+  id                   BigInt               @id @default(autoincrement())
+  categoryId           BigInt               @map("category_id")
+  name                 String
+  createdAt            DateTime?            @default(now()) @map("created_at")
   productSubCategories ProductSubCategory[]
   serviceSubCategories ServiceSubCategory[]
+  category             Category             @relation(fields: [categoryId], references: [id])
 
   @@map("sub_categories")
 }
 
-// 31. subscription_permissions
 model SubscriptionPermission {
   id            BigInt    @id @default(autoincrement())
   tierKey       String    @map("tier_key")
   permissionKey String    @map("permission_key")
   createdAt     DateTime? @default(now()) @map("created_at")
 
+  @@unique([tierKey, permissionKey])
   @@map("subscription_permissions")
 }
 
-// 32. subscription_tiers
 model SubscriptionTier {
   id                BigInt    @id @default(autoincrement())
   tierKey           String    @unique @map("tier_key")
@@ -508,7 +461,6 @@ model SubscriptionTier {
   @@map("subscription_tiers")
 }
 
-// 33. target_age_groups
 model TargetAgeGroup {
   id         BigInt     @id @default(autoincrement())
   name       String
@@ -517,7 +469,6 @@ model TargetAgeGroup {
   @@map("target_age_groups")
 }
 
-// 34. target_regions
 model TargetRegion {
   id         BigInt     @id @default(autoincrement())
   name       String
@@ -526,22 +477,19 @@ model TargetRegion {
   @@map("target_regions")
 }
 
-// 35. user_blocks
 model UserBlock {
-  id         BigInt    @id @default(autoincrement())
-  userId     BigInt    @map("user_id")
-  blockedBy  BigInt    @map("blocked_by")
-  reason     String?   @db.Text
-  status     Boolean
-  createdAt  DateTime? @default(now()) @map("created_at")
-
-  user       User @relation("UserToUserBlockUser", fields: [userId], references: [id])
-  blocker    User @relation("UserToUserBlockBlocker", fields: [blockedBy], references: [id])
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt    @map("user_id")
+  blockedBy BigInt    @map("blocked_by")
+  reason    String?
+  status    Boolean
+  createdAt DateTime? @default(now()) @map("created_at")
+  blocker   User      @relation("UserToUserBlockBlocker", fields: [blockedBy], references: [id])
+  user      User      @relation("UserToUserBlockUser", fields: [userId], references: [id])
 
   @@map("user_blocks")
 }
 
-// 36. user_subscriptions
 model UserSubscription {
   id        BigInt    @id @default(autoincrement())
   userId    BigInt    @map("user_id")
@@ -550,49 +498,44 @@ model UserSubscription {
   endDate   DateTime? @map("end_date")
   status    String?   @default("active")
   createdAt DateTime? @default(now()) @map("created_at")
-
-  user      User @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("user_subscriptions")
 }
 
-// 37. users
 model User {
-  id               BigInt    @id @default(autoincrement())
-  name             String?
-  phone            String?   @unique
-  email            String?   @unique
-  image            String?   @db.Text
-  createdAt        DateTime? @default(now()) @map("created_at")
-  updatedAt        DateTime? @default(now()) @map("updated_at")
-  currencyCode     String?   @map("currency_code")
-  roleId           BigInt?   @map("role_id")
-  dob              DateTime? @db.Date
-  bio              String?   @db.Text
-  pushEnabled      Boolean?  @default(true) @map("push_enabled")
-  emailEnabled     Boolean?  @default(true) @map("email_enabled")
-  smsEnabled       Boolean?  @default(false) @map("sms_enabled")
-  whatsappEnabled  Boolean?  @default(false) @map("whatsapp_enabled")
-  isDeleted        Boolean?  @default(false) @map("is_deleted")
-  deletedAt        DateTime? @map("deleted_at")
-  password         String?   @db.Text
-  isVerified       Boolean?  @default(false) @map("is_verified")
-
-  currency         Currency? @relation(fields: [currencyCode], references: [code])
-  role             Role?     @relation(fields: [roleId], references: [id])
-
+  id                BigInt               @id @default(autoincrement())
+  name              String?
+  phone             String?              @unique
+  email             String?              @unique
+  image             String?
+  createdAt         DateTime?            @default(now()) @map("created_at")
+  updatedAt         DateTime?            @default(now()) @map("updated_at")
+  currencyCode      String?              @map("currency_code")
+  roleId            BigInt?              @map("role_id")
+  dob               DateTime?            @db.Date
+  bio               String?
+  pushEnabled       Boolean?             @default(true) @map("push_enabled")
+  emailEnabled      Boolean?             @default(true) @map("email_enabled")
+  smsEnabled        Boolean?             @default(false) @map("sms_enabled")
+  whatsappEnabled   Boolean?             @default(false) @map("whatsapp_enabled")
+  isDeleted         Boolean?             @default(false) @map("is_deleted")
+  deletedAt         DateTime?            @map("deleted_at")
+  password          String?
+  isVerified        Boolean?             @default(false) @map("is_verified")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
   businesses        Business[]
   deviceTokens      DeviceToken[]
+  blockedUsers      UserBlock[]          @relation("UserToUserBlockBlocker")
+  blocks            UserBlock[]          @relation("UserToUserBlockUser")
   userSubscriptions UserSubscription[]
-  blocks            UserBlock[] @relation("UserToUserBlockUser")
-  blockedUsers      UserBlock[] @relation("UserToUserBlockBlocker")
+  currency          Currency?            @relation(fields: [currencyCode], references: [code])
+  role              Role?                @relation(fields: [roleId], references: [id])
 
   @@map("users")
 }
 
-// 38. app_themes
 model AppTheme {
   id                 BigInt    @id @default(autoincrement())
   name               String

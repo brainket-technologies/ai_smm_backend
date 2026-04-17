@@ -80,7 +80,7 @@ export default function TranslationEditor({
             placeholder="Search keywords or translations..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border-none focus:ring-2 focus:ring-primary text-sm"
            />
         </div>
         <div className="flex items-center space-x-3 w-full md:w-auto">
@@ -96,7 +96,7 @@ export default function TranslationEditor({
             type="submit"
             form="translation-form"
             disabled={isPending}
-            className={`flex-1 md:flex-none flex items-center justify-center space-x-2 ${isPending ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 text-sm`}
+            className={`flex-1 md:flex-none flex items-center justify-center space-x-2 ${isPending ? 'bg-primary/70' : 'bg-primary hover:opacity-90'} text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 text-sm`}
            >
               {isPending ? (
                 <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -118,13 +118,13 @@ export default function TranslationEditor({
 
           <div className="max-h-[600px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
             {filteredTranslations.length > 0 ? filteredTranslations.map(([key, value], idx) => (
-              <div key={idx} className="grid grid-cols-12 p-3 items-center group hover:bg-blue-50/30 dark:hover:bg-blue-500/5 transition-all">
+              <div key={idx} className="grid grid-cols-12 p-3 items-center group hover:bg-primary/5 dark:hover:bg-primary/5 transition-all">
                 <div className="col-span-5 px-2">
                    <input 
                     value={key}
                     onChange={(e) => updateKey(idx, e.target.value)}
                     placeholder="New string key..."
-                    className="w-full bg-transparent font-mono text-xs text-gray-600 dark:text-gray-300 outline-none focus:text-blue-600"
+                    className="w-full bg-transparent font-mono text-xs text-gray-600 dark:text-gray-300 outline-none focus:text-primary"
                    />
                 </div>
                 <div className="col-span-6 px-2">
@@ -132,7 +132,7 @@ export default function TranslationEditor({
                     value={value}
                     onChange={(e) => updateValue(idx, e.target.value)}
                     placeholder="Enter translated text..."
-                    className="w-full bg-slate-50 dark:bg-slate-900 px-3 py-2 rounded-lg text-sm transition-all focus:ring-1 focus:ring-blue-500 outline-none border border-transparent focus:border-blue-500/20"
+                    className="w-full bg-slate-50 dark:bg-slate-900 px-3 py-2 rounded-lg text-sm transition-all focus:ring-1 focus:ring-primary outline-none border border-transparent focus:border-primary/20"
                    />
                 </div>
                 <div className="col-span-1 flex justify-center">
@@ -149,7 +149,7 @@ export default function TranslationEditor({
               <div className="py-20 flex flex-col items-center justify-center text-gray-400 space-y-4">
                  <AlertCircle className="h-10 w-10 opacity-20" />
                  <p className="italic text-sm">No translations found matching your search</p>
-                 <button onClick={() => setSearch("")} className="text-blue-600 font-bold text-xs hover:underline">Clear Search</button>
+                 <button onClick={() => setSearch("")} className="text-primary font-bold text-xs hover:underline">Clear Search</button>
               </div>
             )}
           </div>
@@ -161,7 +161,7 @@ export default function TranslationEditor({
               <span>Tip: Meaningful keys (like `dashboard_title`) help maintainability.</span>
            </div>
            <p className="text-xs font-bold text-gray-400">
-             Total Strings: <span className="text-blue-600">{translations.length}</span>
+             Total Strings: <span className="text-primary">{translations.length}</span>
            </p>
         </div>
       </form>
