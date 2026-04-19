@@ -124,22 +124,13 @@ export default function CurrencyFormModal({ isOpen, onClose, currency }: Currenc
                 </div>
             </div>
 
-            <div className="flex items-center space-x-6 pt-2">
-                <label className="flex items-center space-x-2 cursor-pointer group">
-                  <input 
-                    type="checkbox"
-                    checked={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.checked})}
-                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Active</span>
-                </label>
+            <div className="flex items-center pt-2">
                 <label className="flex items-center space-x-2 cursor-pointer group">
                   <input 
                     type="checkbox"
                     checked={formData.isDefault}
                     onChange={(e) => setFormData({...formData, isDefault: e.target.checked})}
-                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
                   />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Default Currency</span>
                 </label>

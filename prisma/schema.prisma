@@ -35,6 +35,7 @@ model AIModel {
   provider          String
   modelType         String               @map("model_type")
   isActive          Boolean?             @default(true) @map("is_active")
+  apiKey            String?              @map("api_key")
   config            Json?
   createdAt         DateTime?            @default(now()) @map("created_at")
   contextWindow     Int?                 @map("context_window")
@@ -140,6 +141,7 @@ model AppTranslation {
 model AudienceType {
   id         BigInt     @id @default(autoincrement())
   name       String
+  isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
   @@map("audience_types")
@@ -176,7 +178,6 @@ model Business {
   targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
   targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
   user               User               @relation(fields: [userId], references: [id])
-  feedbacks          Feedback[]
   products           Product[]
   services           Service[]
   socialAccounts     SocialAccount[]
@@ -197,18 +198,23 @@ model BusinessCategory {
 
 model Category {
   id                 BigInt             @id @default(autoincrement())
-  name               String             @unique
+  name               String
+  type               String             @default("business") @db.VarChar(50)
+  isActive           Boolean?           @default(true) @map("is_active")
   businessCategories BusinessCategory[]
   productCategories  ProductCategory[]
   serviceCategories  ServiceCategory[]
   subCategories      SubCategory[]
 
+  @@unique([name, type])
+  @@index([type])
   @@map("categories")
 }
 
 model CTAButton {
   id         BigInt     @id @default(autoincrement())
   name       String
+  isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
   @@map("cta_buttons")
@@ -243,15 +249,14 @@ model DeviceToken {
 
 model Feedback {
   id         BigInt    @id @default(autoincrement())
-  businessId BigInt?   @map("business_id")
-  name       String?
-  email      String?
+  userId     BigInt    @map("user_id")
+  subject    String?
   message    String
-  rating     Int?
+  rating     Int?      @default(5)
   type       String?   @default("general")
   status     String?   @default("pending")
   createdAt  DateTime? @default(now()) @map("created_at")
-  business   Business? @relation(fields: [businessId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id])
 
   @@map("feedbacks")
 }
@@ -259,6 +264,7 @@ model Feedback {
 model ModelEthnicity {
   id         BigInt     @id @default(autoincrement())
   name       String
+  isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
   @@map("model_ethnicities")
@@ -349,11 +355,13 @@ model Product {
 model Role {
   id        BigInt    @id @default(autoincrement())
   name      String    @unique
+  isActive  Boolean   @default(true) @map("is_active")
   createdAt DateTime? @default(now()) @map("created_at")
   users     User[]
 
   @@map("roles")
 }
+
 
 model ServiceCategory {
   id         BigInt   @id @default(autoincrement())
@@ -427,11 +435,16 @@ model SubCategory {
   id                   BigInt               @id @default(autoincrement())
   categoryId           BigInt               @map("category_id")
   name                 String
+  type                 String               @default("business") @db.VarChar(50)
+  isActive             Boolean?             @default(true) @map("is_active")
   createdAt            DateTime?            @default(now()) @map("created_at")
   productSubCategories ProductSubCategory[]
   serviceSubCategories ServiceSubCategory[]
   category             Category             @relation(fields: [categoryId], references: [id])
 
+  @@unique([categoryId, type, name])
+  @@index([type])
+  @@index([categoryId, type])
   @@map("sub_categories")
 }
 
@@ -464,6 +477,7 @@ model SubscriptionTier {
 model TargetAgeGroup {
   id         BigInt     @id @default(autoincrement())
   name       String
+  isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
   @@map("target_age_groups")
@@ -472,6 +486,7 @@ model TargetAgeGroup {
 model TargetRegion {
   id         BigInt     @id @default(autoincrement())
   name       String
+  isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
   @@map("target_regions")
@@ -530,6 +545,7 @@ model User {
   blockedUsers      UserBlock[]          @relation("UserToUserBlockBlocker")
   blocks            UserBlock[]          @relation("UserToUserBlockUser")
   userSubscriptions UserSubscription[]
+  feedbacks         Feedback[]
   currency          Currency?            @relation(fields: [currencyCode], references: [code])
   role              Role?                @relation(fields: [roleId], references: [id])
 
@@ -544,6 +560,7 @@ model AppTheme {
   darkPrimaryColor   String    @map("dark_primary_color")
   darkSecondaryColor String    @map("dark_secondary_color")
   isDefault          Boolean?  @default(false) @map("is_default")
+  isActive           Boolean?  @default(true) @map("is_active")
   createdAt          DateTime? @default(now()) @map("created_at")
 
   @@map("app_themes")

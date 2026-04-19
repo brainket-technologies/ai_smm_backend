@@ -118,32 +118,20 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
                   className="w-full px-3 py-2 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-sm"
                 />
             </div>
-
-            <div className="flex items-center space-x-2 pt-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input 
-                    type="checkbox"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Active Status</span>
-                </label>
-            </div>
           </div>
 
           <div className="pt-2">
             <button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary hover:opacity-90 text-white py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm flex items-center justify-center space-x-2"
+                className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-lg font-bold text-sm transition-all shadow-sm flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
             >
                 {isSubmitting ? (
-                <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="h-4 w-4 border-2 border-slate-400 border-t-slate-900 rounded-full animate-spin" />
                 ) : (
                 <>
                     <Save className="h-4 w-4" />
-                    <span>Save Platform</span>
+                    <span>Save Platform Info</span>
                 </>
                 )}
             </button>

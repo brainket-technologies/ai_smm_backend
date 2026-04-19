@@ -12,7 +12,9 @@ function cn(...classes: any[]) {
 }
 
 export default function PagesManagementClient({ initialPages }: { initialPages: any[] }) {
-  const [pages, setPages] = useState(initialPages);
+  // Normalize IDs to strings
+  const normalizedPages = initialPages.map(p => ({ ...p, id: p.id.toString() }));
+  const [pages, setPages] = useState(normalizedPages);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<any>(null);
@@ -41,7 +43,7 @@ export default function PagesManagementClient({ initialPages }: { initialPages: 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this page?")) {
       try {
-        await deleteStaticPage(BigInt(id));
+        await deleteStaticPage(id);
         setPages(pages.filter(p => p.id !== id));
       } catch (error: any) {
         alert(error.message);
@@ -51,7 +53,7 @@ export default function PagesManagementClient({ initialPages }: { initialPages: 
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await togglePageStatus(BigInt(id), !currentStatus);
+      await togglePageStatus(id, !currentStatus);
       setPages(pages.map(p => p.id === id ? { ...p, isActive: !currentStatus } : p));
     } catch (error: any) {
       alert(error.message);
@@ -157,13 +159,14 @@ export default function PagesManagementClient({ initialPages }: { initialPages: 
                     <button 
                       onClick={() => handleToggleStatus(p.id, p.isActive)}
                       className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border transition-colors",
-                        p.isActive 
-                          ? "bg-green-50 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20" 
-                          : "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:border-slate-700"
+                        "relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                        p.isActive ? "bg-green-600" : "bg-slate-200 dark:bg-slate-700"
                       )}
                     >
-                      {p.isActive ? "Published" : "Draft"}
+                      <span className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        p.isActive ? "translate-x-5" : "translate-x-0"
+                      )} />
                     </button>
                   </td>
                   <td className="px-6 py-3 text-right">

@@ -13,7 +13,9 @@ function cn(...classes: any[]) {
 }
 
 export default function TranslationsManagementClient({ initialLanguages }: { initialLanguages: any[] }) {
-  const [languages, setLanguages] = useState(initialLanguages);
+  // Normalize IDs to strings
+  const normalizedLanguages = initialLanguages.map(l => ({ ...l, id: l.id.toString() }));
+  const [languages, setLanguages] = useState(normalizedLanguages);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<any>(null);
@@ -52,7 +54,7 @@ export default function TranslationsManagementClient({ initialLanguages }: { ini
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await toggleLanguageStatus(BigInt(id), !currentStatus);
+      await toggleLanguageStatus(id, !currentStatus);
       setLanguages(languages.map(l => l.id === id ? { ...l, isActive: !currentStatus } : l));
     } catch (error: any) {
       alert(error.message);
@@ -61,7 +63,7 @@ export default function TranslationsManagementClient({ initialLanguages }: { ini
 
   const handleSetDefault = async (id: string) => {
     try {
-      await setDefaultLanguage(BigInt(id));
+      await setDefaultLanguage(id);
       setLanguages(languages.map(l => ({
         ...l,
         isDefault: l.id === id,
@@ -173,28 +175,35 @@ export default function TranslationsManagementClient({ initialLanguages }: { ini
                     <button 
                       onClick={() => handleToggleStatus(lang.id, lang.isActive)}
                       className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border transition-colors",
-                        lang.isActive 
-                          ? "bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:border-green-900/30" 
-                          : "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:border-slate-700"
+                        "relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                        lang.isActive ? "bg-green-600" : "bg-slate-200 dark:bg-slate-700"
                       )}
                     >
-                      {lang.isActive ? "Active" : "Disabled"}
+                      <span className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        lang.isActive ? "translate-x-5" : "translate-x-0"
+                      )} />
                     </button>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    {lang.isDefault ? (
-                      <span className="inline-flex items-center text-primary bg-primary/10 dark:bg-primary/5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-primary/20 dark:border-primary/10">
-                        Primary
-                      </span>
-                    ) : (
-                      <button 
-                        onClick={() => handleSetDefault(lang.id)}
-                        className="text-[10px] font-bold text-slate-400 hover:text-primary uppercase"
-                      >
-                        Set Primary
-                      </button>
+                  <td 
+                    onClick={() => !lang.isDefault && handleSetDefault(lang.id)}
+                    className={cn(
+                      "px-4 py-3 text-center transition-colors truncate",
+                      !lang.isDefault ? "cursor-pointer hover:bg-blue-50/50" : ""
                     )}
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                    {lang.isDefault ? (
+                        <CheckCircle className="h-5 w-5 text-primary" />
+                    ) : (
+                      <div className={cn(
+                        "h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center group",
+                        "border-slate-200 group-hover:border-blue-400"
+                      )}>
+                        <div className="h-2.5 w-2.5 rounded-full bg-blue-500 opacity-0 group-hover:opacity-40 transition-opacity" />
+                      </div>
+                    )}
+                    </div>
                   </td>
                   <td className="px-6 py-3 text-right">
                     <div className="flex items-center justify-end space-x-1">

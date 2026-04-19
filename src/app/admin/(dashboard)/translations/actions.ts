@@ -3,7 +3,7 @@
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function upsertLanguage(id: bigint | null, data: {
+export async function upsertLanguage(id: string | null, data: {
   displayName: string;
   languageCode: string;
   countryCode: string;
@@ -22,7 +22,7 @@ export async function upsertLanguage(id: bigint | null, data: {
 
     if (id) {
       await prisma.appTranslation.update({
-        where: { id },
+        where: { id: BigInt(id) },
         data: {
           ...data,
           updatedAt: new Date()
@@ -44,13 +44,13 @@ export async function upsertLanguage(id: bigint | null, data: {
   }
 }
 
-export async function deleteLanguage(id: bigint) {
+export async function deleteLanguage(id: string) {
   try {
-    const lang = await prisma.appTranslation.findUnique({ where: { id } });
+    const lang = await prisma.appTranslation.findUnique({ where: { id: BigInt(id) } });
     if (lang?.isDefault) {
       throw new Error("Cannot delete the default language.");
     }
-    await prisma.appTranslation.delete({ where: { id } });
+    await prisma.appTranslation.delete({ where: { id: BigInt(id) } });
     revalidatePath("/admin/translations");
     return { success: true };
   } catch (error: any) {
@@ -58,10 +58,20 @@ export async function deleteLanguage(id: bigint) {
   }
 }
 
-export async function toggleLanguageStatus(id: bigint, isActive: boolean) {
+export async function toggleLanguageStatus(id: string, isActive: boolean) {
   try {
+    const langId = BigInt(id);
+    const lang = await prisma.appTranslation.findUnique({ 
+      where: { id: langId },
+      select: { isDefault: true } 
+    });
+    
+    if (!isActive && lang?.isDefault) {
+      throw new Error("Cannot deactivate the system default language.");
+    }
+
     await prisma.appTranslation.update({
-      where: { id },
+      where: { id: langId },
       data: { isActive }
     });
     revalidatePath("/admin/translations");
@@ -71,7 +81,7 @@ export async function toggleLanguageStatus(id: bigint, isActive: boolean) {
   }
 }
 
-export async function setDefaultLanguage(id: bigint) {
+export async function setDefaultLanguage(id: string) {
   try {
     await prisma.$transaction([
       prisma.appTranslation.updateMany({
@@ -79,7 +89,7 @@ export async function setDefaultLanguage(id: bigint) {
         data: { isDefault: false }
       }),
       prisma.appTranslation.update({
-        where: { id },
+        where: { id: BigInt(id) },
         data: { isDefault: true, isActive: true }
       })
     ]);

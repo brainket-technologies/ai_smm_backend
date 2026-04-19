@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken } from '@/lib/jwt';
 
+import bcrypt from 'bcryptjs';
+
 export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -76,7 +78,6 @@ export async function PATCH(request: Request) {
     if (image !== undefined) updateData.image = image;
     
     if (password) {
-      updateData.password = await bcrypt.compare(password, ''); // This is just a placeholder to use bcrypt if needed, actually I should hash it
       updateData.password = await bcrypt.hash(password, 10);
     }
 

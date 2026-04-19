@@ -12,7 +12,9 @@ function cn(...classes: any[]) {
 }
 
 export default function PlatformsManagementClient({ initialPlatforms }: { initialPlatforms: any[] }) {
-  const [platforms, setPlatforms] = useState(initialPlatforms);
+  // Normalize IDs to strings
+  const normalizedPlatforms = initialPlatforms.map(p => ({ ...p, id: p.id.toString() }));
+  const [platforms, setPlatforms] = useState(normalizedPlatforms);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<any>(null);
@@ -40,7 +42,7 @@ export default function PlatformsManagementClient({ initialPlatforms }: { initia
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this platform?")) {
       try {
-        await deletePlatform(BigInt(id));
+        await deletePlatform(id);
         setPlatforms(platforms.filter(p => p.id !== id));
       } catch (error: any) {
         alert(error.message);
@@ -50,7 +52,7 @@ export default function PlatformsManagementClient({ initialPlatforms }: { initia
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await togglePlatformStatus(BigInt(id), !currentStatus);
+      await togglePlatformStatus(id, !currentStatus);
       setPlatforms(platforms.map(p => p.id === id ? { ...p, isActive: !currentStatus } : p));
     } catch (error: any) {
       alert(error.message);
@@ -166,13 +168,14 @@ export default function PlatformsManagementClient({ initialPlatforms }: { initia
                     <button 
                       onClick={() => handleToggleStatus(p.id, p.isActive)}
                       className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border transition-colors",
-                        p.isActive 
-                          ? "bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:border-green-900/30" 
-                          : "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:border-amber-900/30"
+                        "relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                        p.isActive ? "bg-green-600" : "bg-slate-200 dark:bg-slate-700"
                       )}
                     >
-                      {p.isActive ? "Active" : "Paused"}
+                      <span className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        p.isActive ? "translate-x-5" : "translate-x-0"
+                      )} />
                     </button>
                   </td>
                   <td className="px-6 py-3 text-right">

@@ -157,24 +157,15 @@ export default function PaymentFormModal({ isOpen, onClose, paymentMethod }: Pay
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-6 pt-2">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                    <input 
-                        type="checkbox"
-                        checked={formData.isActive}
-                        onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                        className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-                    />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Active</span>
-                    </label>
-                    <label className="flex items-center space-x-2 cursor-pointer">
+                <div className="flex items-center pt-2">
+                    <label className="flex items-center space-x-2 cursor-pointer group">
                     <input 
                         type="checkbox"
                         checked={formData.isDefault}
                         onChange={(e) => setFormData({...formData, isDefault: e.target.checked})}
-                        className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                        className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
                     />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Default</span>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Set as Default Gateway</span>
                     </label>
                 </div>
             </div>

@@ -14,10 +14,10 @@ export async function getPlatforms() {
   }
 }
 
-export async function togglePlatformStatus(id: bigint, isActive: boolean) {
+export async function togglePlatformStatus(id: string, isActive: boolean) {
   try {
     await prisma.platform.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { isActive }
     });
     revalidatePath("/admin/platforms");
@@ -27,10 +27,10 @@ export async function togglePlatformStatus(id: bigint, isActive: boolean) {
   }
 }
 
-export async function deletePlatform(id: bigint) {
+export async function deletePlatform(id: string) {
   try {
     await prisma.platform.delete({
-      where: { id }
+      where: { id: BigInt(id) }
     });
     revalidatePath("/admin/platforms");
     return { success: true };
@@ -39,7 +39,7 @@ export async function deletePlatform(id: bigint) {
   }
 }
 
-export async function upsertPlatform(id: bigint | null, data: {
+export async function upsertPlatform(id: string | null, data: {
   name: string;
   logo?: string;
   url?: string;
@@ -49,7 +49,7 @@ export async function upsertPlatform(id: bigint | null, data: {
   try {
     if (id) {
       await prisma.platform.update({
-        where: { id },
+        where: { id: BigInt(id) },
         data
       });
     } else {

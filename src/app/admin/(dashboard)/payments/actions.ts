@@ -14,10 +14,10 @@ export async function getPaymentMethods() {
   }
 }
 
-export async function togglePaymentStatus(id: bigint, isActive: boolean) {
+export async function togglePaymentStatus(id: string, isActive: boolean) {
   try {
     await prisma.paymentMethod.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { isActive }
     });
     revalidatePath("/admin/payments");
@@ -27,14 +27,14 @@ export async function togglePaymentStatus(id: bigint, isActive: boolean) {
   }
 }
 
-export async function setDefaultPayment(id: bigint) {
+export async function setDefaultPayment(id: string) {
   try {
     await prisma.paymentMethod.updateMany({
       data: { isDefault: false }
     });
     
     await prisma.paymentMethod.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { isDefault: true, isActive: true }
     });
     
@@ -45,10 +45,10 @@ export async function setDefaultPayment(id: bigint) {
   }
 }
 
-export async function deletePaymentMethod(id: bigint) {
+export async function deletePaymentMethod(id: string) {
   try {
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id }
+      where: { id: BigInt(id) }
     });
     
     if (paymentMethod?.isDefault) {
@@ -56,7 +56,7 @@ export async function deletePaymentMethod(id: bigint) {
     }
     
     await prisma.paymentMethod.delete({
-      where: { id }
+      where: { id: BigInt(id) }
     });
     revalidatePath("/admin/payments");
     return { success: true };
@@ -65,7 +65,7 @@ export async function deletePaymentMethod(id: bigint) {
   }
 }
 
-export async function upsertPaymentMethod(id: bigint | null, data: {
+export async function upsertPaymentMethod(id: string | null, data: {
   name: string;
   displayName: string;
   type: string;
@@ -84,7 +84,7 @@ export async function upsertPaymentMethod(id: bigint | null, data: {
 
     if (id) {
       await prisma.paymentMethod.update({
-        where: { id },
+        where: { id: BigInt(id) },
         data
       });
     } else {

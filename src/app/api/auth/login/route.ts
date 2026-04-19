@@ -27,10 +27,18 @@ export async function POST(request: Request) {
             );
         }
 
-        // Verify Role: Only Admins can login to the dashboard
-        if (user.role?.name !== 'ADMIN') {
+        // Verify Role: Only ACTIVE Super Admins can login to the dashboard
+        if (user.role?.name !== 'Super Admin' || !user.role?.isActive) {
             return NextResponse.json(
-                { success: false, message: 'Unauthorized. Admin access only.' },
+                { success: false, message: 'Unauthorized. Access restricted to Active Super Admins only.' },
+                { status: 403 }
+            );
+        }
+
+        // Verify User Status
+        if (user.isDeleted) {
+            return NextResponse.json(
+                { success: false, message: 'Your account has been deactivated or deleted.' },
                 { status: 403 }
             );
         }

@@ -14,16 +14,25 @@ async function main() {
   console.log('Seeding database...');
 
   // 1. Create Roles
+  // First, cleanup any other roles to ensure ONLY these two exist
+  await prisma.role.deleteMany({
+    where: {
+      name: {
+        notIn: ['Super Admin', 'User']
+      }
+    }
+  });
+
   const adminRole = await prisma.role.upsert({
-    where: { name: 'ADMIN' },
+    where: { name: 'Super Admin' },
     update: {},
-    create: { name: 'ADMIN' },
+    create: { name: 'Super Admin', isActive: true },
   });
 
   const userRole = await prisma.role.upsert({
-    where: { name: 'USER' },
+    where: { name: 'User' },
     update: {},
-    create: { name: 'USER' },
+    create: { name: 'User', isActive: true },
   });
 
   console.log('Roles created/verified.');
@@ -48,6 +57,35 @@ async function main() {
   });
 
   console.log('Super Admin user created:', superAdmin.email);
+
+  // 3. Create Sample User & Business (Requested by User)
+  const firozPassword = await bcrypt.hash('12345', 10);
+  const sampleUser = await prisma.user.upsert({
+    where: { email: 'firoz@test.com' },
+    update: { roleId: userRole.id },
+    create: {
+      email: 'firoz@test.com',
+      name: 'Firoz Test User',
+      password: firozPassword,
+      roleId: userRole.id,
+      isVerified: true,
+      phone: '1234567890'
+    },
+  });
+
+  const sampleBusiness = await prisma.business.upsert({
+    where: { id: 1001 }, // Using a fixed ID for seeding reliability
+    update: { userId: sampleUser.id },
+    create: {
+      id: 1001,
+      name: 'Firoz Tech Solutions',
+      userId: sampleUser.id,
+      description: 'AI powered social media management',
+      email: 'info@firoztech.com'
+    }
+  });
+
+  console.log('Sample User and Business created.');
 
   // 3. Create initial App Config
   const appConfigJson = {
@@ -395,7 +433,7 @@ async function main() {
         "max_keyword_searches": 200,
         "max_storage_mb": 5000,
         "max_video_length_seconds": 180,
-        "max_concurrent_devices": 5,
+        "max_concurrent_devices": 4,
         "max_business_accounts": 10,
         "allowed_platforms": ["facebook", "instagram", "linkedin", "gmb"]
       }
@@ -424,7 +462,7 @@ async function main() {
         "max_keyword_searches": 1000,
         "max_storage_mb": 50000,
         "max_video_length_seconds": 600,
-        "max_concurrent_devices": 10,
+        "max_concurrent_devices": -1,
         "max_business_accounts": -1,
         "allowed_platforms": ["facebook", "instagram", "linkedin", "gmb", "whatsapp"]
       }
@@ -617,14 +655,16 @@ async function main() {
       darkPrimaryColor: "#0F1F1A",
       darkSecondaryColor: "#27AE60",
       isDefault: true,
+      isActive: true,
     },
     {
       name: "Ocean Blue",
       primaryColor: "#1E88E5",
       secondaryColor: "#42A5F5",
       darkPrimaryColor: "#1976D2",
-      darkSecondaryColor: "#2196F3",
+      darkSecondaryColor: "#795548",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Sunset Orange",
@@ -633,6 +673,7 @@ async function main() {
       darkPrimaryColor: "#F57C00",
       darkSecondaryColor: "#FF9800",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Royal Purple",
@@ -641,6 +682,7 @@ async function main() {
       darkPrimaryColor: "#7B1FA2",
       darkSecondaryColor: "#9C27B0",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Nature Green",
@@ -649,6 +691,7 @@ async function main() {
       darkPrimaryColor: "#388E3C",
       darkSecondaryColor: "#4CAF50",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Teal Fresh",
@@ -657,6 +700,7 @@ async function main() {
       darkPrimaryColor: "#00796B",
       darkSecondaryColor: "#009688",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Indigo Night",
@@ -665,6 +709,7 @@ async function main() {
       darkPrimaryColor: "#303F9F",
       darkSecondaryColor: "#3F51B5",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Pink Rose",
@@ -673,6 +718,7 @@ async function main() {
       darkPrimaryColor: "#C2185B",
       darkSecondaryColor: "#E91E63",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Fiery Orange",
@@ -681,6 +727,7 @@ async function main() {
       darkPrimaryColor: "#E64A19",
       darkSecondaryColor: "#FF5722",
       isDefault: false,
+      isActive: true,
     },
     {
       name: "Coffee Brown",
@@ -689,6 +736,7 @@ async function main() {
       darkPrimaryColor: "#5D4037",
       darkSecondaryColor: "#795548",
       isDefault: false,
+      isActive: true,
     },
   ];
 
@@ -738,6 +786,254 @@ async function main() {
   } else {
     console.warn('translations.json not found, skipping localization seeding.');
   }
+
+  // --- CATEGORY SEGMENTATION SEEDING ---
+  console.log('Seeding Typed Categories...');
+  const categoryData = [
+    {
+      type: "business",
+      data: [
+        { name: "Retail & Commerce", subs: ["Supermarket", "Clothing Store", "Electronics Shop", "Bookstore", "Hardware", "Jewelry", "Furniture", "Pharmacy", "Pet Store", "Stationery"] },
+        { name: "Healthcare", subs: ["Hospital", "Dental Clinic", "Pharmacy", "Chiropractor", "Dermatology", "Pediatrics", "Eye Care", "Psychiatry", "Veterinary", "Nutritionist"] },
+        { name: "Information Technology", subs: ["Software Dev", "Cybersecurity", "Cloud Hosting", "IT Consulting", "Network Admin", "Data Analytics", "Managed Services", "Blockchain", "AI Research", "Web Design"] },
+        { name: "Food & Beverage", subs: ["Restaurant", "Cafe", "Bakery", "Food Truck", "Catering", "Bar", "Brewery", "Pizza Shop", "Fine Dining", "Fast Food"] },
+        { name: "Real Estate", subs: ["Residential Sales", "Commercial Leases", "Property Mgmt", "Appraisal", "Real Estate Law", "Architecture", "Landscaping", "Interior Design", "Title Company", "Mortgage Broker"] },
+        { name: "Manufacturing", subs: ["Automotive", "Textiles", "Electronics", "Plastics", "Metal Fabrication", "Food Processing", "Chemicals", "Paper Mills", "Aerospace", "Machinery"] },
+        { name: "Education", subs: ["K-12 School", "University", "Tutoring Center", "Language School", "Trade School", "Music Academy", "Dance Studio", "Driving School", "Culinary Institute", "Online Courses"] },
+        { name: "Finance & Accounting", subs: ["Banking", "Investment Firm", "Accounting Firm", "Tax Prep", "Insurance Agency", "Wealth Mgmt", "Credit Union", "Venture Capital", "Payroll Services", "Auditing"] },
+        { name: "Automotive", subs: ["Car Dealership", "Auto Repair", "Tire Shop", "Car Wash", "Towing", "Body Shop", "Motorcycle Sales", "Truck Rental", "Auto Parts", "Detailing"] },
+        { name: "Entertainment", subs: ["Movie Theater", "Amusement Park", "Nightclub", "Bowling Alley", "Arcade", "Museum", "Art Gallery", "Concert Hall", "Escape Room", "Sports Arena"] }
+      ]
+    },
+    {
+      type: "product",
+      data: [
+        { name: "Consumer Electronics", subs: ["Smartphones", "Laptops", "Tablets", "Headphones", "Smartwatches", "TVs", "Cameras", "Gaming Consoles", "Drones", "Speakers"] },
+        { name: "Fashion & Apparel", subs: ["Men's Clothing", "Women's Clothing", "Kids' Apparel", "Shoes", "Bags", "Jewelry", "Watches", "Sunglasses", "Activewear", "Sleepwear"] },
+        { name: "Home & Garden", subs: ["Furniture", "Bedding", "Kitchenware", "Decor", "Lighting", "Gardening Tools", "Outdoor Furniture", "Rugs", "Storage", "Bath Accessories"] },
+        { name: "Software & Digital", subs: ["Operating Systems", "Antivirus", "Design Tech", "Video Editing", "Office Suites", "Mobile Apps", "Plugins", "E-books", "Stock Assets", "SaaS Subscriptions"] },
+        { name: "Groceries", subs: ["Fresh Produce", "Dairy & Eggs", "Meat & Seafood", "Pantry Staples", "Snacks", "Beverages", "Frozen Foods", "Bakery Items", "Organic", "Canned Goods"] },
+        { name: "Beauty & Personal Care", subs: ["Skincare", "Makeup", "Haircare", "Fragrances", "Bath & Body", "Oral Care", "Men's Grooming", "Suntan", "Deodorants", "Nail Care"] },
+        { name: "Toys & Games", subs: ["Action Figures", "Board Games", "Puzzles", "Educational", "Dolls", "Building Blocks", "Outdoor Play", "Arts & Crafts", "RC Vehicles", "Card Games"] },
+        { name: "Books & Media", subs: ["Fiction", "Non-Fiction", "Audiobooks", "Textbooks", "Magazines", "Comics", "Vinyl Records", "Movies", "Sheet Music", "Journals"] },
+        { name: "Sports & Outdoors", subs: ["Fitness Equipment", "Camping Gear", "Cycling", "Team Sports", "Fishing", "Water Sports", "Winter Sports", "Hunting", "Athletic Apparel", "Yoga Mats"] },
+        { name: "Automotive Parts", subs: ["Tires", "Batteries", "Brake Pads", "Wiper Blades", "Oils & Fluids", "Filters", "Lights", "Spark Plugs", "Suspension", "Exhausts"] }
+      ]
+    },
+    {
+      type: "service",
+      data: [
+        { name: "Consulting", subs: ["Business Strategy", "Financial Advisory", "HR Consulting", "Risk Management", "Compliance", "IT Strategy", "Marketing Consulting", "Operations", "Sustainability", "Sales Coaching"] },
+        { name: "Cleaning", subs: ["Residential Cleaning", "Commercial Janitorial", "Deep Cleaning", "Carpet Cleaning", "Window Washing", "Pool Cleaning", "Post-Construction", "Gutter Cleaning", "Pressure Washing", "Maid Service"] },
+        { name: "Maintenance & Repair", subs: ["Plumbing", "Electrical", "HVAC", "Appliance Repair", "Roofing", "Pest Control", "Handyman", "Locksmith", "Painting", "Carpentry"] },
+        { name: "Freelance & Creative", subs: ["Copywriting", "Graphic Design", "Video Editing", "Voiceover", "Illustration", "Translation", "Photography", "Animation", "Music Production", "Ghostwriting"] },
+        { name: "Legal", subs: ["Corporate Law", "Family Law", "Criminal Defense", "Immigration", "Intellectual Property", "Personal Injury", "Real Estate Law", "Tax Law", "Bankruptcy", "Employment Law"] },
+        { name: "Marketing & Strategy", subs: ["SEO Services", "Social Media Mgmt", "PPC Advertising", "Email Marketing", "PR", "Content Marketing", "Influencer Outreach", "Branding", "Market Research", "Affiliate Mgmt"] },
+        { name: "Design & UX", subs: ["UI/UX Design", "Web Design", "Logo Creation", "Packaging Design", "Print Layout", "App Design", "Industrial Design", "Interior Design", "Wireframing", "Prototyping"] },
+        { name: "Construction", subs: ["General Contracting", "Masonry", "Framing", "Drywall", "Concrete", "Excavation", "Flooring", "Siding", "Paving", "Demolition"] },
+        { name: "Logistics & Delivery", subs: ["Courier Service", "Freight Shipping", "Moving Services", "Warehousing", "Last-Mile Delivery", "Food Delivery", "Vehicle Transport", "Supply Chain", "Customs Brokerage", "Inventory Mgmt"] },
+        { name: "Health & Fitness", subs: ["Personal Training", "Yoga Instruction", "Pilates", "Martial Arts", "Nutrition Coaching", "Physical Therapy", "Massage Therapy", "Meditation", "Sports Coaching", "Diet Planning"] }
+      ]
+    }
+  ];
+
+  for (const group of categoryData) {
+    for (const cat of group.data) {
+      // Upsert Category
+      const createdCategory = await prisma.category.upsert({
+        where: { name_type: { name: cat.name, type: group.type } },
+        update: {},
+        create: {
+          name: cat.name,
+          type: group.type,
+        }
+      });
+
+      // Upsert SubCategories
+      for (const sub of cat.subs) {
+        await prisma.subCategory.upsert({
+          where: { categoryId_type_name: { categoryId: createdCategory.id, type: group.type, name: sub } },
+          update: {},
+          create: {
+            categoryId: createdCategory.id,
+            name: sub,
+            type: group.type
+          }
+        });
+      }
+    }
+  }
+
+  // --- SEED AUXILIARY TARGETING TABLES ---
+  console.log('Seeding Auxiliary Targeting Tables...');
+  
+  const targetRegions = ["Worldwide", "North America", "South America", "Europe", "Asia Pacific", "Middle East", "Africa", "USA", "Canada", "UK", "India", "Australia", "Germany", "France", "Japan", "Brazil", "UAE", "Saudi Arabia", "Singapore", "South Africa", "Mexico", "China", "Italy", "Spain", "Russia"];
+  const targetAges = ["Toddlers (1-3)", "Kids (4-12)", "Teens (13-17)", "Young Adults (18-24)", "Millennials (25-34)", "Gen X (35-44)", "Middle-Aged (45-54)", "Pre-retirees (55-64)", "Seniors (65+)", "65 Above", "All Ages", "25 Yr Male", "25 Yr Female", "All Males", "All Females", "Couples", "Expecting Parents", "New Parents", "18-24 Male", "18-24 Female", "25-34 Male", "25-34 Female", "35-44 Male", "35-44 Female"];
+  const modelEthnicities = ["Asian", "Black/African Descent", "Caucasian/White", "Hispanic/Latino", "Middle Eastern", "Native American", "Mixed", "South Asian", "Any"];
+  const ctaButtons = ["Shop Now", "Learn More", "Sign Up", "Subscribe", "Book Now", "Contact Us", "Download", "Try For Free", "Watch Video", "Request Demo", "Get Started", "Join Now", "Order Now", "Find Out More", "Claim Offer"];
+  const audienceTypes = ["Students", "Professionals", "Parents", "Entrepreneurs", "Gamers", "Fitness Enthusiasts", "Shoppers", "Techies", "Travelers", "Foodies", "Retirees", "Investors", "Fashionistas", "Homeowners", "Pet Owners", "Customer", "Couple", "Client", "Guest", "Patient", "Member", "Student", "Passenger", "User", "Subscriber", "Visitor", "Buyer", "Donor", "Owner/Partner", "Other"];
+
+  const seedAuxTable = async (modelDelegate: any, dataItems: string[]) => {
+    for (const name of dataItems) {
+      const exists = await modelDelegate.findFirst({ where: { name } });
+      if (!exists) {
+        await modelDelegate.create({ data: { name, isActive: true } });
+      }
+    }
+  };
+
+  await seedAuxTable(prisma.targetRegion, targetRegions);
+  await seedAuxTable(prisma.targetAgeGroup, targetAges);
+  await seedAuxTable(prisma.modelEthnicity, modelEthnicities);
+  await seedAuxTable(prisma.cTAButton, ctaButtons); // 'cTAButton' corresponds to model CTAButton
+  await seedAuxTable(prisma.audienceType, audienceTypes);
+
+  // --- SEED FEEDBACK ---
+  console.log('Seeding Sample Feedbacks...');
+  
+  // Re-fetching sampleUser to ensure we have the ID in this scope if needed 
+  // (though it was declared in main, this is safer if we rearranged code)
+  const firozUser = await prisma.user.findUnique({ where: { email: 'firoz@test.com' } });
+
+  const feedbackData = [
+    { 
+      userId: firozUser?.id, 
+      subject: "Business Rating", 
+      message: "Firoz Tech Solutions is doing great work! Highly recommended.", 
+      rating: 5, 
+      status: "resolved" 
+    },
+    { 
+      userId: firozUser?.id || superAdmin.id,
+      subject: "General Feedback", 
+      message: "Categories page is loading a bit slow on my end.", 
+      rating: 3, 
+      status: "pending" 
+    },
+  ];
+
+  console.log('Seeding Sample Feedbacks...');
+  for (const f of feedbackData) {
+    const exists = await prisma.feedback.findFirst({ where: { message: f.message } });
+    if (!exists) {
+      await prisma.feedback.create({ data: f });
+    }
+  }
+
+  console.log('Seeding AI Models...');
+  const aiModels = [
+    {
+      modelKey: 'gpt-4o',
+      provider: 'OpenAI',
+      modelType: 'text-generation',
+      contextWindow: 128000,
+      maxTokens: 4096,
+      inputCostPer1k: 0.005,
+      outputCostPer1k: 0.015,
+      config: { temperature: 0.7, top_p: 1.0 },
+      isActive: true,
+      apiKey: "sk-proj-xxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      modelKey: 'claude-3-5-sonnet-20240620',
+      provider: 'Anthropic',
+      modelType: 'text-generation',
+      contextWindow: 200000,
+      maxTokens: 8192,
+      inputCostPer1k: 0.003,
+      outputCostPer1k: 0.015,
+      config: { max_tokens: 4096 },
+      isActive: true,
+      apiKey: "sk-ant-at03-xxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      modelKey: 'gemini-1.5-pro',
+      provider: 'Google',
+      modelType: 'text-generation',
+      contextWindow: 1000000,
+      maxTokens: 8192,
+      inputCostPer1k: 0.0035,
+      outputCostPer1k: 0.0105,
+      config: { safety_settings: "BLOCK_NONE" },
+      isActive: true,
+      apiKey: "AIzaSyxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      modelKey: 'sora-v1',
+      provider: 'OpenAI',
+      modelType: 'video-generation',
+      contextWindow: 0,
+      maxTokens: 0,
+      inputCostPer1k: 0.50,
+      outputCostPer1k: 2.50,
+      config: { duration: "60s", resolution: "1080p" },
+      isActive: true,
+      apiKey: "sk-proj-xxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      modelKey: 'gpt-4o-mini',
+      provider: 'OpenAI',
+      modelType: 'caption-generation',
+      contextWindow: 128000,
+      maxTokens: 2048,
+      inputCostPer1k: 0.00015,
+      outputCostPer1k: 0.0006,
+      config: { detail: "high" },
+      isActive: true,
+      apiKey: "sk-proj-xxxxxxxxxxxxxxxxxxxx"
+    }
+  ];
+
+  for (const model of aiModels) {
+    const exists = await prisma.aIModel.findUnique({ where: { modelKey: model.modelKey } });
+    if (exists) {
+        await prisma.aIModel.update({
+            where: { modelKey: model.modelKey },
+            data: model
+        });
+    } else {
+        await prisma.aIModel.create({ data: model });
+    }
+  }
+
+  console.log('Seeding AI Prompts...');
+  const aiPrompts = [
+    {
+      promptKey: 'marketing_social_post',
+      moduleName: 'Marketing',
+      systemInstruction: 'You are an expert social media marketer. Create engaging, high-conversion posts that align with brand voice.',
+      userPromptTemplate: 'Create a social media post for {businessName} about {topic}. Include high-traffic hashtags.',
+      isActive: true,
+      version: 1
+    },
+    {
+      promptKey: 'product_description_optimizer',
+      moduleName: 'Product',
+      systemInstruction: 'You are a professional e-commerce copywriter. Focus on benefits, features, and SEO keywords.',
+      userPromptTemplate: 'Optimize this product description for {productName}: {description}.',
+      isActive: true,
+      version: 1
+    },
+    {
+      promptKey: 'support_email_drafter',
+      moduleName: 'Support',
+      systemInstruction: 'You are a helpful customer support representative. Be polite, empathetic, and solution-oriented.',
+      userPromptTemplate: 'Draft a reply to this customer query: {query}. The specific business is {businessName}.',
+      isActive: true,
+      version: 1
+    }
+  ];
+
+  for (const prompt of aiPrompts) {
+    const exists = await prisma.aIPrompt.findUnique({ where: { promptKey: prompt.promptKey } });
+    if (exists) {
+      await prisma.aIPrompt.update({ where: { promptKey: prompt.promptKey }, data: prompt });
+    } else {
+      await prisma.aIPrompt.create({ data: prompt });
+    }
+  }
+
+  console.log('Seed completed successfully.');
 }
 
 main()

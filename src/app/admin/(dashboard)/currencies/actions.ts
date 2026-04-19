@@ -3,7 +3,7 @@
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function upsertCurrency(id: bigint | null, data: {
+export async function upsertCurrency(id: string | null, data: {
   name: string;
   code: string;
   symbol: string;
@@ -21,7 +21,7 @@ export async function upsertCurrency(id: bigint | null, data: {
 
     if (id) {
       await prisma.currency.update({
-        where: { id },
+        where: { id: BigInt(id) },
         data: { ...data }
       });
     } else {
@@ -36,25 +36,25 @@ export async function upsertCurrency(id: bigint | null, data: {
   }
 }
 
-export async function deleteCurrency(id: bigint) {
-  const curr = await prisma.currency.findUnique({ where: { id } });
+export async function deleteCurrency(id: string) {
+  const curr = await prisma.currency.findUnique({ where: { id: BigInt(id) } });
   if (curr?.isDefault) {
     throw new Error("Cannot delete the default currency.");
   }
 
-  await prisma.currency.delete({ where: { id } });
+  await prisma.currency.delete({ where: { id: BigInt(id) } });
   revalidatePath("/admin/currencies");
   return { success: true };
 }
 
-export async function setDefaultCurrency(id: bigint) {
+export async function setDefaultCurrency(id: string) {
   await prisma.$transaction([
     prisma.currency.updateMany({
       where: { isDefault: true },
       data: { isDefault: false }
     }),
     prisma.currency.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { isDefault: true, status: true }
     })
   ]);
@@ -63,16 +63,16 @@ export async function setDefaultCurrency(id: bigint) {
   return { success: true };
 }
 
-export async function toggleCurrencyStatus(id: bigint, status: boolean) {
+export async function toggleCurrencyStatus(id: string, status: boolean) {
   if (!status) {
-    const curr = await prisma.currency.findUnique({ where: { id } });
+    const curr = await prisma.currency.findUnique({ where: { id: BigInt(id) } });
     if (curr?.isDefault) {
       throw new Error("Cannot deactivate the default currency.");
     }
   }
 
   await prisma.currency.update({
-    where: { id },
+    where: { id: BigInt(id) },
     data: { status },
   });
 

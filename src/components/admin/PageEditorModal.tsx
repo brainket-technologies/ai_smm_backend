@@ -148,18 +148,6 @@ export default function PageEditorModal({ isOpen, onClose, page }: PageEditorMod
                 <div className="space-y-2 flex flex-col h-[calc(100%-100px)]">
                     <div className="flex items-center justify-between">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-1">Page Content</label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <span className="text-[10px] font-bold uppercase text-slate-400">Published</span>
-                            <div className="relative">
-                                <input 
-                                    type="checkbox"
-                                    checked={formData.isActive}
-                                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                                    className="sr-only peer"
-                                />
-                                <div className="w-8 h-4 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4"></div>
-                            </div>
-                        </label>
                     </div>
                     <RichTextEditor 
                         value={formData.content}

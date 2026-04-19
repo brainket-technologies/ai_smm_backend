@@ -8,13 +8,18 @@ import {
   Languages, 
   CreditCard, 
   FileText, 
-  Users, 
+  Users,
+  Shield, 
   ShieldCheck, 
   Search,
   ChevronRight,
   HelpCircle,
   Layers,
-  Globe
+  Globe,
+  Palette,
+  FolderTree,
+  Target,
+  Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +36,13 @@ const menuGroups = [
     label: "Business Setting",
     items: [
       { name: "Global Config", href: "/admin/config", icon: Settings },
+      { name: "App Themes", href: "/admin/themes", icon: Palette },
       { name: "Static Page", href: "/admin/pages", icon: FileText },
       { name: "Platforms", href: "/admin/platforms", icon: Layers },
+      { name: "Categories", href: "/admin/categories", icon: FolderTree },
+      { name: "AI Models", href: "/admin/ai-models", icon: Bot },
+      { name: "AI Prompts", href: "/admin/ai-prompts", icon: FileText },
+      { name: "Targeting Data", href: "/admin/targeting", icon: Target },
       { name: "Localization", href: "/admin/translations", icon: Languages },
       { name: "Currencies", href: "/admin/currencies", icon: Globe },
       { name: "Payment Method", href: "/admin/payments", icon: CreditCard },
@@ -48,7 +58,9 @@ const menuGroups = [
   {
     label: "Administration",
     items: [
-      { name: "User Roles", href: "/admin/users", icon: Users },
+      { name: "Platform Users", href: "/admin/users", icon: Users },
+      { name: "Roles", href: "/admin/roles", icon: Shield },
+      { name: "User Feedback", href: "/admin/feedback", icon: HelpCircle },
       { name: "Help & Support", href: "/admin/help", icon: HelpCircle },
     ]
   }

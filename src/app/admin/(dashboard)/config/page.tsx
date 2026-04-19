@@ -89,6 +89,9 @@ export default async function ConfigPage() {
 
   const getPlatData = (plat: string) => platforms.find(p => p.platform === plat) || {};
 
+  const androidData = getPlatData('android') as any;
+  const iosData = getPlatData('ios') as any;
+
   return (
     <div className="space-y-8 max-w-6xl pb-20 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
@@ -214,7 +217,7 @@ export default async function ConfigPage() {
              </div>
              
              {(() => {
-                const data = getPlatData('android') as any;
+                const data = androidData;
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -262,7 +265,7 @@ export default async function ConfigPage() {
              </div>
              
              {(() => {
-                const data = getPlatData('ios') as any;
+                const data = iosData;
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

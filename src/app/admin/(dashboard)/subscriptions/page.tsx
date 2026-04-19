@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import SubscriptionManager from "@/components/admin/SubscriptionManager";
+import SubscriptionsManagementClient from "./SubscriptionsManagementClient";
 
 export default async function SubscriptionsPage() {
   // 1. Fetch Tiers
@@ -10,13 +10,23 @@ export default async function SubscriptionsPage() {
   // 2. Fetch Permissions for all tiers
   const permissionsRaw = await prisma.subscriptionPermission.findMany();
 
-  // 3. Fetch all available feature flags for the checklist
-  const availableFeatures = await prisma.appFeatureFlag.findMany({
-    select: { moduleName: true, featureKey: true },
-    orderBy: { moduleName: 'asc' }
-  });
+  // 3. Fetch all active feature flags for the checklist using raw SQL
+  const availableFeatures = await prisma.$queryRaw`
+    SELECT module_name as "moduleName", feature_key as "featureKey" 
+    FROM app_feature_flags 
+    WHERE is_enabled = true 
+    ORDER BY module_name ASC
+  `;
 
-  // 4. Map data for the client component
+  // 4. Fetch all active social platforms using raw SQL
+  const activePlatformsRaw = await prisma.$queryRaw`
+    SELECT name_key as id, name 
+    FROM platforms 
+    WHERE is_active = true 
+    ORDER BY name ASC
+  `;
+  
+  // 5. Map data for the client component
   const tiers = tiersRaw.map(tier => ({
     ...tier,
     id: tier.id.toString(),
@@ -28,9 +38,10 @@ export default async function SubscriptionsPage() {
 
   return (
     <div className="animate-in fade-in duration-700">
-      <SubscriptionManager 
+      <SubscriptionsManagementClient 
         initialTiers={tiers} 
         availableFeatures={availableFeatures as any} 
+        availablePlatforms={activePlatformsRaw as any}
       />
     </div>
   );

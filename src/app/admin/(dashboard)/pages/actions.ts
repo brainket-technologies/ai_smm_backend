@@ -18,11 +18,11 @@ export async function createStaticPage(formData: { title: string; slug: string; 
   revalidatePath("/admin/pages");
 }
 
-export async function updateStaticPage(id: bigint, formData: { title: string; slug: string; content: string; isActive: boolean }) {
+export async function updateStaticPage(id: string, formData: { title: string; slug: string; content: string; isActive: boolean }) {
   const { title, slug, content, isActive } = formData;
 
   await prisma.staticPage.update({
-    where: { id },
+    where: { id: BigInt(id) },
     data: {
       title,
       slug: slug.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
@@ -34,17 +34,17 @@ export async function updateStaticPage(id: bigint, formData: { title: string; sl
   revalidatePath("/admin/pages");
 }
 
-export async function deleteStaticPage(id: bigint) {
+export async function deleteStaticPage(id: string) {
   await prisma.staticPage.delete({
-    where: { id }
+    where: { id: BigInt(id) }
   });
 
   revalidatePath("/admin/pages");
 }
 
-export async function togglePageStatus(id: bigint, isActive: boolean) {
+export async function togglePageStatus(id: string, isActive: boolean) {
   await prisma.staticPage.update({
-    where: { id },
+    where: { id: BigInt(id) },
     data: { isActive }
   });
 

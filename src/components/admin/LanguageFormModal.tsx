@@ -124,24 +124,15 @@ export default function LanguageFormModal({ isOpen, onClose, language }: Languag
                 />
             </div>
 
-              <div className="flex items-center space-x-6 pt-2 pl-1">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input 
-                    type="checkbox"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Active</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+              <div className="flex items-center pt-2 pl-1">
+                <label className="flex items-center space-x-2 cursor-pointer group">
                   <input 
                     type="checkbox"
                     checked={formData.isDefault}
                     onChange={(e) => setFormData({...formData, isDefault: e.target.checked})}
-                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
                   />
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Default</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Set as Default Language</span>
                 </label>
               </div>
             </div>
@@ -150,14 +141,14 @@ export default function LanguageFormModal({ isOpen, onClose, language }: Languag
               <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-primary hover:opacity-90 text-white py-3 rounded-lg font-bold text-sm transition-all shadow-sm flex items-center justify-center space-x-2"
+                  className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-lg font-bold text-sm transition-all shadow-sm active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-2"
               >
                 {isSubmitting ? (
-                <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="h-4 w-4 border-2 border-slate-400 border-t-slate-900 rounded-full animate-spin" />
                 ) : (
                 <>
                     <Save className="h-4 w-4" />
-                    <span>Save Language</span>
+                    <span>{isSubmitting ? 'SAVING...' : 'Save Configuration'}</span>
                 </>
                 )}
             </button>
