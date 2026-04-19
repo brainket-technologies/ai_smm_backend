@@ -1,13 +1,25 @@
-"use server";
+ "use server";
 
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { registerMedia } from "@/lib/media";
 
 export async function getPaymentMethods() {
   try {
-    return await prisma.paymentMethod.findMany({
+    const methods = await prisma.paymentMethod.findMany({
+      include: {
+        media: {
+          select: { fileUrl: true }
+        }
+      },
       orderBy: { isDefault: 'desc' }
     });
+
+    return methods.map(m => ({
+      ...m,
+      id: m.id.toString(),
+      image: m.media?.fileUrl || null, // Map back to 'image' for frontend compatibility
+    }));
   } catch (error) {
     console.error("Failed to fetch payment methods:", error);
     return [];
@@ -76,20 +88,46 @@ export async function upsertPaymentMethod(id: string | null, data: {
   config?: any;
 }) {
   try {
-    if (data.isDefault) {
+    const { name, displayName, type, mode, image, isActive, isDefault, config } = data;
+    
+    if (isDefault) {
       await prisma.paymentMethod.updateMany({
         data: { isDefault: false }
       });
     }
 
+    let mediaId: bigint | null = null;
+    if (image && image.startsWith('http')) {
+      mediaId = await registerMedia({
+        fileUrl: image,
+        fileType: 'image',
+        mediaCategory: 'logo',
+        relatedType: 'payment_method'
+      });
+    }
+
+    const payload: any = {
+      name,
+      displayName,
+      type,
+      mode,
+      isActive,
+      isDefault,
+      config: config || {}
+    };
+
+    if (mediaId) {
+      payload.mediaId = mediaId;
+    }
+
     if (id) {
       await prisma.paymentMethod.update({
         where: { id: BigInt(id) },
-        data
+        data: payload
       });
     } else {
       await prisma.paymentMethod.create({
-        data
+        data: payload
       });
     }
     revalidatePath("/admin/payments");
@@ -102,24 +140,34 @@ export async function upsertPaymentMethod(id: string | null, data: {
 export async function importPayments(data: any[]) {
     try {
         for (const item of data) {
+            let mediaId: bigint | null = null;
+            if (item.image && item.image.startsWith('http')) {
+              mediaId = await registerMedia({
+                fileUrl: item.image,
+                fileType: 'image',
+                mediaCategory: 'logo',
+                relatedType: 'payment_method'
+              });
+            }
+
+            const payload: any = {
+                displayName: item.displayName,
+                type: item.type,
+                mode: item.mode,
+                isActive: item.isActive === 'true' || item.isActive === true,
+                isDefault: item.isDefault === 'true' || item.isDefault === true
+            };
+
+            if (mediaId) {
+              payload.mediaId = mediaId;
+            }
+
             await prisma.paymentMethod.upsert({
                 where: { name: item.name },
-                update: {
-                    displayName: item.displayName,
-                    type: item.type,
-                    mode: item.mode,
-                    image: item.image,
-                    isActive: item.isActive === 'true' || item.isActive === true,
-                    isDefault: item.isDefault === 'true' || item.isDefault === true
-                },
+                update: payload,
                 create: {
+                    ...payload,
                     name: item.name,
-                    displayName: item.displayName,
-                    type: item.type,
-                    mode: item.mode,
-                    image: item.image,
-                    isActive: item.isActive === 'true' || item.isActive === true,
-                    isDefault: item.isDefault === 'true' || item.isDefault === true,
                     config: {}
                 }
             });

@@ -14,12 +14,9 @@ import {
   Search,
   ChevronRight,
   HelpCircle,
-  Layers,
-  Globe,
-  Palette,
-  FolderTree,
   Target,
-  Bot
+  Bot,
+  Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +39,7 @@ const menuGroups = [
       { name: "Categories", href: "/admin/categories", icon: FolderTree },
       { name: "AI Models", href: "/admin/ai-models", icon: Bot },
       { name: "AI Prompts", href: "/admin/ai-prompts", icon: FileText },
+      { name: "3rd Party Config", href: "/admin/service-configs", icon: Zap },
       { name: "Targeting Data", href: "/admin/targeting", icon: Target },
       { name: "Localization", href: "/admin/translations", icon: Languages },
       { name: "Currencies", href: "/admin/currencies", icon: Globe },

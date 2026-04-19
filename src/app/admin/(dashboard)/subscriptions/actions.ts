@@ -4,32 +4,41 @@ import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export async function upsertTier(data: any) {
-  const { id, tierKey, name, priceAmount, pricePeriod, badge, highlightFeatures, limits, isActive, permissions } = data;
+  const { 
+    id, 
+    tierKey, 
+    name, 
+    priceAmount, 
+    pricePeriod, 
+    badge, 
+    highlightFeatures, 
+    limits, 
+    isActive, 
+    permissions,
+    subscriptionLimit,
+    loginDeviceLimit
+  } = data;
 
   try {
-    const tierId = id ? BigInt(id) : undefined;
+    const updateData: any = {
+      name,
+      priceAmount,
+      pricePeriod,
+      badge,
+      highlightFeatures,
+      limits,
+      isActive,
+      subscriptionLimit: subscriptionLimit !== undefined ? BigInt(subscriptionLimit) : undefined,
+      loginDeviceLimit: loginDeviceLimit !== undefined ? BigInt(loginDeviceLimit) : undefined
+    };
     
     // 1. Upsert the Tier
     const tier = await prisma.subscriptionTier.upsert({
       where: { tierKey },
-      update: {
-        name,
-        priceAmount,
-        pricePeriod,
-        badge,
-        highlightFeatures,
-        limits,
-        isActive
-      },
+      update: updateData,
       create: {
-        tierKey,
-        name,
-        priceAmount,
-        pricePeriod,
-        badge,
-        highlightFeatures,
-        limits,
-        isActive
+        ...updateData,
+        tierKey
       }
     });
 

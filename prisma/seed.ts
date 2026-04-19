@@ -13,6 +13,21 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('Seeding database...');
 
+  // --- HELPER FOR MEDIA ---
+  const registerMediaInSeed = async (url: string, type: 'image' | 'video', category: string, relatedType: string) => {
+    if (!url) return null;
+    const media = await prisma.mediaFile.create({
+      data: {
+        fileUrl: url,
+        fileType: type,
+        mediaCategory: category,
+        relatedType: relatedType,
+        tags: { seeded: true }
+      }
+    });
+    return media.id;
+  };
+
   // 1. Create Roles
   // First, cleanup any other roles to ensure ONLY these two exist
   await prisma.role.deleteMany({
@@ -470,6 +485,9 @@ async function main() {
   ];
 
   for (const tierData of subscriptionTiers) {
+    const sLimit = tierData.limits.max_business_accounts === -1 ? BigInt(999999) : BigInt(tierData.limits.max_business_accounts);
+    const dLimit = tierData.limits.max_concurrent_devices === -1 ? BigInt(999999) : BigInt(tierData.limits.max_concurrent_devices);
+
     await prisma.subscriptionTier.upsert({
       where: { tierKey: tierData.id },
       update: {
@@ -479,6 +497,8 @@ async function main() {
         badge: tierData.badge,
         highlightFeatures: tierData.highlight_features,
         limits: tierData.limits as any,
+        subscriptionLimit: sLimit,
+        loginDeviceLimit: dLimit,
       },
       create: {
         tierKey: tierData.id,
@@ -488,6 +508,8 @@ async function main() {
         badge: tierData.badge,
         highlightFeatures: tierData.highlight_features,
         limits: tierData.limits as any,
+        subscriptionLimit: sLimit,
+        loginDeviceLimit: dLimit,
       }
     });
 
@@ -527,10 +549,22 @@ async function main() {
   ];
 
   for (const plat of platformList) {
+    const mediaId = await registerMediaInSeed(plat.logo, 'image', 'logo', 'platform');
     await prisma.platform.upsert({
       where: { name: plat.name },
-      update: plat,
-      create: plat
+      update: {
+        nameKey: plat.nameKey,
+        url: plat.url,
+        isActive: plat.isActive,
+        mediaId: mediaId
+      },
+      create: {
+        name: plat.name,
+        nameKey: plat.nameKey,
+        url: plat.url,
+        isActive: plat.isActive,
+        mediaId: mediaId
+      }
     });
   }
 
@@ -572,10 +606,19 @@ async function main() {
   ];
 
   for (const pm of paymentMethods) {
+    const mediaId = await registerMediaInSeed(pm.image, 'image', 'logo', 'payment_method');
+    const { image, ...pmData } = pm;
     await prisma.paymentMethod.upsert({
       where: { name: pm.name },
-      update: pm,
-      create: pm
+      update: {
+        ...pmData,
+        mediaId: mediaId
+      },
+      create: {
+        ...pmData,
+        mediaId: mediaId,
+        config: pm.config || {}
+      }
     });
   }
   console.log('Payment Methods initialized.');
@@ -741,12 +784,18 @@ async function main() {
   ];
 
   for (const theme of themes) {
+    // Generate a placeholder preview for themes if none exist (using generic picsum for seed)
+    const mediaId = await registerMediaInSeed(`https://picsum.photos/seed/${theme.name}/400/300`, 'image', 'theme', 'app_theme');
     await prisma.appTheme.upsert({
       where: { id: BigInt(themes.indexOf(theme) + 1) },
-      update: { ...theme },
+      update: { 
+        ...theme,
+        mediaId: mediaId
+      },
       create: { 
         id: BigInt(themes.indexOf(theme) + 1),
-        ...theme 
+        ...theme,
+        mediaId: mediaId
       },
     });
   }
@@ -763,22 +812,24 @@ async function main() {
       const langCode = lang["language-code"];
       const translations = localizationData.translations[langCode] || {};
 
+      const mediaId = await registerMediaInSeed(lang["image-url"], 'image', 'flag', 'app_translation');
+
       await prisma.appTranslation.upsert({
         where: { languageCode: langCode },
         update: {
           displayName: lang["display-name"],
           countryCode: lang["country-code"],
-          flagUrl: lang["image-url"],
           isDefault: lang["is-default"],
           translations: translations,
+          mediaId: mediaId
         },
         create: {
           displayName: lang["display-name"],
           languageCode: langCode,
           countryCode: lang["country-code"],
-          flagUrl: lang["image-url"],
           isDefault: lang["is-default"],
           translations: translations,
+          mediaId: mediaId
         },
       });
     }

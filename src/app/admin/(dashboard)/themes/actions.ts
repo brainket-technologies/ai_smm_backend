@@ -1,7 +1,8 @@
-"use server";
+ "use server";
 
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { registerMedia } from "@/lib/media";
 
 // Workaround for Prisma Client sync issues: Using Raw SQL for reliability
 export async function updateThemeStatus(id: string, status: boolean) {
@@ -55,30 +56,63 @@ export async function setThemeAsDefault(id: string) {
 // Standard Prisma logic for non-problematic fields/models
 export async function upsertTheme(id: string | null, data: any) {
   try {
-    const formattedData = {
-      ...data,
-      isDefault: Boolean(data.isDefault),
-      isActive: Boolean(data.isActive)
-    };
+    let mediaId: bigint | null = null;
+    if (data.image && typeof data.image === 'string' && data.image.startsWith('http')) {
+      mediaId = await registerMedia({
+        fileUrl: data.image,
+        fileType: 'image',
+        mediaCategory: 'theme',
+        relatedType: 'app_theme'
+      });
+    }
 
     if (id) {
-      await prisma.$executeRaw`
-        UPDATE app_themes 
-        SET name = ${data.name}, 
-            primary_color = ${data.primaryColor}, 
-            secondary_color = ${data.secondaryColor},
-            dark_primary_color = ${data.darkPrimaryColor},
-            dark_secondary_color = ${data.darkSecondaryColor},
-            is_active = ${data.isActive},
-            is_default = ${data.isDefault}
-        WHERE id = ${BigInt(id)}
-      `;
+      const themeId = BigInt(id);
+      
+      // Using Raw SQL for updates to ensure schema sync reliability
+      if (mediaId) {
+        await prisma.$executeRaw`
+          UPDATE app_themes 
+          SET name = ${data.name}, 
+              primary_color = ${data.primaryColor}, 
+              secondary_color = ${data.secondaryColor},
+              dark_primary_color = ${data.darkPrimaryColor},
+              dark_secondary_color = ${data.darkSecondaryColor},
+              is_active = ${Boolean(data.isActive)},
+              is_default = ${Boolean(data.isDefault)},
+              media_id = ${mediaId}
+          WHERE id = ${themeId}
+        `;
+      } else {
+        await prisma.$executeRaw`
+          UPDATE app_themes 
+          SET name = ${data.name}, 
+              primary_color = ${data.primaryColor}, 
+              secondary_color = ${data.secondaryColor},
+              dark_primary_color = ${data.darkPrimaryColor},
+              dark_secondary_color = ${data.darkSecondaryColor},
+              is_active = ${Boolean(data.isActive)},
+              is_default = ${Boolean(data.isDefault)}
+          WHERE id = ${themeId}
+        `;
+      }
     } else {
-      await prisma.appTheme.create({ data: formattedData });
+      const payload = {
+        name: data.name,
+        primaryColor: data.primaryColor,
+        secondaryColor: data.secondaryColor,
+        darkPrimaryColor: data.darkPrimaryColor,
+        darkSecondaryColor: data.darkSecondaryColor,
+        isActive: Boolean(data.isActive),
+        isDefault: Boolean(data.isDefault),
+        mediaId: mediaId
+      };
+      await prisma.appTheme.create({ data: payload });
     }
     revalidatePath("/admin/themes");
     return { success: true };
   } catch (error: any) {
+    console.error("Upsert Theme Error:", error);
     throw new Error(error.message || "Failed to save theme.");
   }
 }
@@ -101,6 +135,16 @@ export const markThemeAsPrimary = setThemeAsDefault;
 export async function importThemes(data: any[]) {
     try {
         for (const item of data) {
+            let mediaId: bigint | null = null;
+            if (item.image && typeof item.image === 'string' && item.image.startsWith('http')) {
+              mediaId = await registerMedia({
+                fileUrl: item.image,
+                fileType: 'image',
+                mediaCategory: 'theme',
+                relatedType: 'app_theme'
+              });
+            }
+
             await prisma.appTheme.create({
                 data: {
                     name: item.name,
@@ -109,7 +153,8 @@ export async function importThemes(data: any[]) {
                     darkPrimaryColor: item.darkPrimaryColor,
                     darkSecondaryColor: item.darkSecondaryColor,
                     isDefault: item.isDefault === 'true' || item.isDefault === true,
-                    isActive: true
+                    isActive: true,
+                    mediaId: mediaId
                 }
             });
         }

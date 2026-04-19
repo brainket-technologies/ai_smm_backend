@@ -22,7 +22,9 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
     name: '',
     priceAmount: 0,
     pricePeriod: 'month',
-    badge: '',
+     badge: '',
+    subscriptionLimit: 1,
+    loginDeviceLimit: 1,
   // Default structure correctly handled
     limits: {
       unlimited: false,
@@ -35,8 +37,6 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
       max_keyword_searches: 0,
       max_storage_mb: 0,
       max_video_length_seconds: 0,
-      max_concurrent_devices: 0,
-      max_business_accounts: 0,
       allowed_platforms: []
     },
     permissions: []
@@ -49,6 +49,8 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
       setFormData({
         ...tier,
         priceAmount: Number(tier.priceAmount || 0),
+        subscriptionLimit: Number(tier.subscriptionLimit || 1),
+        loginDeviceLimit: Number(tier.loginDeviceLimit || 1),
         limits: {
           ...tier.limits || {}
         },
@@ -61,6 +63,8 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
         priceAmount: 0,
         pricePeriod: 'month',
         badge: '',
+        subscriptionLimit: 1,
+        loginDeviceLimit: 1,
         limits: {
           unlimited: false,
           daily_posts: 0,
@@ -72,8 +76,6 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
           max_keyword_searches: 0,
           max_storage_mb: 0,
           max_video_length_seconds: 0,
-          max_concurrent_devices: 0,
-          max_business_accounts: 0,
           allowed_platforms: []
         },
         permissions: []
@@ -209,8 +211,8 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
                 <LimitSimple label="Products" value={formData.limits.max_products} onChange={(v) => setFormData({...formData, limits: {...formData.limits, max_products: v}})} />
                 <LimitSimple label="Services" value={formData.limits.max_services} onChange={(v) => setFormData({...formData, limits: {...formData.limits, max_services: v}})} />
                 <LimitSimple label="Storage(MB)" value={formData.limits.max_storage_mb} onChange={(v) => setFormData({...formData, limits: {...formData.limits, max_storage_mb: v}})} />
-                <LimitSimple label="Biz Accounts" value={formData.limits.max_business_accounts} onChange={(v) => setFormData({...formData, limits: {...formData.limits, max_business_accounts: v}})} />
-                <LimitSimple label="Device Limit" value={formData.limits.max_concurrent_devices} onChange={(v) => setFormData({...formData, limits: {...formData.limits, max_concurrent_devices: v}})} />
+                <LimitSimple label="Biz Accounts" value={formData.subscriptionLimit} onChange={(v) => setFormData({...formData, subscriptionLimit: v})} />
+                <LimitSimple label="Device Limit" value={formData.loginDeviceLimit} onChange={(v) => setFormData({...formData, loginDeviceLimit: v})} />
                 <div className="space-y-1 col-span-3">
                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Social Platforms</label>
                    <div className="flex flex-wrap gap-2">

@@ -14,6 +14,9 @@ export async function getPlatformUsers() {
       },
       include: {
         role: true,
+        media: {
+          select: { fileUrl: true }
+        },
         userSubscriptions: {
           where: {
             status: "active"
@@ -37,6 +40,7 @@ export async function getPlatformUsers() {
         ...u,
         id: u.id.toString(),
         createdAt: u.createdAt ? u.createdAt.toISOString() : new Date().toISOString(),
+        image: u.media?.fileUrl || null, // Map back to 'image' for frontend compatibility
         businessCount: u._count.businesses,
         subscription: u.userSubscriptions?.[0]?.tierKey || "Free Trial"
       }))

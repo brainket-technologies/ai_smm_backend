@@ -1,7 +1,30 @@
-"use server";
+ "use server";
 
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { registerMedia } from "@/lib/media";
+
+export async function getLanguages() {
+  try {
+    const langs = await prisma.appTranslation.findMany({
+      include: {
+        media: {
+          select: { fileUrl: true }
+        }
+      },
+      orderBy: { isDefault: 'desc' }
+    });
+
+    return langs.map(l => ({
+      ...l,
+      id: l.id.toString(),
+      flagUrl: l.media?.fileUrl || null, // Map back for frontend compatibility
+    }));
+  } catch (error) {
+    console.error("Failed to fetch languages:", error);
+    return [];
+  }
+}
 
 export async function upsertLanguage(id: string | null, data: {
   displayName: string;
@@ -12,26 +35,48 @@ export async function upsertLanguage(id: string | null, data: {
   isDefault: boolean;
 }) {
   try {
+    const { displayName, languageCode, countryCode, flagUrl, isActive, isDefault } = data;
+
     // If setting as default, unset others first
-    if (data.isDefault) {
+    if (isDefault) {
       await prisma.appTranslation.updateMany({
         where: { isDefault: true },
         data: { isDefault: false }
       });
     }
 
+    let mediaId: bigint | null = null;
+    if (flagUrl && flagUrl.startsWith('http')) {
+      mediaId = await registerMedia({
+        fileUrl: flagUrl,
+        fileType: 'image',
+        mediaCategory: 'flag',
+        relatedType: 'app_translation'
+      });
+    }
+
+    const payload: any = {
+      displayName,
+      languageCode,
+      countryCode,
+      isActive,
+      isDefault,
+      updatedAt: new Date()
+    };
+
+    if (mediaId) {
+      payload.mediaId = mediaId;
+    }
+
     if (id) {
       await prisma.appTranslation.update({
         where: { id: BigInt(id) },
-        data: {
-          ...data,
-          updatedAt: new Date()
-        }
+        data: payload
       });
     } else {
       await prisma.appTranslation.create({
         data: {
-          ...data,
+          ...payload,
           translations: {} // Initialize with empty translations
         }
       });
@@ -103,22 +148,33 @@ export async function setDefaultLanguage(id: string) {
 export async function importLanguages(data: any[]) {
     try {
         for (const item of data) {
+            let mediaId: bigint | null = null;
+            if (item.flagUrl && item.flagUrl.startsWith('http')) {
+              mediaId = await registerMedia({
+                fileUrl: item.flagUrl,
+                fileType: 'image',
+                mediaCategory: 'flag',
+                relatedType: 'app_translation'
+              });
+            }
+
+            const payload: any = {
+                displayName: item.displayName,
+                countryCode: item.countryCode,
+                isActive: item.isActive === 'true' || item.isActive === true,
+                isDefault: item.isDefault === 'true' || item.isDefault === true
+            };
+
+            if (mediaId) {
+              payload.mediaId = mediaId;
+            }
+
             await prisma.appTranslation.upsert({
                 where: { languageCode: item.languageCode },
-                update: {
-                    displayName: item.displayName,
-                    countryCode: item.countryCode,
-                    flagUrl: item.flagUrl,
-                    isActive: item.isActive === 'true' || item.isActive === true,
-                    isDefault: item.isDefault === 'true' || item.isDefault === true
-                },
+                update: payload,
                 create: {
-                    displayName: item.displayName,
+                    ...payload,
                     languageCode: item.languageCode,
-                    countryCode: item.countryCode,
-                    flagUrl: item.flagUrl,
-                    isActive: item.isActive === 'true' || item.isActive === true,
-                    isDefault: item.isDefault === 'true' || item.isDefault === true,
                     translations: {}
                 }
             });
