@@ -110,6 +110,24 @@ async function autoSetConfig() {
   revalidatePath("/admin/config");
 }
 
+async function initConfig() {
+  "use server";
+  
+  await prisma.appConfig.upsert({
+    where: { id: BigInt(1) },
+    update: {},
+    create: {
+      id: BigInt(1),
+      appName: "BrandBoost AI",
+      maintenanceMode: false,
+      globalAiEnabled: true,
+      freeTrialDays: 7
+    }
+  });
+
+  revalidatePath("/admin/config");
+}
+
 export default async function ConfigPage() {
   const { config, platforms } = await getConfig();
 
@@ -119,6 +137,16 @@ export default async function ConfigPage() {
         <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
         <h2 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Configuration Missing</h2>
         <p className="text-slate-500 mt-2 max-w-sm">Please initialize the database config to start.</p>
+        
+        <form action={initConfig} className="mt-8">
+          <button 
+            type="submit"
+            className="flex items-center space-x-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
+          >
+            <Settings className="h-4 w-4" />
+            <span>Initialize System Config</span>
+          </button>
+        </form>
       </div>
     );
   }
