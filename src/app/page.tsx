@@ -11,10 +11,15 @@ import prisma from "@/lib/prisma";
 export const dynamic = 'force-dynamic';
 
 async function getLandingData() {
-  const config = await prisma.appConfig.findFirst({
-    where: { id: BigInt(1) }
-  });
-  return { config };
+  try {
+    const config = await prisma.appConfig.findFirst({
+      where: { id: BigInt(1) }
+    });
+    return { config };
+  } catch (error) {
+    console.error("Landing Data Fetch Failed:", error);
+    return { config: null };
+  }
 }
 
 export default async function LandingPage() {

@@ -20,6 +20,7 @@ export async function GET(request: Request) {
     await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS hero_subtitle TEXT`);
     await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS features_json JSONB`);
     await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS pricing_title TEXT`);
+    await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS primary_color TEXT`);
 
     // Detect Current Domain dynamically
     const url = new URL(request.url);
