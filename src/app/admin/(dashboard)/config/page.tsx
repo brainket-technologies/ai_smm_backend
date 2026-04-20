@@ -147,6 +147,7 @@ export default async function ConfigPage() {
                   name="apiBaseUrl"
                   defaultValue={config.apiBaseUrl || ""}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-mono text-xs"
+                  placeholder="https://ai-smm-backend.vercel.app"
                 />
               </div>
               <div className="space-y-2">
