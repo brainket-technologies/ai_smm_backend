@@ -155,18 +155,34 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
 
   const handleFieldChange = (providerId: string, field: string, value: any, isConfig = false) => {
     setFormStates(prev => {
+      const currentProvider = prev[providerId];
+      if (!currentProvider) return prev;
+
+      let updatedState = { ...currentProvider };
+
+      if (isConfig) {
+        // Support nested fields like "test.keyId"
+        if (field.includes('.')) {
+          const [parent, child] = field.split('.');
+          const currentConfig = { ...(updatedState.config || {}) };
+          currentConfig[parent] = { 
+            ...(currentConfig[parent] || {}), 
+            [child]: value 
+          };
+          updatedState.config = currentConfig;
+        } else {
+          updatedState.config = { ...updatedState.config, [field]: value };
+        }
+      } else {
+        updatedState = { ...updatedState, [field]: value };
+      }
+
       const updated = {
         ...prev,
-        [providerId]: {
-          ...prev[providerId],
-          ...(isConfig 
-            ? { config: { ...prev[providerId].config, [field]: value } }
-            : { [field]: value }
-          )
-        }
+        [providerId]: updatedState
       };
 
-      // If user is manually editing the 'json' field, try to sync individual fields
+      // If user is manually editing the 'json' field, try to sync individual fields (existing logic)
       if (isConfig && field === 'json' && value) {
         try {
           const parsed = JSON.parse(value);
@@ -174,16 +190,14 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
             projectId: parsed.project_id,
             clientEmail: parsed.client_email,
             privateKey: parsed.private_key,
-            apiKey: parsed.apiKey, // common placeholders
+            apiKey: parsed.apiKey, 
             authDomain: parsed.authDomain
           };
 
           Object.entries(fieldsToSync).forEach(([k, v]) => {
             if (v) updated[providerId].config[k] = v;
           });
-        } catch (e) {
-          // ignore parsing error during typing
-        }
+        } catch (e) {}
       }
 
       return updated;
@@ -367,18 +381,21 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
                 {activeCategory !== 'login' && (
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">Default</span>
-                    <button 
-                      onClick={() => handleToggleDefault(p.id)}
-                      className={cn(
-                        "relative inline-flex h-5 w-9 items-center rounded-full transition-colors",
-                        config.isDefault ? "bg-emerald-500 shadow-inner" : "bg-slate-200 dark:bg-slate-700"
-                      )}
-                    >
-                      <span className={cn(
-                        "inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200",
-                        config.isDefault ? "translate-x-5" : "translate-x-1"
-                      )} />
-                    </button>
+
+                    {activeCategory !== 'login' && (
+                      <button 
+                        onClick={() => handleToggleDefault(p.id)}
+                        className={cn(
+                          "relative inline-flex h-5 w-9 items-center rounded-full transition-colors",
+                          config.isDefault ? "bg-emerald-500 shadow-inner" : "bg-slate-200 dark:bg-slate-700"
+                        )}
+                      >
+                        <span className={cn(
+                          "inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200",
+                          config.isDefault ? "translate-x-5" : "translate-x-1"
+                        )} />
+                      </button>
+                    )}
                   </div>
                 )}
 
@@ -584,24 +601,63 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
                   )}
 
                   {p.id === 'razorpay' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Key ID</label>
-                        <input 
-                          type="text"
-                          value={config.config?.keyId || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'keyId', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+                    <div className="space-y-6">
+                      {/* Test Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-amber-500" />
+                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Test / Sandbox Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-amber-50/30 dark:bg-amber-900/5 rounded-xl border border-amber-100/50 dark:border-amber-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Key ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.test?.keyId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.keyId', e.target.value, true)}
+                              placeholder="rzp_test_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Key Secret</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.keySecret || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.keySecret', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Key Secret</label>
-                        <input 
-                          type="password"
-                          value={config.config?.keySecret || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'keySecret', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+
+                      {/* Live Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-emerald-500" />
+                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Production / Live Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-emerald-50/30 dark:bg-emerald-900/5 rounded-xl border border-emerald-100/50 dark:border-emerald-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Key ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.live?.keyId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.keyId', e.target.value, true)}
+                              placeholder="rzp_live_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Key Secret</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.keySecret || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.keySecret', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -927,111 +983,283 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
                   )}
 
                   {p.id === 'stripe' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Publishable Key</label>
-                        <input 
-                          type="text"
-                          value={config.config?.publishableKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'publishableKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+                    <div className="space-y-6">
+                      {/* Test Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-amber-500" />
+                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Test / Sandbox Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-amber-50/30 dark:bg-amber-900/5 rounded-xl border border-amber-100/50 dark:border-amber-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Publishable Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.test?.publishableKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.publishableKey', e.target.value, true)}
+                              placeholder="pk_test_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.secretKey', e.target.value, true)}
+                              placeholder="sk_test_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Webhook Secret</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.webhookSecret || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.webhookSecret', e.target.value, true)}
+                              placeholder="whsec_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
-                        <input 
-                          type="password"
-                          value={config.config?.secretKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Webhook Secret</label>
-                        <input 
-                          type="password"
-                          value={config.config?.webhookSecret || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'webhookSecret', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+
+                      {/* Live Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-emerald-500" />
+                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Production / Live Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-emerald-50/30 dark:bg-emerald-900/5 rounded-xl border border-emerald-100/50 dark:border-emerald-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Publishable Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.live?.publishableKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.publishableKey', e.target.value, true)}
+                              placeholder="pk_live_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.secretKey', e.target.value, true)}
+                              placeholder="sk_live_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Webhook Secret</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.webhookSecret || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.webhookSecret', e.target.value, true)}
+                              placeholder="whsec_..."
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {p.id === 'paypal' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client ID</label>
-                        <input 
-                          type="text"
-                          value={config.config?.clientId || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'clientId', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+                    <div className="space-y-6">
+                      {/* Test Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-amber-500" />
+                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Test / Sandbox Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-amber-50/30 dark:bg-amber-900/5 rounded-xl border border-amber-100/50 dark:border-amber-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Client ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.test?.clientId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.clientId', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
-                        <input 
-                          type="password"
-                          value={config.config?.secretKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+
+                      {/* Live Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-emerald-500" />
+                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Production / Live Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-emerald-50/30 dark:bg-emerald-900/5 rounded-xl border border-emerald-100/50 dark:border-emerald-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Client ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.live?.clientId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.clientId', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {p.id === 'flutterwave' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public Key</label>
-                        <input 
-                          type="text"
-                          value={config.config?.publicKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'publicKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+                    <div className="space-y-6">
+                      {/* Test Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-amber-500" />
+                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Test / Sandbox Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-amber-50/30 dark:bg-amber-900/5 rounded-xl border border-amber-100/50 dark:border-amber-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Public Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.test?.publicKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.publicKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Encryption Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.encryptionKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.encryptionKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
-                        <input 
-                          type="password"
-                          value={config.config?.secretKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encryption Key</label>
-                        <input 
-                          type="password"
-                          value={config.config?.encryptionKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'encryptionKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+
+                      {/* Live Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-emerald-500" />
+                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Production / Live Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-emerald-50/30 dark:bg-emerald-900/5 rounded-xl border border-emerald-100/50 dark:border-emerald-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Public Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.live?.publicKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.publicKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Encryption Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.encryptionKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.encryptionKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {p.id === 'paystack' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public Key</label>
-                        <input 
-                          type="text"
-                          value={config.config?.publicKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'publicKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+                    <div className="space-y-6">
+                      {/* Test Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-amber-500" />
+                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Test / Sandbox Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-amber-50/30 dark:bg-amber-900/5 rounded-xl border border-amber-100/50 dark:border-amber-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Public Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.test?.publicKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.publicKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Test Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.test?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'test.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-amber-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
-                        <input 
-                          type="password"
-                          value={config.config?.secretKey || ''}
-                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
-                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
-                        />
+
+                      {/* Live Section */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-3 w-3 text-emerald-500" />
+                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Production / Live Credentials</h4>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-emerald-50/30 dark:bg-emerald-900/5 rounded-xl border border-emerald-100/50 dark:border-emerald-900/10">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Public Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.live?.publicKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.publicKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Secret Key</label>
+                            <input 
+                              type="password"
+                              value={config.config?.live?.secretKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'live.secretKey', e.target.value, true)}
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-emerald-500/30 shadow-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

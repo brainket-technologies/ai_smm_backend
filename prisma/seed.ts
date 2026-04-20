@@ -1114,9 +1114,9 @@ async function main() {
       config: {
         host: 'smtp.gmail.com',
         port: 587,
-        user: 'admin@brandboost.ai',
-        pass: 'YOUR_PASSWORD',
-        from: 'BrandBoost AI <admin@brandboost.ai>'
+        user: 'brainkettech@gmail.com',
+        pass: 'kuzwqngeywqwvig',
+        from: 'Brainket Tech <brainkettech@gmail.com>'
       },
       isActive: true,
       isDefault: true
@@ -1278,8 +1278,14 @@ async function main() {
       isActive: true,
       isDefault: true,
       config: {
-        keyId: 'rzp_test_YOUR_KEY',
-        keySecret: 'YOUR_SECRET'
+        test: {
+          keyId: 'rzp_test_YOUR_KEY',
+          keySecret: 'YOUR_SECRET'
+        },
+        live: {
+          keyId: '',
+          keySecret: ''
+        }
       }
     },
     {
@@ -1290,8 +1296,16 @@ async function main() {
       isActive: false,
       isDefault: false,
       config: {
-        publishableKey: 'pk_test_YOUR_KEY',
-        secretKey: 'sk_test_YOUR_SECRET'
+        test: {
+          publishableKey: 'pk_test_YOUR_KEY',
+          secretKey: 'sk_test_YOUR_SECRET',
+          webhookSecret: ''
+        },
+        live: {
+          publishableKey: '',
+          secretKey: '',
+          webhookSecret: ''
+        }
       }
     },
     {
@@ -1302,8 +1316,14 @@ async function main() {
       isActive: false,
       isDefault: false,
       config: {
-        clientId: 'YOUR_CLIENT_ID',
-        secretKey: 'YOUR_SECRET'
+        test: {
+          clientId: 'YOUR_CLIENT_ID',
+          secretKey: 'YOUR_SECRET'
+        },
+        live: {
+          clientId: '',
+          secretKey: ''
+        }
       }
     }
   ];
