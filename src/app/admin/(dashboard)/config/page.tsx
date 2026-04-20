@@ -41,6 +41,7 @@ async function updateConfig(formData: FormData) {
   const heroSubtitle = formData.get("heroSubtitle") as string;
   const pricingTitle = formData.get("pricingTitle") as string;
   const freeTrialDays = parseInt(formData.get("freeTrialDays") as string) || 7;
+  const primaryColor = formData.get("primaryColor") as string;
 
   await prisma.appConfig.update({
     where: { id: BigInt(1) },
@@ -57,7 +58,8 @@ async function updateConfig(formData: FormData) {
       heroTitle,
       heroSubtitle,
       pricingTitle,
-      freeTrialDays
+      freeTrialDays,
+      primaryColor
     }
   });
 
@@ -245,6 +247,26 @@ export default async function ConfigPage() {
                     placeholder="Elevate Your Social Influence with AI"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs"
                   />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Landing Primary Color</label>
+                  <div className="flex items-center space-x-3">
+                    <input 
+                      type="color"
+                      defaultValue={config.primaryColor || "#2ECC71"}
+                      className="w-10 h-10 rounded-lg cursor-pointer border-none bg-transparent"
+                      onChange={(e) => {
+                        const input = e.target.parentElement?.querySelector('input[name="primaryColor"]') as HTMLInputElement;
+                        if (input) input.value = e.target.value;
+                      }}
+                    />
+                    <input 
+                      name="primaryColor"
+                      defaultValue={config.primaryColor || "#2ECC71"}
+                      placeholder="#2ECC71"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-mono text-sm"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Pricing Section Title</label>

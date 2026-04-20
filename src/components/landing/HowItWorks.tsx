@@ -23,13 +23,13 @@ const steps = [
   },
 ];
 
-export default function HowItWorks() {
+export default function HowItWorks({ primaryColor }: { primaryColor: string }) {
   return (
-    <section id="how-it-works" className="py-40 bg-slate-900/30">
+    <section id="how-it-works" className="py-40 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-32">
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase italic opacity-0 animate-fade-in-up [animation-fill-mode:forwards]">
-            How it <span className="text-emerald-500">Works</span>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-8 tracking-tighter uppercase italic opacity-0 animate-fade-in-up [animation-fill-mode:forwards]">
+            How it <span style={{ color: primaryColor }}>Works</span>
           </h2>
         </div>
 
@@ -37,16 +37,22 @@ export default function HowItWorks() {
           {steps.map((step, i) => (
             <div
               key={i}
-              className="relative p-12 rounded-[40px] bg-slate-950 border border-white/5 flex flex-col items-center text-center group hover:border-emerald-500/20 transition-all duration-500 hover:-translate-y-2 opacity-0 animate-fade-in-up [animation-fill-mode:forwards]"
+              className="relative p-12 rounded-[40px] bg-white border border-slate-200/50 flex flex-col items-center text-center group hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 shadow-sm hover:shadow-xl opacity-0 animate-fade-in-up [animation-fill-mode:forwards]"
               style={{ animationDelay: `${(i + 2) * 150}ms` }}
             >
-              <div className="absolute top-8 right-10 text-4xl font-black text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors italic">
+              <div 
+                style={{ color: `${primaryColor}20` }}
+                className="absolute top-8 right-10 text-4xl font-black group-hover:text-emerald-500/20 transition-colors italic"
+              >
                 {step.step}
               </div>
-              <div className="w-20 h-20 rounded-3xl bg-emerald-500/10 flex items-center justify-center mb-10 text-emerald-500 group-hover:scale-110 transition-transform duration-500">
+              <div 
+                style={{ backgroundColor: `${primaryColor}10`, color: primaryColor }}
+                className="w-20 h-20 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500"
+              >
                 {step.icon}
               </div>
-              <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight italic">{step.title}</h3>
+              <h3 className="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tight italic">{step.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{step.description}</p>
             </div>
           ))}

@@ -62,6 +62,7 @@ export async function GET(request: Request) {
         api_base_url = '${apiUrl}',
         landing_page_url = '${landingUrl}',
         admin_panel_url = '${adminUrl}',
+        primary_color = '#2ECC71',
         hero_title = 'Ignite Your Brand with AI-Powered Social Mastery',
         hero_subtitle = 'The all-in-one Social Media AI management suite. Create, Automate, and Scale your digital presence across all platforms instantly.',
         pricing_title = 'Engineered for Growth',

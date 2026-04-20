@@ -101,6 +101,7 @@ model AppConfig {
   createdAt          DateTime? @default(now()) @map("created_at")
   updatedAt          DateTime? @default(now()) @map("updated_at")
   freeTrialDays      Int?      @default(7) @map("free_trial_days")
+  primaryColor       String?   @default("#2ECC71") @map("primary_color")
 
   @@map("app_configs")
 }
