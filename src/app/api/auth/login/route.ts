@@ -20,12 +20,15 @@ export async function POST(request: Request) {
             include: { role: true }
         });
 
+        console.log(`[Login Debug] Login attempt for: ${email}`);
         if (!user) {
+            console.log(`[Login Debug] User not found: ${email}`);
             return NextResponse.json(
                 { success: false, message: 'User not found' },
                 { status: 404 }
             );
         }
+        console.log(`[Login Debug] User found: ${user.email}, Role: ${user.role?.name}`);
 
         // Verify Role: Only ACTIVE Super Admins can login to the dashboard
         if (user.role?.name !== 'Super Admin' || !user.role?.isActive) {

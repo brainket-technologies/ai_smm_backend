@@ -14,8 +14,8 @@ export default async function PagesManagement() {
   const serializablePages = pages.map(p => ({
     ...p,
     id: p.id.toString(), // Convert BigInt to string
-    createdAt: p.createdAt.toISOString(),
-    updatedAt: p.updatedAt.toISOString(),
+    createdAt: p.createdAt ? p.createdAt.toISOString() : new Date().toISOString(),
+    updatedAt: p.updatedAt ? p.updatedAt.toISOString() : new Date().toISOString(),
   }));
 
   return <PagesManagementClient initialPages={serializablePages} />;

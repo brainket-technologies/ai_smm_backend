@@ -9,16 +9,16 @@ export async function getFeedbacks() {
       select: {
         id: true,
         userId: true,
-        title: true,
+        subject: true,
         message: true,
         rating: true,
         status: true,
         createdAt: true,
         user: {
            select: {
-              id: true,
               name: true,
               email: true,
+              businesses: { select: { name: true } },
               profileMedia: { select: { fileUrl: true } }
            }
         }
@@ -31,6 +31,8 @@ export async function getFeedbacks() {
       data: feedbacks.map(f => ({
         ...f,
         id: f.id.toString(),
+        userId: f.userId ? f.userId.toString() : null,
+        status: f.status || "pending",
         createdAt: f.createdAt ? f.createdAt.toISOString() : new Date().toISOString()
       }))
     };

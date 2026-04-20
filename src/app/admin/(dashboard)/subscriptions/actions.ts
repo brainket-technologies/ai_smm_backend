@@ -57,7 +57,15 @@ export async function upsertTier(data: any) {
     }
 
     revalidatePath("/admin/subscriptions");
-    return { success: true, tier: { ...tier, id: tier.id.toString() } };
+    return { 
+      success: true, 
+      tier: { 
+        ...tier, 
+        id: tier.id.toString(),
+        subscriptionLimit: tier.subscriptionLimit?.toString() || "1",
+        loginDeviceLimit: tier.loginDeviceLimit?.toString() || "1"
+      } 
+    };
   } catch (error: any) {
     console.error("Failed to upsert tier:", error);
     return { success: false, error: error.message };

@@ -18,7 +18,8 @@ export async function getPlatforms() {
     return platforms.map(p => ({
       ...p,
       id: p.id.toString(),
-      logo: p.media?.fileUrl || null, // Map back to 'logo' for frontend compatibility
+      mediaId: p.mediaId?.toString() || null,
+      logo: p.media?.fileUrl || null,
     }));
   } catch (error) {
     console.error("Failed to fetch platforms:", error);

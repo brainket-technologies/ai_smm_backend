@@ -14,8 +14,6 @@ export default async function PlatformsPage() {
   const serializablePlatforms = platforms.map(p => ({
     ...p,
     id: p.id.toString(),
-    createdAt: p.createdAt?.toISOString() || null,
-    updatedAt: p.updatedAt?.toISOString() || null,
   }));
 
   return <PlatformsManagementClient initialPlatforms={serializablePlatforms} />;

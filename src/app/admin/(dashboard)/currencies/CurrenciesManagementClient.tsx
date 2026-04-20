@@ -43,7 +43,7 @@ export default function CurrenciesManagementClient({ initialCurrencies }: { init
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this currency?")) {
       try {
-        await deleteCurrency(BigInt(id));
+        await deleteCurrency(id);
         setCurrencies(currencies.filter(c => c.id !== id));
       } catch (error: any) {
         alert(error.message);

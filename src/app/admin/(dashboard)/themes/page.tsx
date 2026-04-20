@@ -26,7 +26,7 @@ export default async function ThemesPage() {
   const rawThemes = await getThemes();
   
   // Explicitly map fields to ensure they exist for the client component
-  const themes = rawThemes.map((t: any) => ({
+  const themes = (rawThemes as any[]).map((t: any) => ({
     ...t,
     id: t.id.toString(), // Pre-convert ID to string
     isActive: t.isActive ?? t.is_active ?? true,

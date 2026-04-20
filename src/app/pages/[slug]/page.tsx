@@ -60,7 +60,7 @@ export default async function StaticPage({ params }: PageProps) {
                          prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:leading-relaxed
                          prose-a:text-primary dark:prose-a:text-primary prose-a:font-semibold
                          prose-strong:text-slate-900 dark:prose-strong:text-white"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: page.content || "" }}
             />
         </div>
         

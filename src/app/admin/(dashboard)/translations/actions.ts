@@ -18,7 +18,8 @@ export async function getLanguages() {
     return langs.map(l => ({
       ...l,
       id: l.id.toString(),
-      flagUrl: l.media?.fileUrl || null, // Map back for frontend compatibility
+      mediaId: l.mediaId?.toString() || null,
+      flagUrl: l.media?.fileUrl || null,
     }));
   } catch (error) {
     console.error("Failed to fetch languages:", error);

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/jwt';
+import { registerMedia } from '@/lib/media';
 
 import bcrypt from 'bcryptjs';
 
@@ -81,7 +82,7 @@ export async function PATCH(request: Request) {
       const mediaId = await registerMedia({
         fileUrl: image,
         fileType: 'image',
-        mediaCategory: 'profile',
+        mediaCategory: 'avatar',
         relatedType: 'user'
       });
       if (mediaId) {

@@ -14,7 +14,12 @@ function cn(...classes: any[]) {
 
 export default function TranslationsManagementClient({ initialLanguages }: { initialLanguages: any[] }) {
   // Normalize IDs to strings
-  const normalizedLanguages = initialLanguages.map(l => ({ ...l, id: l.id.toString() }));
+  const normalizedLanguages = initialLanguages.map(l => ({ 
+      ...l, 
+      id: l.id.toString(),
+      mediaId: l.mediaId?.toString() || null,
+      flagUrl: l.media?.fileUrl || null,
+  }));
   const [languages, setLanguages] = useState(normalizedLanguages);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
@@ -42,14 +47,12 @@ export default function TranslationsManagementClient({ initialLanguages }: { ini
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this language?")) {
       try {
-        await deleteLanguage(BigInt(id));
+        await deleteLanguage(id);
         setLanguages(languages.filter(l => l.id !== id));
       } catch (error: any) {
         alert(error.message);
       }
-    }
   };
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
