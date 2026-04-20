@@ -37,6 +37,9 @@ async function updateConfig(formData: FormData) {
   const apiBaseUrl = formData.get("apiBaseUrl") as string;
   const landingPageUrl = formData.get("landingPageUrl") as string;
   const adminPanelUrl = formData.get("adminPanelUrl") as string;
+  const heroTitle = formData.get("heroTitle") as string;
+  const heroSubtitle = formData.get("heroSubtitle") as string;
+  const pricingTitle = formData.get("pricingTitle") as string;
   const freeTrialDays = parseInt(formData.get("freeTrialDays") as string) || 7;
 
   await prisma.appConfig.update({
@@ -51,6 +54,9 @@ async function updateConfig(formData: FormData) {
       apiBaseUrl,
       landingPageUrl,
       adminPanelUrl,
+      heroTitle,
+      heroSubtitle,
+      pricingTitle,
       freeTrialDays
     }
   });
@@ -221,6 +227,45 @@ export default async function ConfigPage() {
                     />
                     <Clock className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                 </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-6">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                <Globe className="h-4 w-4 text-emerald-500" />
+                <span>Landing Page Appearance</span>
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Hero Title</label>
+                  <input 
+                    name="heroTitle"
+                    defaultValue={config.heroTitle || ""}
+                    placeholder="Elevate Your Social Influence with AI"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Pricing Section Title</label>
+                  <input 
+                    name="pricingTitle"
+                    defaultValue={config.pricingTitle || ""}
+                    placeholder="Simple, Transparent Pricing"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Hero Subtitle</label>
+                <textarea 
+                  name="heroSubtitle"
+                  defaultValue={config.heroSubtitle || ""}
+                  rows={2}
+                  placeholder="Tell your users why they should use your app..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs resize-none"
+                />
               </div>
             </div>
 
