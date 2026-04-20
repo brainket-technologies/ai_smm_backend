@@ -134,7 +134,7 @@ export default async function ConfigPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Support Email</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Support Email</label>
                 <input 
                   name="supportEmail"
                   defaultValue={config.supportEmail || ""}
@@ -142,7 +142,7 @@ export default async function ConfigPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">API Base URL</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">API Base URL</label>
                 <input 
                   name="apiBaseUrl"
                   defaultValue={config.apiBaseUrl || ""}
@@ -173,11 +173,11 @@ export default async function ConfigPage() {
              
              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Version</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Version</label>
                     <input name="android_appVersion" defaultValue={androidData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Build Code</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Build Code</label>
                     <input type="number" name="android_appVersionCode" defaultValue={androidData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-amber-500/5 rounded-xl border border-amber-500/10">
@@ -191,11 +191,11 @@ export default async function ConfigPage() {
              </div>
              <div className="space-y-4">
                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
                     <input name="android_storeUrl" defaultValue={androidData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium" />
                 </div>
                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
                     <textarea name="android_updateDescription" defaultValue={androidData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none" rows={2} />
                 </div>
              </div>
@@ -210,11 +210,11 @@ export default async function ConfigPage() {
              
              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Version</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Version</label>
                     <input name="ios_appVersion" defaultValue={iosData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Build Code</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Build Code</label>
                     <input type="number" name="ios_appVersionCode" defaultValue={iosData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-blue-500/5 rounded-xl border border-blue-500/10">
@@ -228,11 +228,11 @@ export default async function ConfigPage() {
              </div>
              <div className="space-y-4">
                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
                     <input name="ios_storeUrl" defaultValue={iosData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium" />
                 </div>
                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
+                    <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
                     <textarea name="ios_updateDescription" defaultValue={iosData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none" rows={2} />
                 </div>
              </div>
@@ -257,7 +257,7 @@ export default async function ConfigPage() {
 
             {/* Protocol Toggles */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center space-x-2">
+                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center space-x-2">
                     <Cpu className="h-3 w-3" />
                     <span>System Protocols</span>
                  </h3>
@@ -288,7 +288,7 @@ export default async function ConfigPage() {
                     ))}
 
                     <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 pt-5">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Lockdown Message</label>
+                      <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Lockdown Message</label>
                       <textarea 
                         name="maintenanceMessage"
                         defaultValue={config.maintenanceMessage || ""}

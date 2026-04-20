@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
             <div className="space-y-12">
                 {/* Email Field */}
                 <div className="relative group bg-gray-50/50 border border-gray-100 focus-within:border-accent focus-within:bg-white rounded-xl transition-all p-4">
-                    <label className="absolute -top-7 left-1 text-[10px] font-bold text-accent uppercase tracking-widest transition-all">
+                    <label className="absolute -top-7 left-1 text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest transition-all">
                         Admin Email
                     </label>
                     <div className="flex items-center px-0">
@@ -107,14 +107,14 @@ export default function AdminLoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="admin@ai.com"
-                            className="w-full bg-transparent text-gray-950 text-base focus:outline-none placeholder:text-gray-400 caret-accent"
+                            className="w-full bg-transparent text-slate-900 dark:text-white text-base focus:outline-none placeholder:text-slate-400 caret-emerald-500"
                         />
                     </div>
                 </div>
 
                 {/* Password Field */}
                 <div className="relative group bg-gray-50/50 border border-gray-100 focus-within:border-accent focus-within:bg-white rounded-xl transition-all p-4">
-                    <label className="absolute -top-7 left-1 text-[10px] font-bold text-accent uppercase tracking-widest transition-all">
+                    <label className="absolute -top-7 left-1 text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest transition-all">
                         Password
                     </label>
                     <div className="flex items-center">
@@ -125,7 +125,7 @@ export default function AdminLoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter password"
-                            className="w-full bg-transparent text-gray-950 text-base focus:outline-none placeholder:text-gray-400 caret-accent"
+                            className="w-full bg-transparent text-slate-900 dark:text-white text-base focus:outline-none placeholder:text-slate-400 caret-emerald-500"
                         />
                     </div>
                 </div>
