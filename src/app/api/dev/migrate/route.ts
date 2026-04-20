@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     console.log("Starting Migration via API (Adding is_active for auxiliary models)...");
     
@@ -17,23 +17,31 @@ export async function GET() {
     await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS landing_page_url TEXT`);
     await prisma.$executeRawUnsafe(`ALTER TABLE app_configs ADD COLUMN IF NOT EXISTS admin_panel_url TEXT`);
 
-    // Auto-Set Values for Production
+    // Detect Current Domain dynamically
+    const url = new URL(request.url);
+    const origin = `${url.protocol}//${url.host}`;
+    const apiUrl = `${origin}/api/v1`;
+    const adminUrl = `${origin}/admin`;
+    const landingUrl = `${origin}/`;
+
+    // Auto-Set Values for Production based on dynamic origin
     await prisma.$executeRawUnsafe(`
       UPDATE app_configs 
       SET 
-        api_base_url = 'https://ai-smm-backend.vercel.app/api/v1',
-        landing_page_url = 'https://ai-smm-backend.vercel.app/',
-        admin_panel_url = 'https://ai-smm-backend.vercel.app/admin'
+        api_base_url = '${apiUrl}',
+        landing_page_url = '${landingUrl}',
+        admin_panel_url = '${adminUrl}'
       WHERE id = 1
     `);
     
     return NextResponse.json({ 
       success: true, 
-      message: "Schema updated and system URLs auto-set successfully.",
+      message: "Schema updated and system URLs auto-set dynamically.",
       data: {
-        landing: "https://ai-smm-backend.vercel.app/",
-        admin: "https://ai-smm-backend.vercel.app/admin",
-        api: "https://ai-smm-backend.vercel.app/api/v1"
+        detected_origin: origin,
+        landing: landingUrl,
+        admin: adminUrl,
+        api: apiUrl
       }
     });
   } catch(error: any) {
