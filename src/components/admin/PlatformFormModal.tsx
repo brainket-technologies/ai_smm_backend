@@ -44,7 +44,7 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await upsertPlatform(platform ? BigInt(platform.id) : null, formData);
+      await upsertPlatform(platform ? platform.id : null, formData);
       onClose();
     } catch (error: any) {
       alert(error.message);

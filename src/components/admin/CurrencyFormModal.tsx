@@ -47,7 +47,7 @@ export default function CurrencyFormModal({ isOpen, onClose, currency }: Currenc
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await upsertCurrency(currency ? BigInt(currency.id) : null, formData);
+      await upsertCurrency(currency ? currency.id : null, formData);
       onClose();
     } catch (error: any) {
       alert(error.message);

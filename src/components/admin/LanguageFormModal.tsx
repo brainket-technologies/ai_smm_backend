@@ -47,7 +47,7 @@ export default function LanguageFormModal({ isOpen, onClose, language }: Languag
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await upsertLanguage(language ? BigInt(language.id) : null, formData);
+      await upsertLanguage(language ? language.id : null, formData);
       onClose();
     } catch (error: any) {
       alert(error.message);

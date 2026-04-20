@@ -54,7 +54,7 @@ export default function PageEditorModal({ isOpen, onClose, page }: PageEditorMod
     setIsLoading(true);
     try {
       if (page) {
-        await updateStaticPage(BigInt(page.id), formData);
+        await updateStaticPage(page.id, formData);
       } else {
         await createStaticPage(formData);
       }
