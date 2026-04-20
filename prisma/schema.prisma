@@ -7,26 +7,26 @@ datasource db {
 }
 
 model AIGeneratedContent {
-  id              BigInt    @id @default(autoincrement())
-  userId          BigInt    @map("user_id")
-  businessId      BigInt?   @map("business_id")
-  contentType     String?   @map("content_type")
-  inputData       String?   @map("input_data")
-  generatedOutput String?   @map("generated_output")
-  isSaved         Boolean?  @default(false) @map("is_saved")
+  id              BigInt     @id @default(autoincrement())
+  userId          BigInt     @map("user_id")
+  businessId      BigInt?    @map("business_id")
+  contentType     String?    @map("content_type")
+  inputData       String?    @map("input_data")
+  generatedOutput String?    @map("generated_output")
+  isSaved         Boolean?   @default(false) @map("is_saved")
   metadata        Json?
-  createdAt       DateTime? @default(now()) @map("created_at")
-  modelId         BigInt?   @map("model_id")
-  promptId        BigInt?   @map("prompt_id")
-  status          String?   @default("completed")
-  inputTokens     Int?      @default(0) @map("input_tokens")
-  outputTokens    Int?      @default(0) @map("output_tokens")
-  responseTimeMs  Int?      @map("response_time_ms")
-  mediaId         BigInt?   @map("media_id")
-  model           AIModel?  @relation(fields: [modelId], references: [id])
-  prompt          AIPrompt? @relation(fields: [promptId], references: [id])
-  user            User      @relation(fields: [userId], references: [id])
+  createdAt       DateTime?  @default(now()) @map("created_at")
+  modelId         BigInt?    @map("model_id")
+  promptId        BigInt?    @map("prompt_id")
+  status          String?    @default("completed")
+  inputTokens     Int?       @default(0) @map("input_tokens")
+  outputTokens    Int?       @default(0) @map("output_tokens")
+  responseTimeMs  Int?       @map("response_time_ms")
+  mediaId         BigInt?    @map("media_id")
   media           MediaFile? @relation(fields: [mediaId], references: [id])
+  model           AIModel?   @relation(fields: [modelId], references: [id])
+  prompt          AIPrompt?  @relation(fields: [promptId], references: [id])
+  user            User       @relation(fields: [userId], references: [id])
 
   @@map("ai_generated_content")
 }
@@ -37,13 +37,13 @@ model AIModel {
   provider          String
   modelType         String               @map("model_type")
   isActive          Boolean?             @default(true) @map("is_active")
-  apiKey            String?              @map("api_key")
   config            Json?
   createdAt         DateTime?            @default(now()) @map("created_at")
   contextWindow     Int?                 @map("context_window")
   maxTokens         Int?                 @map("max_tokens")
   inputCostPer1k    Decimal?             @map("input_cost_per_1k") @db.Decimal
   outputCostPer1k   Decimal?             @map("output_cost_per_1k") @db.Decimal
+  apiKey            String?              @map("api_key")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
 
@@ -126,16 +126,16 @@ model AppPlatformConfig {
 }
 
 model AppTranslation {
-  id           BigInt    @id @default(autoincrement())
-  languageCode String    @unique @map("language_code")
-  countryCode  String?   @map("country_code")
-  displayName  String?   @map("display_name")
-  mediaId      BigInt?   @map("media_id")
-  isDefault    Boolean?  @default(false) @map("is_default")
+  id           BigInt     @id @default(autoincrement())
+  languageCode String     @unique @map("language_code")
+  countryCode  String?    @map("country_code")
+  displayName  String?    @map("display_name")
+  isDefault    Boolean?   @default(false) @map("is_default")
   translations Json
-  isActive     Boolean?  @default(true) @map("is_active")
-  createdAt    DateTime? @default(now()) @map("created_at")
-  updatedAt    DateTime? @default(now()) @map("updated_at")
+  isActive     Boolean?   @default(true) @map("is_active")
+  createdAt    DateTime?  @default(now()) @map("created_at")
+  updatedAt    DateTime?  @default(now()) @map("updated_at")
+  mediaId      BigInt?    @map("media_id")
   media        MediaFile? @relation("TranslationFlag", fields: [mediaId], references: [id])
 
   @@map("app_translations")
@@ -143,10 +143,11 @@ model AppTranslation {
 
 model ExternalServiceConfig {
   id        BigInt   @id @default(autoincrement())
-  category  String   // OTP, MAIL, STORAGE, NOTIFICATION
-  provider  String   // msg91, smtp, s3, cloudinary, firebase
-  config    Json     // credentials and settings
+  category  String
+  provider  String
+  config    Json
   isActive  Boolean  @default(true) @map("is_active")
+  isDefault Boolean  @default(false) @map("is_default")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([category, provider])
@@ -154,37 +155,30 @@ model ExternalServiceConfig {
 }
 
 model MediaFile {
-  id            BigInt   @id @default(autoincrement())
-
-  userId        BigInt?  @map("user_id")
-  businessId    BigInt?  @map("business_id")
-
-  fileUrl       String   @map("file_url")
-  fileType      String   @map("file_type") // image, video, document
-  mimeType      String?  @map("mime_type")
-
-  mediaCategory String?  @map("media_category") // logo, ai_generated, post
-  relatedType   String?  @map("related_type") // business, ai_content, product
-  relatedId     BigInt?  @map("related_id")
-
-  size          Int?
-  tags          Json?
-
-  createdAt     DateTime @default(now()) @map("created_at")
-
-  user          User?     @relation(fields: [userId], references: [id])
-  business      Business? @relation(fields: [businessId], references: [id])
-  
-  // Back relations for models that store this ID as a primary image
-  usersWithThisImage   User[]    @relation("UserImage")
-  businessesWithThisLogo Business[] @relation("BusinessLogo")
-  platformsWithThisLogo Platform[] @relation("PlatformLogo")
-  paymentMethodsWithThisImage PaymentMethod[] @relation("PaymentImage")
-  themesWithThisImage AppTheme[] @relation("ThemeImage")
-  translationsWithThisFlag AppTranslation[] @relation("TranslationFlag")
-  productsWithThisImage Product[] @relation("ProductImage")
-  servicesWithThisImage Service[] @relation("ServiceImage")
-  aiGeneratedContents AIGeneratedContent[]
+  id                          BigInt               @id @default(autoincrement())
+  userId                      BigInt?              @map("user_id")
+  businessId                  BigInt?              @map("business_id")
+  fileUrl                     String               @map("file_url")
+  fileType                    String               @map("file_type")
+  mimeType                    String?              @map("mime_type")
+  mediaCategory               String?              @map("media_category")
+  relatedType                 String?              @map("related_type")
+  relatedId                   BigInt?              @map("related_id")
+  size                        Int?
+  tags                        Json?
+  createdAt                   DateTime             @default(now()) @map("created_at")
+  aiGeneratedContents         AIGeneratedContent[]
+  themesWithThisImage         AppTheme[]           @relation("ThemeImage")
+  translationsWithThisFlag    AppTranslation[]     @relation("TranslationFlag")
+  businessesWithThisLogo      Business[]           @relation("BusinessLogo")
+  business                    Business?            @relation(fields: [businessId], references: [id])
+  user                        User?                @relation("UserUploads", fields: [userId], references: [id])
+  notificationsWithThisImage  Notifications[]      @relation("NotificationImage")
+  paymentMethodsWithThisImage PaymentMethod[]      @relation("PaymentImage")
+  platformsWithThisLogo       Platform[]           @relation("PlatformLogo")
+  productsWithThisImage       Product[]            @relation("ProductImage")
+  servicesWithThisImage       Service[]            @relation("ServiceImage")
+  usersWithThisImage          User[]               @relation("UserProfileImage")
 
   @@map("media_files")
 }
@@ -219,36 +213,34 @@ model Business {
   country            String?
   state              String?
   city               String?
-  postalCode         String?            @map("postal_code")
-  mediaId            BigInt?            @map("media_id")
   brandColor         String?            @map("brand_color")
   description        String?
-  visibilityStatus   String?            @default("active") @map("visibility_status")
   audienceTypeId     BigInt?            @map("audience_type_id")
-  businessTypeId     BigInt?            @map("business_type_id")
-  ctaButtonId        BigInt?            @map("cta_button_id")
   targetRegionId     BigInt?            @map("target_region_id")
+  targetGender       String?            @default("all") @map("target_gender")
   targetAgeGroupId   BigInt?            @map("target_age_group_id")
   modelEthnicityId   BigInt?            @map("model_ethnicity_id")
-  targetGender       String?            @default("all") @map("target_gender")
   createdAt          DateTime?          @default(now()) @map("created_at")
+  businessTypeId     BigInt?            @map("business_type_id")
+  ctaButtonId        BigInt?            @map("cta_button_id")
+  mediaId            BigInt?            @map("media_id")
+  postalCode         String?            @map("postal_code")
   updatedAt          DateTime?          @default(now()) @map("updated_at")
-  
+  visibilityStatus   String?            @default("active") @map("visibility_status")
+  usageLogs          AIUsageLog[]
+  businessCategories BusinessCategory[]
   audienceType       AudienceType?      @relation(fields: [audienceTypeId], references: [id])
   businessType       BusinessType?      @relation(fields: [businessTypeId], references: [id])
   ctaButton          CTAButton?         @relation(fields: [ctaButtonId], references: [id])
-  owner              User               @relation(fields: [ownerId], references: [id])
   media              MediaFile?         @relation("BusinessLogo", fields: [mediaId], references: [id])
-  targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
-  targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
   modelEthnicity     ModelEthnicity?    @relation(fields: [modelEthnicityId], references: [id])
-  
-  businessCategories BusinessCategory[]
+  targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
+  targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
+  owner              User               @relation(fields: [ownerId], references: [id])
+  mediaFiles         MediaFile[]
   products           Product[]
   services           Service[]
   socialAccounts     SocialAccount[]
-  mediaFiles         MediaFile[]
-  usageLogs          AIUsageLog[]
 
   @@map("businesses")
 }
@@ -267,8 +259,8 @@ model BusinessCategory {
 model Category {
   id                 BigInt             @id @default(autoincrement())
   name               String
-  type               String             @default("business") @db.VarChar(50)
   isActive           Boolean?           @default(true) @map("is_active")
+  type               String             @default("business") @db.VarChar(50)
   businessCategories BusinessCategory[]
   productCategories  ProductCategory[]
   serviceCategories  ServiceCategory[]
@@ -316,15 +308,15 @@ model DeviceToken {
 }
 
 model Feedback {
-  id         BigInt    @id @default(autoincrement())
-  userId     BigInt    @map("user_id")
-  subject    String?
-  message    String
-  rating     Int?      @default(5)
-  type       String?   @default("general")
-  status     String?   @default("pending")
-  createdAt  DateTime? @default(now()) @map("created_at")
-  user       User?     @relation(fields: [userId], references: [id])
+  id        BigInt    @id @default(autoincrement())
+  message   String
+  rating    Int?      @default(5)
+  type      String?   @default("general")
+  status    String?   @default("pending")
+  createdAt DateTime? @default(now()) @map("created_at")
+  subject   String?
+  userId    BigInt    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("feedbacks")
 }
@@ -339,30 +331,31 @@ model ModelEthnicity {
 }
 
 model Notifications {
-  id        BigInt    @id @default(autoincrement())
+  id        BigInt     @id @default(autoincrement())
   title     String
   message   String
-  type      String?   @default("general")
-  image     String?
-  actionUrl String?   @map("action_url")
-  isGlobal  Boolean?  @default(false) @map("is_global")
-  createdAt DateTime? @default(now()) @map("created_at")
+  type      String?    @default("general")
+  actionUrl String?    @map("action_url")
+  isGlobal  Boolean?   @default(false) @map("is_global")
+  createdAt DateTime?  @default(now()) @map("created_at")
+  mediaId   BigInt?    @map("media_id")
+  media     MediaFile? @relation("NotificationImage", fields: [mediaId], references: [id])
 
   @@map("notifications")
 }
 
 model PaymentMethod {
-  id           BigInt    @id @default(autoincrement())
-  name         String    @unique
-  displayName  String?   @map("display_name")
-  type         String // gateway, manual
-  mode         String    @default("test") // test, live
-  mediaId      BigInt?   @map("media_id")
-  isActive     Boolean?  @default(true) @map("is_active")
-  isDefault    Boolean?  @default(false) @map("is_default")
-  config       Json?
-  createdAt    DateTime? @default(now()) @map("created_at")
-  media        MediaFile? @relation("PaymentImage", fields: [mediaId], references: [id])
+  id          BigInt     @id @default(autoincrement())
+  name        String     @unique
+  displayName String?    @map("display_name")
+  type        String
+  config      Json?
+  mode        String     @default("test")
+  isActive    Boolean?   @default(true) @map("is_active")
+  isDefault   Boolean?   @default(false) @map("is_default")
+  createdAt   DateTime?  @default(now()) @map("created_at")
+  mediaId     BigInt?    @map("media_id")
+  media       MediaFile? @relation("PaymentImage", fields: [mediaId], references: [id])
 
   @@map("payment_methods")
 }
@@ -370,12 +363,12 @@ model PaymentMethod {
 model Platform {
   id             BigInt          @id @default(autoincrement())
   name           String          @unique
-  nameKey        String?         @unique @map("name_key")
-  mediaId        BigInt?         @map("media_id")
   url            String?
+  nameKey        String?         @unique @map("name_key")
   isActive       Boolean?        @default(true) @map("is_active")
-  socialAccounts SocialAccount[]
+  mediaId        BigInt?         @map("media_id")
   media          MediaFile?      @relation("PlatformLogo", fields: [mediaId], references: [id])
+  socialAccounts SocialAccount[]
 
   @@map("platforms")
 }
@@ -409,11 +402,11 @@ model Product {
   description          String?
   price                Decimal              @default(0) @db.Decimal
   stock                Int?                 @default(0)
-  mediaId              BigInt?              @map("media_id")
   tags                 Json?
   visibilityStatus     String?              @default("active") @map("visibility_status")
   createdAt            DateTime?            @default(now()) @map("created_at")
   updatedAt            DateTime?            @default(now()) @map("updated_at")
+  mediaId              BigInt?              @map("media_id")
   productCategories    ProductCategory[]
   productSubCategories ProductSubCategory[]
   business             Business             @relation(fields: [businessId], references: [id])
@@ -425,13 +418,12 @@ model Product {
 model Role {
   id        BigInt    @id @default(autoincrement())
   name      String    @unique
-  isActive  Boolean   @default(true) @map("is_active")
   createdAt DateTime? @default(now()) @map("created_at")
+  isActive  Boolean   @default(true) @map("is_active")
   users     User[]
 
   @@map("roles")
 }
-
 
 model ServiceCategory {
   id         BigInt   @id @default(autoincrement())
@@ -461,11 +453,11 @@ model Service {
   description          String?
   price                Decimal              @default(0) @db.Decimal
   slots                Int?                 @default(1)
-  mediaId              BigInt?              @map("media_id")
   tags                 Json?
   visibilityStatus     String?              @default("active") @map("visibility_status")
   createdAt            DateTime?            @default(now()) @map("created_at")
   updatedAt            DateTime?            @default(now()) @map("updated_at")
+  mediaId              BigInt?              @map("media_id")
   serviceCategories    ServiceCategory[]
   serviceSubCategories ServiceSubCategory[]
   business             Business             @relation(fields: [businessId], references: [id])
@@ -506,9 +498,9 @@ model SubCategory {
   id                   BigInt               @id @default(autoincrement())
   categoryId           BigInt               @map("category_id")
   name                 String
-  type                 String               @default("business") @db.VarChar(50)
-  isActive             Boolean?             @default(true) @map("is_active")
   createdAt            DateTime?            @default(now()) @map("created_at")
+  isActive             Boolean?             @default(true) @map("is_active")
+  type                 String               @default("business") @db.VarChar(50)
   productSubCategories ProductSubCategory[]
   serviceSubCategories ServiceSubCategory[]
   category             Category             @relation(fields: [categoryId], references: [id])
@@ -530,17 +522,20 @@ model SubscriptionPermission {
 }
 
 model SubscriptionTier {
-  id                BigInt    @id @default(autoincrement())
-  tierKey           String    @unique @map("tier_key")
+  id                BigInt             @id @default(autoincrement())
+  tierKey           String             @unique @map("tier_key")
   name              String
-  priceAmount       Decimal?  @default(0) @map("price_amount") @db.Decimal
-  pricePeriod       String?   @default("month") @map("price_period")
+  priceAmount       Decimal?           @default(0) @map("price_amount") @db.Decimal
+  pricePeriod       String?            @default("month") @map("price_period")
   badge             String?
-  highlightFeatures Json?     @map("highlight_features")
+  highlightFeatures Json?              @map("highlight_features")
   limits            Json?
-  isActive          Boolean?  @default(true) @map("is_active")
-  createdAt         DateTime? @default(now()) @map("created_at")
-  updatedAt         DateTime? @default(now()) @map("updated_at")
+  isActive          Boolean?           @default(true) @map("is_active")
+  createdAt         DateTime?          @default(now()) @map("created_at")
+  updatedAt         DateTime?          @default(now()) @map("updated_at")
+  loginDeviceLimit  BigInt?            @default(1) @map("login_device_limit")
+  subscriptionLimit BigInt?            @default(1) @map("subscription_limit")
+  userSubscriptions UserSubscription[]
 
   @@map("subscription_tiers")
 }
@@ -577,14 +572,15 @@ model UserBlock {
 }
 
 model UserSubscription {
-  id        BigInt    @id @default(autoincrement())
-  userId    BigInt    @map("user_id")
-  tierKey   String    @map("tier_key")
-  startDate DateTime? @default(now()) @map("start_date")
-  endDate   DateTime? @map("end_date")
-  status    String?   @default("active")
-  createdAt DateTime? @default(now()) @map("created_at")
-  user      User      @relation(fields: [userId], references: [id])
+  id        BigInt           @id @default(autoincrement())
+  userId    BigInt           @map("user_id")
+  tierKey   String           @map("tier_key")
+  startDate DateTime?        @default(now()) @map("start_date")
+  endDate   DateTime?        @map("end_date")
+  status    String?          @default("active")
+  createdAt DateTime?        @default(now()) @map("created_at")
+  tier      SubscriptionTier @relation(fields: [tierKey], references: [tierKey])
+  user      User             @relation(fields: [userId], references: [id])
 
   @@map("user_subscriptions")
 }
@@ -594,7 +590,6 @@ model User {
   name              String?
   phone             String?              @unique
   email             String?              @unique
-  mediaId           BigInt?              @map("media_id")
   createdAt         DateTime?            @default(now()) @map("created_at")
   updatedAt         DateTime?            @default(now()) @map("updated_at")
   currencyCode      String?              @map("currency_code")
@@ -609,33 +604,34 @@ model User {
   deletedAt         DateTime?            @map("deleted_at")
   password          String?
   isVerified        Boolean?             @default(false) @map("is_verified")
+  mediaId           BigInt?              @map("media_id")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
   businesses        Business[]
   deviceTokens      DeviceToken[]
+  feedbacks         Feedback[]
+  mediaFiles        MediaFile[]          @relation("UserUploads")
   blockedUsers      UserBlock[]          @relation("UserToUserBlockBlocker")
   blocks            UserBlock[]          @relation("UserToUserBlockUser")
   userSubscriptions UserSubscription[]
-  feedbacks         Feedback[]
   currency          Currency?            @relation(fields: [currencyCode], references: [code])
+  profileMedia      MediaFile?           @relation("UserProfileImage", fields: [mediaId], references: [id])
   role              Role?                @relation(fields: [roleId], references: [id])
-  media             MediaFile?           @relation("UserImage", fields: [mediaId], references: [id])
-  mediaFiles        MediaFile[]         // For all images uploaded by this user
 
   @@map("users")
 }
 
 model AppTheme {
-  id                 BigInt    @id @default(autoincrement())
+  id                 BigInt     @id @default(autoincrement())
   name               String
-  mediaId            BigInt?   @map("media_id")
-  primaryColor       String    @map("primary_color")
-  secondaryColor     String    @map("secondary_color")
-  darkPrimaryColor   String    @map("dark_primary_color")
-  darkSecondaryColor String    @map("dark_secondary_color")
-  isDefault          Boolean?  @default(false) @map("is_default")
-  isActive           Boolean?  @default(true) @map("is_active")
-  createdAt          DateTime? @default(now()) @map("created_at")
+  primaryColor       String     @map("primary_color")
+  secondaryColor     String     @map("secondary_color")
+  darkPrimaryColor   String     @map("dark_primary_color")
+  darkSecondaryColor String     @map("dark_secondary_color")
+  isDefault          Boolean?   @default(false) @map("is_default")
+  createdAt          DateTime?  @default(now()) @map("created_at")
+  isActive           Boolean?   @default(true) @map("is_active")
+  mediaId            BigInt?    @map("media_id")
   media              MediaFile? @relation("ThemeImage", fields: [mediaId], references: [id])
 
   @@map("app_themes")

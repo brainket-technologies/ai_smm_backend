@@ -1,26 +1,24 @@
- "use client";
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Smartphone, 
   Mail, 
   HardDrive, 
   Bell, 
-  Plus, 
-  Save, 
-  X, 
   Settings2, 
-  CheckCircle2, 
   Zap, 
-  ShieldCheck, 
   Server,
   Cloud,
   FileJson,
-  ExternalLink,
+  FileUp,
   Edit2,
-  Trash2
+  CreditCard,
+  Shield,
+  Globe,
+  Apple
 } from 'lucide-react';
-import { upsertExternalServiceConfig, toggleExternalServiceStatus, deleteExternalServiceConfig } from './actions';
+import { getExternalServiceConfigs, upsertExternalServiceConfig, toggleExternalServiceStatus } from './service-actions';
 
 function cn(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -33,24 +31,59 @@ type ExternalConfig = {
   config: any;
   isActive: boolean;
   updatedAt?: string;
+  displayName?: string;
+  mode?: string;
+  isDefault?: boolean;
 };
 
 const CATEGORIES = [
-  { id: 'OTP', label: 'OTP Services', icon: Smartphone },
-  { id: 'MAIL', label: 'Mail / SMTP', icon: Mail },
-  { id: 'STORAGE', label: 'Cloud Storage', icon: HardDrive },
-  { id: 'NOTIFICATION', label: 'Notifications', icon: Bell },
+  { id: 'otp', label: 'OTP Services', icon: Smartphone },
+  { id: 'mail', label: 'Mail / SMTP', icon: Mail },
+  { id: 'storage', label: 'Cloud Storage', icon: HardDrive },
+  { id: 'notification', label: 'Notifications', icon: Bell },
+  { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
+  { id: 'ads', label: 'Ad Networks', icon: Globe },
+  { id: 'login', label: 'App Login', icon: Shield },
 ];
 
 const PROVIDERS: Record<string, { id: string; label: string; icon: any }[]> = {
-  OTP: [{ id: 'msg91', label: 'MSG91', icon: Zap }],
-  MAIL: [{ id: 'smtp', label: 'SMTP Server', icon: Server }],
-  STORAGE: [
-    { id: 's3', label: 'AWS S3 / R2', icon: Cloud },
-    { id: 'cloudinary', label: 'Cloudinary', icon: Cloud },
+  otp: [
+    { id: 'msg91', label: 'MSG91', icon: Zap },
+    { id: 'firebase', label: 'Firebase Auth/OTP', icon: FlameIcon }
   ],
-  NOTIFICATION: [{ id: 'firebase', label: 'Firebase Cloud Messaging', icon: FlameIcon }],
+  mail: [{ id: 'smtp', label: 'SMTP Server', icon: Server }],
+  storage: [
+    { id: 's3', label: 'AWS S3 / R2', icon: Cloud },
+    { id: 'cloudflare', label: 'Cloudflare R2', icon: Cloud },
+    { id: 'cloudinary', label: 'Cloudinary', icon: Cloud },
+    { id: 'firebase', label: 'Firebase Storage', icon: FlameIcon },
+    { id: 'local_storage', label: 'Local Server (Manual)', icon: HardDrive },
+  ],
+  notification: [{ id: 'firebase', label: 'Firebase Cloud Messaging', icon: FlameIcon }],
+  payment: [
+    { id: 'razorpay', label: 'Razorpay', icon: CreditCard },
+    { id: 'stripe', label: 'Stripe', icon: Shield },
+    { id: 'paypal', label: 'PayPal', icon: Globe },
+    { id: 'flutterwave', label: 'Flutterwave', icon: CreditCard },
+    { id: 'paystack', label: 'Paystack', icon: CreditCard },
+  ],
+  ads: [
+    { id: 'admob', label: 'Google AdMob', icon: Zap },
+    { id: 'facebook', label: 'Facebook Audience Network', icon: Globe },
+  ],
+  login: [
+    { id: 'otp_login', label: 'Phone OTP Login', icon: Smartphone },
+    { id: 'password', label: 'Email/Password Login', icon: Shield },
+    { id: 'google', label: 'Google Sign-In', icon: Globe },
+    { id: 'apple', label: 'Apple Login', icon: AppleIcon },
+  ],
 };
+
+function AppleIcon(props: any) {
+  return (
+    <Apple {...props} className="text-slate-900 dark:text-slate-50" />
+  );
+}
 
 function FlameIcon(props: any) {
   return (
@@ -73,69 +106,210 @@ function FlameIcon(props: any) {
 
 export default function ExternalServiceManagement({ initialConfigs }: { initialConfigs: ExternalConfig[] }) {
   const [configs, setConfigs] = useState<ExternalConfig[]>(initialConfigs);
-  const [activeCategory, setActiveCategory] = useState('OTP');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingConfig, setEditingConfig] = useState<Partial<ExternalConfig> | null>(null);
+  const [activeCategory, setActiveCategory] = useState('otp');
+  const [formStates, setFormStates] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const filteredConfigs = configs.filter(c => c.category === activeCategory);
-  
-  // Available providers for current category that ARE NOT yet configured
-  const availableProviders = PROVIDERS[activeCategory].filter(p => 
-    !configs.find(c => c.category === activeCategory && c.provider === p.id)
-  );
+  useEffect(() => {
+    fetchConfigs();
+  }, [activeCategory]);
 
-  const handleToggleStatus = async (id: string, category: string, currentStatus: boolean) => {
-    // Some categories might prefer exclusive active (e.g. only 1 active storage)
-    const exclusive = category === 'STORAGE' || category === 'OTP';
-    const res = await toggleExternalServiceStatus(id, category, currentStatus, exclusive);
-    if (res.success) {
-      if (exclusive && !currentStatus) {
-        // If we activated an exclusive one, deactivate others in state
-        setConfigs(configs.map(c => 
-          c.category === category 
-            ? { ...c, isActive: c.id === id } 
-            : c
-        ));
-      } else {
-        setConfigs(configs.map(c => c.id === id ? { ...c, isActive: !currentStatus } : c));
-      }
-    } else {
-      alert(res.error || "Failed to update status");
-    }
-  };
-
-  const openEditModal = (config: ExternalConfig) => {
-    setEditingConfig(config);
-    setIsModalOpen(true);
-  };
-
-  const openAddModal = (providerId: string) => {
-    setEditingConfig({
-      category: activeCategory,
-      provider: providerId,
-      config: {},
-      isActive: true
+  const fetchConfigs = async () => {
+    const res = await getExternalServiceConfigs();
+    const data = res.success ? res.data : [];
+    
+    setConfigs(data);
+    
+    // Reset/Initialize form states for the current category
+    const initialForms: Record<string, any> = {};
+    PROVIDERS[activeCategory].forEach(p => {
+      const existing = data.find(c => c.category === activeCategory && c.provider === p.id);
+      initialForms[p.id] = existing ? { ...existing } : {
+        category: activeCategory,
+        provider: p.id,
+        config: {},
+        isActive: true,
+        mode: 'test',
+        isDefault: false
+      };
     });
-    setIsModalOpen(true);
+    setFormStates(initialForms);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const res = await upsertExternalServiceConfig(editingConfig);
+  const handleMethodChange = (providerId: string, method: string, field: string, value: any) => {
+    setFormStates(prev => {
+      const currentConfig = prev[providerId]?.config || {};
+      const newMethods = { ...currentConfig.methods };
+      if (!newMethods[method]) newMethods[method] = {};
+      newMethods[method][field] = value;
+      
+      return {
+        ...prev,
+        [providerId]: {
+          ...prev[providerId],
+          config: { ...currentConfig, methods: newMethods }
+        }
+      };
+    });
+  };
+
+  const handleFieldChange = (providerId: string, field: string, value: any, isConfig = false) => {
+    setFormStates(prev => {
+      const updated = {
+        ...prev,
+        [providerId]: {
+          ...prev[providerId],
+          ...(isConfig 
+            ? { config: { ...prev[providerId].config, [field]: value } }
+            : { [field]: value }
+          )
+        }
+      };
+
+      // If user is manually editing the 'json' field, try to sync individual fields
+      if (isConfig && field === 'json' && value) {
+        try {
+          const parsed = JSON.parse(value);
+          const fieldsToSync = {
+            projectId: parsed.project_id,
+            clientEmail: parsed.client_email,
+            privateKey: parsed.private_key,
+            apiKey: parsed.apiKey, // common placeholders
+            authDomain: parsed.authDomain
+          };
+
+          Object.entries(fieldsToSync).forEach(([k, v]) => {
+            if (v) updated[providerId].config[k] = v;
+          });
+        } catch (e) {
+          // ignore parsing error during typing
+        }
+      }
+
+      return updated;
+    });
+  };
+
+  const handleJsonUpload = async (providerId: string, file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        const parsed = JSON.parse(text);
+        
+        // Map common Firebase keys to our internal fields
+        const configUpdates: any = {
+          json: JSON.stringify(parsed, null, 2),
+          projectId: parsed.project_id || parsed.project_info?.project_id || '',
+          clientEmail: parsed.client_email || '',
+          privateKey: parsed.private_key || '',
+          apiKey: parsed.apiKey || parsed.client?.[0]?.api_key?.[0]?.current_key || '',
+          authDomain: parsed.authDomain || (parsed.project_info?.project_id ? `${parsed.project_info.project_id}.firebaseapp.com` : '')
+        };
+
+        // If it's a google-services.json, try to find the Web Client ID (type 3)
+        if (parsed.client?.[0]?.oauth_client) {
+          const webClient = parsed.client[0].oauth_client.find((c: any) => c.client_type === 3);
+          if (webClient) {
+            configUpdates.clientId = webClient.client_id;
+          }
+        }
+        
+        // Also support direct client_id if present
+        if (parsed.client_id) configUpdates.clientId = parsed.client_id;
+
+        setFormStates(prev => ({
+          ...prev,
+          [providerId]: {
+            ...prev[providerId],
+            config: {
+              ...prev[providerId].config,
+              ...configUpdates
+            }
+          }
+        }));
+
+        // Give state a moment to update then save
+        setTimeout(() => {
+          saveProviderConfig(providerId);
+        }, 100);
+
+      } catch (err) {
+        alert("Invalid JSON file");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleToggleDefault = async (providerId: string) => {
+    const current = formStates[providerId];
+    if (!current) return;
+
+    // Local optimistic update
+    setFormStates(prev => {
+      const next = { ...prev };
+      // Turn off others in this category (though state is currently category-scoped)
+      Object.keys(next).forEach(pid => {
+        if (next[pid].category === activeCategory) {
+          next[pid] = { ...next[pid], isDefault: pid === providerId };
+        }
+      });
+      return next;
+    });
+
+    // We save immediately when default is toggled to ensure it's applied app-wide
+    const res = await upsertExternalServiceConfig({ 
+      ...current, 
+      isDefault: true, 
+      isActive: true 
+    });
+    
     if (res.success) {
-      window.location.reload();
+      fetchConfigs();
     } else {
-      alert(res.error || "Failed to save configuration");
-      setIsLoading(false);
+      alert(`Failed to set as default: ${res.error || 'Unknown error'}`);
+      fetchConfigs(); // Rollback
     }
+  };
+
+  const handleToggleActive = async (providerId: string) => {
+    const current = formStates[providerId];
+    if (!current) return;
+
+    const newActive = !current.isActive;
+
+    // Optimistic update
+    setFormStates(prev => ({
+      ...prev,
+      [providerId]: { ...prev[providerId], isActive: newActive }
+    }));
+
+    const res = await upsertExternalServiceConfig({ ...current, isActive: newActive });
+    if (!res.success) {
+      alert(`Failed to update: ${res.error || 'Unknown error'}`);
+      fetchConfigs(); // rollback
+    } else {
+      fetchConfigs();
+    }
+  };
+
+  const saveProviderConfig = async (providerId: string) => {
+    const payload = formStates[providerId];
+    if (!payload) return;
+
+    setIsLoading(true);
+    const res = await upsertExternalServiceConfig(payload);
+    if (res.success) {
+      fetchConfigs();
+    } else {
+      alert(`Failed to save: ${res.error || 'Unknown error'}`);
+    }
+    setIsLoading(false);
   };
 
   return (
     <div className="space-y-8 max-w-6xl">
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100/80 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-200/50 dark:border-slate-700/30">
+      <div className="flex flex-wrap gap-2 mb-6 p-1 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl w-fit">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.id;
@@ -144,218 +318,887 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={cn(
-                "flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300",
+                "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
                 isActive 
-                  ? "bg-white dark:bg-slate-900 text-accent shadow-sm translate-y-[-1px]" 
-                  : "text-slate-500 hover:text-slate-700 hover:bg-white/50 dark:hover:bg-slate-800"
+                  ? "bg-white dark:bg-slate-900 text-accent shadow-sm" 
+                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               )}
             >
-              <Icon className={cn("h-4.5 w-4.5", isActive ? "text-accent" : "text-slate-400")} />
-              <span>{cat.label}</span>
+              <Icon className="h-3.5 w-3.5" />
+              {cat.label}
             </button>
           );
         })}
       </div>
 
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Configured Service Cards */}
-        {filteredConfigs.map((c) => {
-          const providerInfo = PROVIDERS[activeCategory].find(p => p.id === c.provider);
-          const Icon = providerInfo?.icon || Settings2;
-          
+      <div className="columns-1 lg:columns-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+        {PROVIDERS[activeCategory].map((p) => {
+          const config = formStates[p.id];
+          if (!config) return null;
+
+          const Icon = p.icon;
+
           return (
-            <div key={c.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group overflow-hidden flex flex-col">
-              <div className="p-6 pb-4">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="h-14 w-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform duration-500">
-                    <Icon className="h-7 w-7 text-accent" />
+            <div key={p.id} className="break-inside-avoid mb-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-fit">
+              {/* Card Header */}
+              <div className="p-5 flex items-center justify-between border-b border-slate-50 dark:border-slate-800/50">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
+                    config.id ? "bg-accent/10" : "bg-slate-100 dark:bg-slate-800"
+                  )}>
+                    <Icon className={cn("h-5 w-5", config.id ? "text-accent" : "text-slate-400")} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{p.label}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={cn(
+                        "h-1.5 w-1.5 rounded-full",
+                        config.id ? "bg-emerald-500" : "bg-slate-300"
+                      )} />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">
+                        {config.id ? 'Connected' : 'Not Setup'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Default toggle — hidden for 'login' category */}
+                {activeCategory !== 'login' && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">Default</span>
+                    <button 
+                      onClick={() => handleToggleDefault(p.id)}
+                      className={cn(
+                        "relative inline-flex h-5 w-9 items-center rounded-full transition-colors",
+                        config.isDefault ? "bg-emerald-500 shadow-inner" : "bg-slate-200 dark:bg-slate-700"
+                      )}
+                    >
+                      <span className={cn(
+                        "inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200",
+                        config.isDefault ? "translate-x-5" : "translate-x-1"
+                      )} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Active toggle — shown ONLY for login category */}
+                {activeCategory === 'login' && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">Active</span>
+                    <button
+                      onClick={() => handleToggleActive(p.id)}
+                      className={cn(
+                        "relative inline-flex h-5 w-9 items-center rounded-full transition-colors",
+                        config.isActive ? "bg-emerald-500 shadow-inner" : "bg-slate-200 dark:bg-slate-700"
+                      )}
+                    >
+                      <span className={cn(
+                        "inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200",
+                        config.isActive ? "translate-x-5" : "translate-x-1"
+                      )} />
+                    </button>
+                    <span className={cn(
+                      "text-[10px] font-black uppercase tracking-tight",
+                      config.isActive ? "text-emerald-500" : "text-slate-400"
+                    )}>
+                      {config.isActive ? 'ON' : 'OFF'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Card Body (Form) */}
+              <div className="p-6 space-y-5">
+                {(activeCategory === 'payment' || activeCategory === 'otp') && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Environment</label>
+                      <select 
+                        value={config.mode || 'test'}
+                        onChange={(e) => handleFieldChange(p.id, 'mode', e.target.value)}
+                        className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold uppercase p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                      >
+                        <option value="test">Test Mode</option>
+                        <option value="live">Live Mode</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Display Name</label>
+                      <input 
+                        type="text"
+                        value={config.displayName || ''}
+                        onChange={(e) => handleFieldChange(p.id, 'displayName', e.target.value)}
+                        placeholder="e.g. Primary Portal"
+                        className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-4 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                  {p.id === 'msg91' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auth Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.authKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'authKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Template ID</label>
+                          <input 
+                            type="text"
+                            value={config.config?.templateId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'templateId', e.target.value, true)}
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sender ID</label>
+                          <input 
+                            type="text"
+                            value={config.config?.senderId || 'BKTMSG'}
+                            onChange={(e) => handleFieldChange(p.id, 'senderId', e.target.value, true)}
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'firebase' && (activeCategory === 'storage' || activeCategory === 'notification' || activeCategory === 'otp') && (
+                    <div className="flex flex-col space-y-4">
+                      {activeCategory === 'storage' && (
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Storage Bucket URL</label>
+                          <input 
+                            type="text"
+                            value={config.config?.bucketUrl || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'bucketUrl', e.target.value, true)}
+                            placeholder="gs://your-project.appspot.com"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      )}
+
+
+                      {activeCategory === 'otp' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col space-y-1.5 md:col-span-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">API Key</label>
+                            <input 
+                              type="text"
+                              value={config.config?.apiKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'apiKey', e.target.value, true)}
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auth Domain</label>
+                            <input 
+                              type="text"
+                              value={config.config?.authDomain || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'authDomain', e.target.value, true)}
+                              placeholder="project-id.firebaseapp.com"
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Project ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.projectId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'projectId', e.target.value, true)}
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {(activeCategory === 'notification' || activeCategory === 'storage') && (
+                        <div className="grid grid-cols-1 gap-4 mb-4">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Project ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.projectId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'projectId', e.target.value, true)}
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Email</label>
+                            <input 
+                              type="text"
+                              value={config.config?.clientEmail || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'clientEmail', e.target.value, true)}
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Private Key</label>
+                            <textarea 
+                              rows={4}
+                              value={config.config?.privateKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'privateKey', e.target.value, true)}
+                              className="bg-slate-50 dark:bg-slate-800 text-[11px] font-mono p-3 rounded-xl outline-none border-2 border-transparent focus:border-accent/30 shadow-sm"
+                              placeholder="-----BEGIN PRIVATE KEY-----\n..."
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {(activeCategory === 'notification' || activeCategory === 'storage' || activeCategory === 'otp' || activeCategory === 'login') && (
+                        <div className="flex flex-col space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800/50 mt-4">
+                          <div className="flex items-center justify-between mt-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Service Account JSON</label>
+                            <label className="cursor-pointer group flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-accent/10 border border-slate-200 dark:border-slate-700 rounded-lg transition-all">
+                              <FileUp className="h-3 w-3 text-slate-500 group-hover:text-accent" />
+                              <span className="text-[10px] font-black text-slate-500 group-hover:text-accent uppercase tracking-tight">Upload JSON</span>
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                accept=".json"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleJsonUpload(p.id, file);
+                                }}
+                              />
+                            </label>
+                          </div>
+                          <textarea 
+                            rows={4}
+                            value={config.config?.json || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'json', e.target.value, true)}
+                            className="bg-slate-50 dark:bg-slate-800 text-[10px] font-mono p-3 rounded-xl outline-none border-2 border-transparent focus:border-accent/20 min-h-[120px] shadow-inner"
+                            placeholder='{ "project_id": "...", ... }'
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {p.id === 'razorpay' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Key ID</label>
+                        <input 
+                          type="text"
+                          value={config.config?.keyId || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'keyId', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Key Secret</label>
+                        <input 
+                          type="password"
+                          value={config.config?.keySecret || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'keySecret', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 's3' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Region</label>
+                          <input 
+                            type="text"
+                            value={config.config?.region || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'region', e.target.value, true)}
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bucket</label>
+                          <input 
+                            type="text"
+                            value={config.config?.bucket || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'bucket', e.target.value, true)}
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access Key</label>
+                        <input 
+                          type="text"
+                          value={config.config?.accessKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'accessKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── AdMob fields ── */}
+                  {p.id === 'admob' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">App ID</label>
+                        <input
+                          type="text"
+                          value={config.config?.appId || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'appId', e.target.value, true)}
+                          placeholder="ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Banner Ad Unit ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.bannerUnitId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'bannerUnitId', e.target.value, true)}
+                            placeholder="ca-app-pub-xxx/xxx"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Interstitial Ad Unit ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.interstitialUnitId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'interstitialUnitId', e.target.value, true)}
+                            placeholder="ca-app-pub-xxx/xxx"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rewarded Ad Unit ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.rewardedUnitId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'rewardedUnitId', e.target.value, true)}
+                            placeholder="ca-app-pub-xxx/xxx"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Native Ad Unit ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.nativeUnitId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'nativeUnitId', e.target.value, true)}
+                            placeholder="ca-app-pub-xxx/xxx"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5 col-span-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">App Open Ad Unit ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.appOpenUnitId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'appOpenUnitId', e.target.value, true)}
+                            placeholder="ca-app-pub-xxx/xxx"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Facebook Audience Network fields ── */}
+                  {p.id === 'facebook' && activeCategory === 'ads' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">App ID</label>
+                        <input
+                          type="text"
+                          value={config.config?.appId || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'appId', e.target.value, true)}
+                          placeholder="Your Facebook App ID"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Banner Placement ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.bannerPlacementId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'bannerPlacementId', e.target.value, true)}
+                            placeholder="XXXXXXXXXX_XXXXXXXXXX"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Interstitial Placement ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.interstitialPlacementId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'interstitialPlacementId', e.target.value, true)}
+                            placeholder="XXXXXXXXXX_XXXXXXXXXX"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Native Placement ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.nativePlacementId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'nativePlacementId', e.target.value, true)}
+                            placeholder="XXXXXXXXXX_XXXXXXXXXX"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rewarded Placement ID</label>
+                          <input
+                            type="text"
+                            value={config.config?.rewardedPlacementId || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'rewardedPlacementId', e.target.value, true)}
+                            placeholder="XXXXXXXXXX_XXXXXXXXXX"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'smtp' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col space-y-1.5 md:col-span-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">SMTP Host</label>
+                        <input 
+                          type="text"
+                          value={config.config?.host || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'host', e.target.value, true)}
+                          placeholder="e.g., smtp.gmail.com"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Port</label>
+                        <input 
+                          type="text"
+                          value={config.config?.port || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'port', e.target.value, true)}
+                          placeholder="e.g., 587"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secure</label>
+                        <select 
+                          value={config.config?.secure || 'false'}
+                          onChange={(e) => handleFieldChange(p.id, 'secure', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        >
+                          <option value="false">TLS / StartTLS</option>
+                          <option value="true">SSL</option>
+                        </select>
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Username</label>
+                        <input 
+                          type="text"
+                          value={config.config?.user || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'user', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Password</label>
+                        <input 
+                          type="password"
+                          value={config.config?.pass || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'pass', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'cloudflare' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Account ID</label>
+                        <input 
+                          type="text"
+                          value={config.config?.accountId || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'accountId', e.target.value, true)}
+                          placeholder="e.g., 01d5e6ef06459ccd65c6cf090b257f3a"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bucket Name</label>
+                          <input 
+                            type="text"
+                            value={config.config?.bucket || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'bucket', e.target.value, true)}
+                            placeholder="e.g., smm-app"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public URL</label>
+                          <input 
+                            type="text"
+                            value={config.config?.publicUrl || ''}
+                            onChange={(e) => handleFieldChange(p.id, 'publicUrl', e.target.value, true)}
+                            placeholder="https://pub-....r2.dev"
+                            className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Endpoint URL</label>
+                        <input 
+                          type="text"
+                          value={config.config?.endpoint || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'endpoint', e.target.value, true)}
+                          placeholder="https://<account-id>.r2.cloudflarestorage.com"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access Key ID</label>
+                        <input 
+                          type="text"
+                          value={config.config?.accessKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'accessKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Access Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'cloudinary' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cloud Name</label>
+                        <input 
+                          type="text"
+                          value={config.config?.cloudName || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'cloudName', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">API Key</label>
+                        <input 
+                          type="text"
+                          value={config.config?.apiKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'apiKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">API Secret</label>
+                        <input 
+                          type="password"
+                          value={config.config?.apiSecret || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'apiSecret', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'stripe' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Publishable Key</label>
+                        <input 
+                          type="text"
+                          value={config.config?.publishableKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'publishableKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Webhook Secret</label>
+                        <input 
+                          type="password"
+                          value={config.config?.webhookSecret || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'webhookSecret', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'paypal' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client ID</label>
+                        <input 
+                          type="text"
+                          value={config.config?.clientId || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'clientId', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'flutterwave' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public Key</label>
+                        <input 
+                          type="text"
+                          value={config.config?.publicKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'publicKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encryption Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.encryptionKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'encryptionKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {p.id === 'paystack' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public Key</label>
+                        <input 
+                          type="text"
+                          value={config.config?.publicKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'publicKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secret Key</label>
+                        <input 
+                          type="password"
+                          value={config.config?.secretKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'secretKey', e.target.value, true)}
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Separate Cards for OTP and Password ── */}
+                  {(p.id === 'otp_login' || p.id === 'password') && activeCategory === 'login' && (
+                    <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                      <div className={cn(
+                        "h-8 w-8 rounded-lg flex items-center justify-center",
+                        config.isActive ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-slate-100 dark:bg-slate-800"
+                      )}>
+                        <Shield className={cn("h-4 w-4", config.isActive ? "text-emerald-600" : "text-slate-400")} />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                          {p.id === 'otp_login' ? 'Allow users to log in via a one-time password sent to their phone/email.' : 'Allow users to log in using their email and password.'}
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Toggle the Active switch in the card header to enable or disable.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Google Sign-In Card ── */}
+                  {activeCategory === 'login' && p.id === 'google' && (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        <div className="flex flex-col space-y-4">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Web Client ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.clientId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'clientId', e.target.value, true)}
+                              placeholder="YOUR_GOOGLE_CLIENT_ID"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Secret (Optional)</label>
+                            <input 
+                              type="password"
+                              value={config.config?.clientSecret || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'clientSecret', e.target.value, true)}
+                              placeholder="•••••••••••••••••••••••••"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* ── Apple Login Card ── */}
+                  {activeCategory === 'login' && p.id === 'apple' && (
+                    <div className="space-y-4">
+                      {/* ... existing apple login fields ... (omitted for brevity in replacement, but I will include them to keep the file intact) */}
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        <div className="space-y-4">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Service ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.clientId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'clientId', e.target.value, true)}
+                              placeholder="YOUR_APPLE_CLIENT_ID"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Team ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.teamId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'teamId', e.target.value, true)}
+                              placeholder="YOUR_APPLE_TEAM_ID"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Key ID</label>
+                            <input 
+                              type="text"
+                              value={config.config?.keyId || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'keyId', e.target.value, true)}
+                              placeholder="YOUR_APPLE_KEY_ID"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Private Key (.p8)</label>
+                            <textarea 
+                              rows={4}
+                              value={config.config?.privateKey || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'privateKey', e.target.value, true)}
+                              placeholder="YOUR_APPLE_PRIVATE_KEY"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-mono p-3 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Local Storage (Manual) Card ── */}
+                  {activeCategory === 'storage' && p.id === 'local_storage' && (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        <div className="space-y-4">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Upload Directory</label>
+                            <input 
+                              type="text"
+                              value={config.config?.uploadPath || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'uploadPath', e.target.value, true)}
+                              placeholder="e.g., public/uploads"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                            <p className="text-[9px] text-slate-400">Path relative to project root where files will be saved.</p>
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Public URL Prefix</label>
+                            <input 
+                              type="text"
+                              value={config.config?.publicPath || ''}
+                              onChange={(e) => handleFieldChange(p.id, 'publicPath', e.target.value, true)}
+                              placeholder="e.g., /uploads"
+                              className="bg-white dark:bg-slate-900 text-[11px] font-bold p-2.5 rounded-xl outline-none border border-slate-200 dark:border-slate-700 focus:border-accent/30"
+                            />
+                            <p className="text-[9px] text-slate-400">The base URL prefix used to serve these files.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {!['msg91', 'firebase', 'razorpay', 's3', 'smtp', 'cloudinary', 'stripe', 'paypal', 'cloudflare', 'flutterwave', 'paystack', 'admob', 'facebook', 'google', 'apple', 'otp_login', 'password'].includes(p.id) && (
+                    <p className="text-[10px] text-slate-400 italic">Configuration fields for {p.label} will appear here.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Card Footer — hidden for simple login methods (no form config to save) */}
+              {!(activeCategory === 'login' && (p.id === 'otp_login' || p.id === 'password')) && (
+                <div className="mt-auto p-5 bg-slate-50/50 dark:bg-slate-800/20 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                    <p className={cn(
+                      "text-[10px] font-black uppercase mt-1 tracking-tight",
+                      config.id ? "text-emerald-500" : "text-slate-400"
+                    )}>
+                      {config.id ? 'Verified' : 'Pending'}
+                    </p>
                   </div>
                   <button 
-                    onClick={() => handleToggleStatus(c.id!, c.category, c.isActive)}
-                    className={cn(
-                      "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                      c.isActive ? "bg-accent shadow-inner shadow-accent/20" : "bg-slate-200 dark:bg-slate-700"
-                    )}
+                    onClick={() => saveProviderConfig(p.id)}
+                    disabled={isLoading}
+                    className="px-6 py-2.5 bg-slate-900 dark:bg-slate-800 hover:bg-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50"
                   >
-                    <span className={cn(
-                      "inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200",
-                      c.isActive ? "translate-x-6" : "translate-x-1"
-                    )} />
+                    {isLoading ? 'Wait...' : 'Save Settings'}
                   </button>
                 </div>
-                
-                <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight uppercase">{providerInfo?.label || c.provider}</h3>
-                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-1">Configured Provider</p>
-              </div>
-
-              <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-y border-slate-100 dark:border-slate-800">
-                <div className="flex items-center text-xs font-medium text-slate-500 gap-2">
-                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                   <span>Keys secured and active</span>
-                </div>
-              </div>
-
-              <div className="p-4 mt-auto flex items-center gap-2">
-                <button 
-                  onClick={() => openEditModal(c)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-black uppercase tracking-widest hover:bg-accent transition-colors active:scale-[0.98]"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                  Edit Configuration
-                </button>
-              </div>
+              )}
             </div>
           );
         })}
-
-        {/* Available Providers to Add */}
-        {availableProviders.map((p) => {
-          const Icon = p.icon;
-          return (
-            <button 
-              key={p.id}
-              onClick={() => openAddModal(p.id)}
-              className="bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 p-8 flex flex-col items-center justify-center group hover:border-accent/40 hover:bg-accent/[0.02] transition-all"
-            >
-              <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform mb-4">
-                <Icon className="h-7 w-7 text-slate-300 group-hover:text-accent opacity-50 group-hover:opacity-100" />
-              </div>
-              <h4 className="text-sm font-black text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-widest">Add {p.label}</h4>
-            </button>
-          );
-        })}
       </div>
-
-      {/* Configuration Modal */}
-      {isModalOpen && editingConfig && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-300" onClick={() => !isLoading && setIsModalOpen(false)} />
-          
-          <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
-            <form onSubmit={handleSubmit}>
-              <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <Settings2 className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest leading-none">
-                      {PROVIDERS[activeCategory].find(p => p.id === editingConfig.provider)?.label}
-                    </h2>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1.5">Settings Configuration</p>
-                  </div>
-                </div>
-                <button type="button" onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all active:scale-90">
-                  <X className="h-5 w-5 text-slate-400" />
-                </button>
-              </div>
-
-              <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                {/* Form Fields Based on Provider */}
-                {editingConfig.provider === 'msg91' && (
-                  <>
-                    <Field label="Auth Key" type="password" path="authKey" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="Enter MSG91 Auth Key" />
-                    <Field label="Template ID" path="templateId" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="e.g. 64c..." />
-                    <Field label="Sender ID" path="senderId" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="e.g. BKTMSG" />
-                  </>
-                )}
-
-                {editingConfig.provider === 'smtp' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <Field label="Host" path="host" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="smtp.gmail.com" />
-                    </div>
-                    <Field label="Port" path="port" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="587" />
-                    <Field label="Encryption" path="encryption" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="tls" />
-                    <div className="md:col-span-2 space-y-4 pt-2 border-t border-slate-50 dark:border-slate-800 mt-2">
-                       <Field label="User" path="user" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="email@example.com" />
-                       <Field label="Password" type="password" path="pass" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="********" />
-                    </div>
-                  </div>
-                )}
-
-                {editingConfig.provider === 's3' && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                       <Field label="Region" path="region" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="us-east-1" />
-                       <Field label="Bucket Name" path="bucket" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="my-assets" />
-                    </div>
-                    <Field label="Access Key" path="accessKey" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="AKIA..." />
-                    <Field label="Secret Key" type="password" path="secretKey" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="********" />
-                    <Field label="Endpoint (Optional for R2)" path="endpoint" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="https://<id>.r2.cloudflarestorage.com" />
-                  </>
-                )}
-
-                {editingConfig.provider === 'cloudinary' && (
-                  <>
-                    <Field label="Cloud Name" path="cloudName" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="Enter cloud name" />
-                    <Field label="API Key" path="apiKey" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="Enter API key" />
-                    <Field label="API Secret" type="password" path="apiSecret" editingConfig={editingConfig} setEditingConfig={setEditingConfig} placeholder="********" />
-                  </>
-                )}
-
-                {editingConfig.provider === 'firebase' && (
-                   <div className="space-y-4">
-                      <div className="flex flex-col space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                           <FileJson className="h-3 w-3" />
-                           Service Account JSON
-                        </label>
-                        <textarea 
-                          rows={10}
-                          value={editingConfig.config?.json || ''}
-                          onChange={(e) => setEditingConfig({
-                            ...editingConfig, 
-                            config: { ...editingConfig.config, json: e.target.value }
-                          })}
-                          placeholder='{ "type": "service_account", ... }'
-                          className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-accent/30 outline-none transition-all text-xs font-mono text-slate-600 dark:text-slate-300"
-                        />
-                      </div>
-                      <p className="text-[10px] text-slate-400 font-medium italic">Paste the entire contents of your Firebase service account key file here.</p>
-                   </div>
-                )}
-              </div>
-
-              <div className="p-8 bg-slate-50/50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800">
-                <button 
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-slate-900 dark:bg-accent text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg shadow-slate-900/10 dark:shadow-accent/20 active:scale-[0.98] disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      Save Provider Configuration
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Field({ label, path, editingConfig, setEditingConfig, type = "text", placeholder = "" }: any) {
-  return (
-    <div className="flex flex-col space-y-1.5">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</label>
-      <input 
-        type={type}
-        value={editingConfig.config?.[path] || ''}
-        onChange={(e) => setEditingConfig({
-          ...editingConfig, 
-          config: { ...editingConfig.config, [path]: e.target.value }
-        })}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-accent/30 outline-none transition-all text-xs font-bold text-slate-700 dark:text-slate-200"
-      />
     </div>
   );
 }

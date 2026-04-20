@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Settings, Save, AlertTriangle, Smartphone, Tablet, Globe, ShieldAlert, Mail, Link as LinkIcon, Clock } from "lucide-react";
 

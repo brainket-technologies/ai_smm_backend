@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import ThemeManagementClient from "./ThemeManagementClient";
 
 export const metadata = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import TargetingManagementClient from "./TargetingManagementClient";
 
 export default async function TargetingPage() {

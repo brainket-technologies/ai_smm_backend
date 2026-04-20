@@ -1,4 +1,4 @@
-import { getPlatformUsers } from "./actions";
+import { getPlatformUsers } from "./user-actions";
 import UserManagementClient from "./UserManagementClient";
 
 export default async function UsersPage() {

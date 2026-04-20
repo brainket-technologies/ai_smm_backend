@@ -89,12 +89,12 @@ async function main() {
   });
 
   const sampleBusiness = await prisma.business.upsert({
-    where: { id: 1001 }, // Using a fixed ID for seeding reliability
-    update: { userId: sampleUser.id },
+    where: { id: 1001 },
+    update: { owner: { connect: { id: sampleUser.id } } },
     create: {
       id: 1001,
       name: 'Firoz Tech Solutions',
-      userId: sampleUser.id,
+      owner: { connect: { id: sampleUser.id } },
       description: 'AI powered social media management',
       email: 'info@firoztech.com'
     }
@@ -115,7 +115,7 @@ async function main() {
   };
 
   await prisma.appConfig.upsert({
-    where: { id: BigInt(1) }, 
+    where: { id: BigInt(1) },
     update: {
       appName: appConfigJson.app_name,
       maintenanceMode: appConfigJson.maintenance_mode,
@@ -572,13 +572,13 @@ async function main() {
 
   // 3.5 Create Payment Methods
   const paymentMethods = [
-    { 
-      name: 'stripe', 
-      displayName: 'Stripe Checkout', 
-      type: 'gateway', 
-      mode: 'test', 
+    {
+      name: 'stripe',
+      displayName: 'Stripe Checkout',
+      type: 'gateway',
+      mode: 'test',
       image: 'https://logo.clearbit.com/stripe.com',
-      isActive: true, 
+      isActive: true,
       isDefault: true,
       config: {
         publishable_key: 'pk_test_stripe_123',
@@ -586,13 +586,13 @@ async function main() {
         webhook_secret: 'whsec_stripe_123'
       }
     },
-    { 
-      name: 'razorpay', 
-      displayName: 'Razorpay', 
-      type: 'gateway', 
-      mode: 'test', 
+    {
+      name: 'razorpay',
+      displayName: 'Razorpay',
+      type: 'gateway',
+      mode: 'test',
       image: 'https://logo.clearbit.com/razorpay.com',
-      isActive: true, 
+      isActive: true,
       isDefault: false,
       config: {
         key_id: 'rzp_test_567',
@@ -660,7 +660,7 @@ async function main() {
   }
 
   console.log('Static Pages initialized.');
-  
+
   // 4. Create Currencies
   const currenciesPath = path.join(__dirname, 'data', 'currencies.json');
   if (fs.existsSync(currenciesPath)) {
@@ -788,11 +788,11 @@ async function main() {
     const mediaId = await registerMediaInSeed(`https://picsum.photos/seed/${theme.name}/400/300`, 'image', 'theme', 'app_theme');
     await prisma.appTheme.upsert({
       where: { id: BigInt(themes.indexOf(theme) + 1) },
-      update: { 
+      update: {
         ...theme,
         mediaId: mediaId
       },
-      create: { 
+      create: {
         id: BigInt(themes.indexOf(theme) + 1),
         ...theme,
         mediaId: mediaId
@@ -917,7 +917,7 @@ async function main() {
 
   // --- SEED AUXILIARY TARGETING TABLES ---
   console.log('Seeding Auxiliary Targeting Tables...');
-  
+
   const targetRegions = ["Worldwide", "North America", "South America", "Europe", "Asia Pacific", "Middle East", "Africa", "USA", "Canada", "UK", "India", "Australia", "Germany", "France", "Japan", "Brazil", "UAE", "Saudi Arabia", "Singapore", "South Africa", "Mexico", "China", "Italy", "Spain", "Russia"];
   const targetAges = ["Toddlers (1-3)", "Kids (4-12)", "Teens (13-17)", "Young Adults (18-24)", "Millennials (25-34)", "Gen X (35-44)", "Middle-Aged (45-54)", "Pre-retirees (55-64)", "Seniors (65+)", "65 Above", "All Ages", "25 Yr Male", "25 Yr Female", "All Males", "All Females", "Couples", "Expecting Parents", "New Parents", "18-24 Male", "18-24 Female", "25-34 Male", "25-34 Female", "35-44 Male", "35-44 Female"];
   const modelEthnicities = ["Asian", "Black/African Descent", "Caucasian/White", "Hispanic/Latino", "Middle Eastern", "Native American", "Mixed", "South Asian", "Any"];
@@ -941,25 +941,25 @@ async function main() {
 
   // --- SEED FEEDBACK ---
   console.log('Seeding Sample Feedbacks...');
-  
+
   // Re-fetching sampleUser to ensure we have the ID in this scope if needed 
   // (though it was declared in main, this is safer if we rearranged code)
   const firozUser = await prisma.user.findUnique({ where: { email: 'firoz@test.com' } });
 
   const feedbackData = [
-    { 
-      userId: firozUser?.id, 
-      subject: "Business Rating", 
-      message: "Firoz Tech Solutions is doing great work! Highly recommended.", 
-      rating: 5, 
-      status: "resolved" 
+    {
+      userId: firozUser?.id,
+      subject: "Business Rating",
+      message: "Firoz Tech Solutions is doing great work! Highly recommended.",
+      rating: 5,
+      status: "resolved"
     },
-    { 
+    {
       userId: firozUser?.id || superAdmin.id,
-      subject: "General Feedback", 
-      message: "Categories page is loading a bit slow on my end.", 
-      rating: 3, 
-      status: "pending" 
+      subject: "General Feedback",
+      message: "Categories page is loading a bit slow on my end.",
+      rating: 3,
+      status: "pending"
     },
   ];
 
@@ -1038,12 +1038,12 @@ async function main() {
   for (const model of aiModels) {
     const exists = await prisma.aIModel.findUnique({ where: { modelKey: model.modelKey } });
     if (exists) {
-        await prisma.aIModel.update({
-            where: { modelKey: model.modelKey },
-            data: model
-        });
+      await prisma.aIModel.update({
+        where: { modelKey: model.modelKey },
+        data: model
+      });
     } else {
-        await prisma.aIModel.create({ data: model });
+      await prisma.aIModel.create({ data: model });
     }
   }
 
@@ -1082,6 +1082,238 @@ async function main() {
     } else {
       await prisma.aIPrompt.create({ data: prompt });
     }
+  }
+
+  console.log('Seeding External Service Configs...');
+  const externalConfigs = [
+    {
+      category: 'otp',
+      provider: 'msg91',
+      config: {
+        authKey: 'YOUR_MSG91_AUTH_KEY',
+        templateId: 'YOUR_TEMPLATE_ID',
+        senderId: 'YOUR_SENDER_ID'
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'otp',
+      provider: 'firebase',
+      config: {
+        apiKey: 'AIzaSyA5SVlOwGfeSrfOprRry5a-1kkoHl_m_Fg',
+        authDomain: 'fir-notes-20c44.firebaseapp.com',
+        projectId: 'fir-notes-20c44'
+      },
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'mail',
+      provider: 'smtp',
+      config: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        user: 'admin@brandboost.ai',
+        pass: 'YOUR_PASSWORD',
+        from: 'BrandBoost AI <admin@brandboost.ai>'
+      },
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'storage',
+      provider: 's3',
+      config: {
+        bucket: 'brandboost-ai',
+        region: 'auto',
+        endpoint: 'https://your-account-id.r2.cloudflarestorage.com',
+        accessKeyId: 'YOUR_ACCESS_KEY',
+        secretAccessKey: 'YOUR_SECRET_KEY',
+        publicUrl: 'https://pub-your-id.r2.dev'
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'storage',
+      provider: 'cloudinary',
+      config: {
+        cloudName: 'YOUR_CLOUD_NAME',
+        apiKey: 'YOUR_API_KEY',
+        apiSecret: 'YOUR_API_SECRET'
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'storage',
+      provider: 'cloudflare',
+      config: {
+        accountId: '01d5e6ef06459ccd65c6cf090b257f3a',
+        bucket: 'smm-app',
+        accessKey: 'fc267b61e37006faec3c74467d5e4257',
+        secretKey: '0db4c7e968759254c708a8d8a7dfbef4b4c095c64a5fada737ac15baef1ec0d2',
+        publicUrl: 'https://pub-48874cf0b48c45fda1607415bcffe39d.r2.dev',
+        endpoint: 'https://01d5e6ef06459ccd65c6cf090b257f3a.r2.cloudflarestorage.com',
+      },
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'storage',
+      provider: 'firebase',
+      config: {
+        bucketUrl: 'gs://fir-notes-20c44.firebasestorage.app',
+        json: `{
+  "type": "service_account",
+  "project_id": "fir-notes-20c44",
+  "private_key_id": "4820252c67b5cf6255bc8d86b7dbc85fd2b85ac5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC0c2R0mK8DDX76\n0KwFZ4X1z3mfx4tEv0XwW5yJOs5/4D/vHnGisKD0YyLL8LJslmyXRCFSjTJjxCZU\nxiKLOBP1puuhTStQpIfX3pjRPsh5sHWLdLBM1LoMCYOD2sNUSgK0+tPfBPqxyPh+\nAO/ZzR8M3728c2BjyPqXIoc5ZUpMbRavhL92VU5BItlntgg5UYv2K2O40pLOSZX9\nGrQhzofXyBQkphfjaa+5+FRd9AJR1gIFJ5kF2giWHmGtdgkkrU1JaonyzZ5E7MGe\nkHqHntJFvrDOXY3022FBh1pII9kQmyiYzDE/3xntGZJ1/COMlJAIe77Vvc2d+Upp\nAXSLUAFlAgMBAAECggEAJGthq/Kg5+HSbfatsU2KiOj96BSS9CYSjIdA2aWHxeFR\npgYj8yzo30oe3MBQkn/tnL4AZ7PdpqsQ/W0bzbNcu+ibh+uWQWljjVr8xsaAGadW\nofXEG02X2xQUegkuARYK49H37vwHSNiB5pRz1CaFDMkfdyhmHN2UTeqHFjtuOmw2\n7QxX5OybbidxFb/7RpgOSLHAe+RbclY4YnGpVM+57v7HLvEKahdJEpvqV3Uqa+3h\nUgbXOQDv5JCcgaoupGvjXiFC0SuHk5djItu/Uc6oSkUBan/q+6kal8aTFhovdl3Q\ngqnXfSSNwo1RAuFrELr3gcFkb2ubNojnNrZSSitHZQKBgQDo6k+Vvz45BcZgWXTG\n112QG5klGelzbZxBLKM8gsH11IdJr7A46nsh3BMCW+rGGDChNvuQ0nMww0E2lWK1\nZCW9WPCDJesgjsCtVc/SS50xRsX83DjS1N6XiuyD7vK2QZfB3N7kEYKJPTySydPN\nuqFiw3m28RQsnXDz0fsPcvXZ8wKBgQDGVeo5WSxTwEUgfIjiprtk4BYpER+tCb5o\nQKm3K/yC3ReGH0FJunsuAbiN/8zt71uw+Q7hKoPWf3TO7Fwrxg37eMb2DOvr6bap\nYqakN6H6UVaADA1wNmD2DnN0MHwGwOYLCxRWFZtGcQ6S28fCEO2oADl6NCF6aCJY\nfn4e8gn1RwKBgCAaU5fXQTNI2XvkOJVDj/DR7PzRIn03aWcOSP2JJETG41LDtW1S\n3F/hXnlfw+9D3EgMNQZUC254Kx/j3TQVNqJvhM7+xfa51lLN1hQtOeBV2eotTGO6\n1WdbzZetsqRuTAV7dPlIdI6H8zZkPR5JD/914+vUNKylkrD4izso5DwDAoGBAJAv\njWO7rDoGoTqIzorXY4xmTDX2uOx3FPF9cOQ1GhGY4a0js7cB1uMPZTf2KukfBa2W\nonaXDdk2N5jmw+sexLN4jkv6ANk0wxJJIZRozVzJHPVhzbMyFTNMNirVxJS0T4jf\nuR0MACIptsqU9Jfk7qEf6KkqlNwEMFPdQZsFoq+pAoGATNWAWyXaUxpcDn8/c2xT\n6QQYBZNqgNK9d5AKe6lR721QFonMTiIGYbXLSRCHWzit6JIzFSFkKF8HGDmi3+Lz\nWzVYRKC/jqAbA35bqR2G9tfMOLNC8Y+jzUKlJJUTyEgmtGxZ7nvjQXCSCwoJbywz\nR1bPGePhLctyXYU+eZtsWd4=\nuniverse_domain: \"googleapis.com\"\n}`
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'storage',
+      provider: 'local_storage',
+      config: {
+        uploadPath: 'public/uploads',
+        publicPath: '/uploads'
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'notification',
+      provider: 'firebase',
+      config: {
+        projectId: 'fir-notes-20c44',
+        clientEmail: 'firebase-adminsdk-lkmsq@fir-notes-20c44.iam.gserviceaccount.com',
+        privateKey: `-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC0c2R0mK8DDX76\n0KwFZ4X1z3mfx4tEv0XwW5yJOs5/4D/vHnGisKD0YyLL8LJslmyXRCFSjTJjxCZU\nxiKLOBP1puuhTStQpIfX3pjRPsh5sHWLdLBM1LoMCYOD2sNUSgK0+tPfBPqxyPh+\nAO/ZzR8M3728c2BjyPqXIoc5ZUpMbRavhL92VU5BItlntgg5UYv2K2O40pLOSZX9\nGrQhzofXyBQkphfjaa+5+FRd9AJR1gIFJ5kF2giWHmGtdgkkrU1JaonyzZ5E7MGe\nkHqHntJFvrDOXY3022FBh1pII9kQmyiYzDE/3xntGZJ1/COMlJAIe77Vvc2d+Upp\nAXSLUAFlAgMBAAECggEAJGthq/Kg5+HSbfatsU2KiOj96BSS9CYSjIdA2aWHxeFR\npgYj8yzo30oe3MBQkn/tnL4AZ7PdpqsQ/W0bzbNcu+ibh+uWQWljjVr8xsaAGadW\nofXEG02X2xQUegkuARYK49H37vwHSNiB5pRz1CaFDMkfdyhmHN2UTeqHFjtuOmw2\n7QxX5OybbidxFb/7RpgOSLHAe+RbclY4YnGpVM+57v7HLvEKahdJEpvqV3Uqa+3h\nUgbXOQDv5JCcgaoupGvjXiFC0SuHk5djItu/Uc6oSkUBan/q+6kal8aTFhovdl3Q\ngqnXfSSNwo1RAuFrELr3gcFkb2ubNojnNrZSSitHZQKBgQDo6k+Vvz45BcZgWXTG\n112QG5klGelzbZxBLKM8gsH11IdJr7A46nsh3BMCW+rGGDChNvuQ0nMww0E2lWK1\nZCW9WPCDJesgjsCtVc/SS50xRsX83DjS1N6XiuyD7vK2QZfB3N7kEYKJPTySydPN\nuqFiw3m28RQsnXDz0fsPcvXZ8wKBgQDGVeo5WSxTwEUgfIjiprtk4BYpER+tCb5o\nQKm3K/yC3ReGH0FJunsuAbiN/8zt71uw+Q7hKoPWf3TO7Fwrxg37eMb2DOvr6bap\nYqakN6H6UVaADA1wNmD2DnN0MHwGwOYLCxRWFZtGcQ6S28fCEO2oADl6NCF6aCJY\nfn4e8gn1RwKBgCAaU5fXQTNI2XvkOJVDj/DR7PzRIn03aWcOSP2JJETG41LDtW1S\n3F/hXnlfw+9D3EgMNQZUC254Kx/j3TQVNqJvhM7+xfa51lLN1hQtOeBV2eotTGO6\n1WdbzZetsqRuTAV7dPlIdI6H8zZkPR5JD/914+vUNKylkrD4izso5DwDAoGBAJAv\njWO7rDoGoTqIzorXY4xmTDX2uOx3FPF9cOQ1GhGY4a0js7cB1uMPZTf2KukfBa2W\nonaXDdk2N5jmw+sexLN4jkv6ANk0wxJJIZRozVzJHPVhzbMyFTNMNirVxJS0T4jf\nuR0MACIptsqU9Jfk7qEf6KkqlNwEMFPdQZsFoq+pAoGATNWAWyXaUxpcDn8/c2xT\n6QQYBZNqgNK9d5AKe6lR721QFonMTiIGYbXLSRCHWzit6JIzFSFkKF8HGDmi3+Lz\nWzVYRKC/jqAbA35bqR2G9tfMOLNC8Y+jzUKlJJUTyEgmtGxZ7nvjQXCSCwoJbywz\nR1bPGePhLctyXYU+eZtsWd4=\n-----END PRIVATE KEY-----`
+      },
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'ads',
+      provider: 'admob',
+      config: {
+        appId: 'ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX',
+        bannerUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+        interstitialUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+        rewardedUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+        nativeUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+        appOpenUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+      },
+      isActive: false,
+      isDefault: true
+    },
+    {
+      category: 'ads',
+      provider: 'facebook',
+      config: {
+        appId: 'YOUR_FACEBOOK_APP_ID',
+        bannerPlacementId: 'YOUR_BANNER_PLACEMENT_ID',
+        interstitialPlacementId: 'YOUR_INTERSTITIAL_PLACEMENT_ID',
+        nativePlacementId: 'YOUR_NATIVE_PLACEMENT_ID',
+        rewardedPlacementId: 'YOUR_REWARDED_PLACEMENT_ID',
+      },
+      isActive: false,
+      isDefault: false
+    },
+    {
+      category: 'login',
+      provider: 'otp_login',
+      config: {},
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'login',
+      provider: 'password',
+      config: {},
+      isActive: true,
+      isDefault: false
+    },
+    {
+      category: 'login',
+      provider: 'google',
+      config: {
+        clientId: '332307306449-0pb9b6ic5b9l2dq9te7le0v5quurq5vb.apps.googleusercontent.com',
+        clientSecret: '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'
+      },
+      isActive: true,
+      isDefault: false
+    },
+    {
+      category: 'login',
+      provider: 'apple',
+      config: {
+        clientId: 'YOUR_APPLE_CLIENT_ID',
+        teamId: 'YOUR_APPLE_TEAM_ID',
+        keyId: 'YOUR_APPLE_KEY_ID',
+        privateKey: 'YOUR_APPLE_PRIVATE_KEY'
+      },
+      isActive: false,
+      isDefault: false
+    },
+  ];
+
+  for (const config of externalConfigs) {
+    await prisma.externalServiceConfig.upsert({
+      where: { category_provider: { category: config.category, provider: config.provider } },
+      update: config,
+      create: config,
+    });
+  }
+
+  console.log('Seeding Payment Gateways...');
+  const gatewayPaymentMethods = [
+    {
+      name: 'razorpay',
+      displayName: 'Razorpay',
+      type: 'gateway',
+      mode: 'test',
+      isActive: true,
+      isDefault: true,
+      config: {
+        keyId: 'rzp_test_YOUR_KEY',
+        keySecret: 'YOUR_SECRET'
+      }
+    },
+    {
+      name: 'stripe',
+      displayName: 'Stripe',
+      type: 'gateway',
+      mode: 'test',
+      isActive: false,
+      isDefault: false,
+      config: {
+        publishableKey: 'pk_test_YOUR_KEY',
+        secretKey: 'sk_test_YOUR_SECRET'
+      }
+    },
+    {
+      name: 'paypal',
+      displayName: 'PayPal',
+      type: 'gateway',
+      mode: 'test',
+      isActive: false,
+      isDefault: false,
+      config: {
+        clientId: 'YOUR_CLIENT_ID',
+        secretKey: 'YOUR_SECRET'
+      }
+    }
+  ];
+
+  for (const method of gatewayPaymentMethods) {
+    await prisma.paymentMethod.upsert({
+      where: { name: method.name },
+      update: method,
+      create: method,
+    });
   }
 
   console.log('Seed completed successfully.');

@@ -1,16 +1,26 @@
 "use server";
 
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getFeedbacks() {
   try {
     const feedbacks = await prisma.feedback.findMany({
-      include: {
+      select: {
+        id: true,
+        userId: true,
+        title: true,
+        message: true,
+        rating: true,
+        status: true,
+        createdAt: true,
         user: {
-          include: {
-            businesses: true
-          }
+           select: {
+              id: true,
+              name: true,
+              email: true,
+              profileMedia: { select: { fileUrl: true } }
+           }
         }
       },
       orderBy: { createdAt: 'desc' }

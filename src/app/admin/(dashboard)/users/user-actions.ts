@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getPlatformUsers() {
@@ -14,7 +14,7 @@ export async function getPlatformUsers() {
       },
       include: {
         role: true,
-        media: {
+        profileMedia: {
           select: { fileUrl: true }
         },
         userSubscriptions: {
@@ -40,7 +40,7 @@ export async function getPlatformUsers() {
         ...u,
         id: u.id.toString(),
         createdAt: u.createdAt ? u.createdAt.toISOString() : new Date().toISOString(),
-        image: u.media?.fileUrl || null, // Map back to 'image' for frontend compatibility
+        image: u.profileMedia?.fileUrl || null, // Map back to 'image' for frontend compatibility
         businessCount: u._count.businesses,
         subscription: u.userSubscriptions?.[0]?.tierKey || "Free Trial"
       }))

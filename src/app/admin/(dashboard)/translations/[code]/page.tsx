@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";

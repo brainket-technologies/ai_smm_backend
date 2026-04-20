@@ -16,7 +16,11 @@ import {
   HelpCircle,
   Target,
   Bot,
-  Zap
+  Zap,
+  Layers,
+  Palette,
+  FolderTree,
+  Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,36 +34,45 @@ const menuGroups = [
     ]
   },
   {
-    label: "Business Setting",
+    label: "App Settings",
     items: [
-      { name: "Global Config", href: "/admin/config", icon: Settings },
-      { name: "App Themes", href: "/admin/themes", icon: Palette },
-      { name: "Static Page", href: "/admin/pages", icon: FileText },
-      { name: "Platforms", href: "/admin/platforms", icon: Layers },
-      { name: "Categories", href: "/admin/categories", icon: FolderTree },
-      { name: "AI Models", href: "/admin/ai-models", icon: Bot },
-      { name: "AI Prompts", href: "/admin/ai-prompts", icon: FileText },
-      { name: "3rd Party Config", href: "/admin/service-configs", icon: Zap },
-      { name: "Targeting Data", href: "/admin/targeting", icon: Target },
-      { name: "Localization", href: "/admin/translations", icon: Languages },
-      { name: "Currencies", href: "/admin/currencies", icon: Globe },
-      { name: "Payment Method", href: "/admin/payments", icon: CreditCard },
+      { name: "Global Config",  href: "/admin/config",      icon: Settings   },
+      { name: "App Themes",     href: "/admin/themes",      icon: Palette    },
+      { name: "Static Page",    href: "/admin/pages",       icon: FileText   },
+      { name: "Platforms",      href: "/admin/platforms",   icon: Layers     },
+      { name: "Categories",     href: "/admin/categories",  icon: FolderTree },
     ]
   },
   {
-    label: "Subscription Management",
+    label: "AI & Services",
     items: [
-      { name: "Feature Flags", href: "/admin/feature-flags", icon: ShieldCheck },
-      { name: "Subscription", href: "/admin/subscriptions", icon: CreditCard },
+      { name: "AI Models",       href: "/admin/ai-models",      icon: Bot     },
+      { name: "AI Prompts",      href: "/admin/ai-prompts",     icon: FileText},
+      { name: "3rd Party Config",href: "/admin/service-configs",icon: Zap     },
+    ]
+  },
+  {
+    label: "Content & Data",
+    items: [
+      { name: "Targeting Data", href: "/admin/targeting",    icon: Target    },
+      { name: "Localization",   href: "/admin/translations", icon: Languages },
+      { name: "Currencies",     href: "/admin/currencies",   icon: Globe     },
+    ]
+  },
+  {
+    label: "Subscriptions",
+    items: [
+      { name: "Feature Flags",  href: "/admin/feature-flags",  icon: ShieldCheck },
+      { name: "Subscription",   href: "/admin/subscriptions",  icon: CreditCard  },
     ]
   },
   {
     label: "Administration",
     items: [
-      { name: "Platform Users", href: "/admin/users", icon: Users },
-      { name: "Roles", href: "/admin/roles", icon: Shield },
-      { name: "User Feedback", href: "/admin/feedback", icon: HelpCircle },
-      { name: "Help & Support", href: "/admin/help", icon: HelpCircle },
+      { name: "Platform Users", href: "/admin/users",    icon: Users      },
+      { name: "Roles",          href: "/admin/roles",    icon: Shield     },
+      { name: "User Feedback",  href: "/admin/feedback", icon: HelpCircle },
+      { name: "Help & Support", href: "/admin/help",     icon: HelpCircle },
     ]
   }
 ];

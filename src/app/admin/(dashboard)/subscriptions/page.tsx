@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import SubscriptionsManagementClient from "./SubscriptionsManagementClient";
 
 export default async function SubscriptionsPage() {

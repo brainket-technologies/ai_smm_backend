@@ -18,7 +18,7 @@ import {
   Briefcase,
   ShieldAlert
 } from 'lucide-react';
-import { toggleUserVerification, deleteUser } from './actions';
+import { toggleUserVerification, deleteUser } from './user-actions';
 import DataManagementToolbar from '@/components/admin/DataManagementToolbar';
 
 function cn(...classes: any[]) {

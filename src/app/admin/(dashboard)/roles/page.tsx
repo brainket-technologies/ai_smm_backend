@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import RolesManagementClient from "./RolesManagementClient";
 
 export default async function RolesPage() {

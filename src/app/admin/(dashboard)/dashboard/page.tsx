@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { 
   Users, 
@@ -17,7 +17,15 @@ async function getStats() {
     prisma.user.findMany({
       take: 5,
       orderBy: { createdAt: 'desc' },
-      select: { id: true, name: true, phone: true, createdAt: true, image: true }
+      select: { 
+        id: true, 
+        name: true, 
+        phone: true, 
+        createdAt: true, 
+        profileMedia: {
+          select: { fileUrl: true }
+        }
+      }
     }),
     prisma.aIGeneratedContent.findMany({
       take: 5,
@@ -31,7 +39,13 @@ async function getStats() {
     businesses: Number(businessCount),
     aiGenerations: Number(aiCount),
     activeSubscriptions: Number(subscriptionCount),
-    recentUsers: recentUsers.map(u => ({ ...u, id: u.id.toString() })),
+    recentUsers: recentUsers.map(u => ({ 
+      id: u.id.toString(),
+      name: u.name,
+      phone: u.phone,
+      createdAt: u.createdAt,
+      image: u.profileMedia?.fileUrl || null
+    })),
     recentAI: recentAI.map(a => ({ ...a, id: a.id.toString() }))
   };
 }

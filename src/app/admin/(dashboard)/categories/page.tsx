@@ -1,5 +1,5 @@
 import React from 'react';
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import CategoriesManagementClient from "./CategoriesManagementClient";
 
 export default async function CategoriesPage() {

@@ -1,6 +1,6 @@
  import { Metadata } from 'next';
 import ExternalServiceManagement from './ExternalServiceManagement';
-import { getExternalServiceConfigs } from './actions';
+import { getExternalServiceConfigs } from './service-actions';
 
 export const metadata: Metadata = {
   title: '3rd Party Config | Admin Dashboard',
@@ -8,8 +8,13 @@ export const metadata: Metadata = {
 };
 
 export default async function ServiceConfigsPage() {
-  const result = await getExternalServiceConfigs();
-  const initialConfigs = result.success ? result.data : [];
+  let initialConfigs: any[] = [];
+  try {
+    const result = await getExternalServiceConfigs();
+    initialConfigs = result.success ? result.data : [];
+  } catch (e) {
+    console.error("ServiceConfigsPage load error:", e);
+  }
 
   return (
     <div className="p-6 pb-20">

@@ -1,4 +1,4 @@
- import prisma from "./db";
+ import prisma from "./prisma";
 
 export type MediaCategory = 'logo' | 'ai_generated' | 'post' | 'product' | 'service' | 'avatar' | 'flag' | 'theme';
 export type RelatedType = 'business' | 'ai_content' | 'product' | 'service' | 'user' | 'platform' | 'payment_method' | 'app_theme' | 'app_translation';

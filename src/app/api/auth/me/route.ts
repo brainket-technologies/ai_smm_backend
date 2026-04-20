@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/jwt';
 
 import bcrypt from 'bcryptjs';
@@ -22,6 +22,7 @@ export async function GET(request: Request) {
       where: { id: BigInt(decoded.id) },
       include: {
         role: true,
+        profileMedia: { select: { fileUrl: true } }
       },
     });
 
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      image: user.image,
+      image: user.profileMedia?.fileUrl || null,
       role: user.role ? {
         id: user.role.id.toString(),
         name: user.role.name,
@@ -75,7 +76,18 @@ export async function PATCH(request: Request) {
     if (email !== undefined) updateData.email = email;
     if (phone !== undefined) updateData.phone = phone;
     if (bio !== undefined) updateData.bio = bio;
-    if (image !== undefined) updateData.image = image;
+    
+    if (image && (image.startsWith('http') || image.startsWith('data:image'))) {
+      const mediaId = await registerMedia({
+        fileUrl: image,
+        fileType: 'image',
+        mediaCategory: 'profile',
+        relatedType: 'user'
+      });
+      if (mediaId) {
+        updateData.mediaId = mediaId;
+      }
+    }
     
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
@@ -86,7 +98,10 @@ export async function PATCH(request: Request) {
     const updatedUser = await prisma.user.update({
       where: { id: BigInt(decoded.id) },
       data: updateData,
-      include: { role: true }
+      include: { 
+        role: true,
+        profileMedia: { select: { fileUrl: true } }
+      }
     });
 
     const userData = {
@@ -94,7 +109,7 @@ export async function PATCH(request: Request) {
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone,
-      image: updatedUser.image,
+      image: updatedUser.profileMedia?.fileUrl || null,
       role: updatedUser.role ? {
         id: updatedUser.role.id.toString(),
         name: updatedUser.role.name,
