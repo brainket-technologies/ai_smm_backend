@@ -29,31 +29,31 @@ export async function GET(request: Request) {
     const landingUrl = `${origin}/`;
 
     const defaultFeatures = [
-      {
-        id: "1",
-        title: "AI Post Generation",
-        description: "Generate high-engaging social media posts for any platform using advanced AI models tailored to your brand voice.",
-        icon: "Zap"
-      },
-      {
-        id: "2",
-        title: "Multi-Platform Scheduling",
-        description: "Schedule and manage content across Instagram, Facebook, LinkedIn, and Twitter from a single, unified dashboard.",
-        icon: "Globe"
-      },
-      {
-        id: "3",
-        title: "Business Intelligence",
-        description: "Get deep insights into your audience, product performance, and social growth with AI-driven analytics.",
-        icon: "Cpu"
-      },
-      {
-        id: "4",
-        title: "Team Collaboration",
-        description: "Role-based access control and seamless workflows for your marketing team and business managers.",
-        icon: "ShieldAlert"
-      }
+      { id: "1", title: "AI Content Engine", description: "Generate localized, high-impact posts for Instagram, Facebook, and LinkedIn in seconds.", icon: "Zap" },
+      { id: "2", title: "Global Scheduling", description: "One-click publishing across multiple platforms with AI-optimized timing.", icon: "Globe" },
+      { id: "3", title: "Business CRM", description: "Manage products, services, and customers with integrated business intelligence.", icon: "Cpu" },
+      { id: "4", title: "Analytics Wall", description: "Real-time growth tracking and audience insights delivered via a beautiful dashboard.", icon: "BarChart3" },
+      { id: "5", title: "Team Roles", description: "Granular access control for agency owners, managers, and contributors.", icon: "ShieldAlert" },
+      { id: "6", title: "Brand Voice", description: "AI models trained on your specific brand identity for consistent messaging.", icon: "Star" }
     ];
+
+    const defaultTestimonials = [
+      { id: "1", name: "Sarah Chen", role: "Digital Agency Owner", text: "BrandBoost AI reduced my content creation time by 80%. It's like having a full-time social team.", avatar: "https://i.pravatar.cc/150?img=32" },
+      { id: "2", name: "David Miller", role: "E-commerce Manager", text: "The integration with our product catalog is seamless. AI generation works like magic for our ads.", avatar: "https://i.pravatar.cc/150?img=12" }
+    ];
+
+    // Initialize Default Static Pages if missing
+    const pagesToSeed = [
+      { slug: 'faq', title: 'Frequently Asked Questions', content: '<h3>How does the AI work?</h3><p>Our AI uses advanced LLMs fine-tuned for social media marketing.</p>' }
+    ];
+
+    for (const page of pagesToSeed) {
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO static_pages (slug, title, content, is_active, created_at, updated_at)
+        VALUES ('${page.slug}', '${page.title}', '${page.content}', true, NOW(), NOW())
+        ON CONFLICT (slug) DO NOTHING;
+      `);
+    }
 
     // Auto-Set Values for Production based on dynamic origin
     await prisma.$executeRawUnsafe(`
@@ -62,9 +62,9 @@ export async function GET(request: Request) {
         api_base_url = '${apiUrl}',
         landing_page_url = '${landingUrl}',
         admin_panel_url = '${adminUrl}',
-        hero_title = 'Elevate Your Social Influence with AI',
-        hero_subtitle = 'The ultimate Social Media AI Management suite for businesses. Generate, schedule, and grow your digital presence in seconds.',
-        pricing_title = 'Simple, Transparent Pricing',
+        hero_title = 'Ignite Your Brand with AI-Powered Social Mastery',
+        hero_subtitle = 'The all-in-one Social Media AI management suite. Create, Automate, and Scale your digital presence across all platforms instantly.',
+        pricing_title = 'Engineered for Growth',
         features_json = '${JSON.stringify(defaultFeatures)}'
       WHERE id = 1
     `);
