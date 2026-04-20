@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { 
   Settings, Save, AlertTriangle, Smartphone, Tablet, Globe, 
   ShieldAlert, Mail, Link as LinkIcon, Clock, Cpu, 
@@ -85,6 +86,26 @@ async function updateConfig(formData: FormData) {
       }
     });
   }
+
+  revalidatePath("/admin/config");
+}
+
+async function autoSetConfig() {
+  "use server";
+  
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const proto = headersList.get('x-forwarded-proto') || 'https';
+  const origin = `${proto}://${host}`;
+  
+  await prisma.appConfig.update({
+    where: { id: BigInt(1) },
+    data: {
+      apiBaseUrl: `${origin}/api/v1`,
+      landingPageUrl: `${origin}/`,
+      adminPanelUrl: `${origin}/admin`
+    }
+  });
 
   revalidatePath("/admin/config");
 }
@@ -286,6 +307,19 @@ export default async function ConfigPage() {
                   <span>Update Configuration</span>
                 </button>
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center uppercase tracking-widest font-bold">Instantly applies changes</p>
+                
+                <div className="pt-4 border-t border-slate-800 dark:border-slate-100 mt-4">
+                  <form action={autoSetConfig}>
+                    <button 
+                      type="submit"
+                      className="w-full bg-slate-800 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-slate-200 text-white dark:text-slate-900 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 border border-slate-700"
+                    >
+                      <Zap className="h-3 w-3 text-amber-500" />
+                      <span>Auto-Configure URLs</span>
+                    </button>
+                  </form>
+                  <p className="text-[9px] text-slate-500 text-center mt-2">Auto-detects & sets your current domain</p>
+                </div>
             </div>
 
             {/* Protocol Toggles */}
