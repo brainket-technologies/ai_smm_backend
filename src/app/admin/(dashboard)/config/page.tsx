@@ -6,14 +6,21 @@ import {
   CheckCircle2, Zap
 } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 async function getConfig() {
-  const config = await prisma.appConfig.findFirst({
-    where: { id: BigInt(1) }
-  });
-  
-  const platforms = await prisma.appPlatformConfig.findMany();
-  
-  return { config, platforms };
+  try {
+    const config = await prisma.appConfig.findFirst({
+      where: { id: BigInt(1) }
+    });
+    
+    const platforms = await prisma.appPlatformConfig.findMany();
+    
+    return { config, platforms };
+  } catch (error) {
+    console.error("Failed to fetch config:", error);
+    return { config: null, platforms: [] };
+  }
 }
 
 async function updateConfig(formData: FormData) {
@@ -27,6 +34,8 @@ async function updateConfig(formData: FormData) {
   const globalAiEnabled = formData.get("globalAiEnabled") === "on";
   const supportEmail = formData.get("supportEmail") as string;
   const apiBaseUrl = formData.get("apiBaseUrl") as string;
+  const landingPageUrl = formData.get("landingPageUrl") as string;
+  const adminPanelUrl = formData.get("adminPanelUrl") as string;
   const freeTrialDays = parseInt(formData.get("freeTrialDays") as string) || 7;
 
   await prisma.appConfig.update({
@@ -39,6 +48,8 @@ async function updateConfig(formData: FormData) {
       globalAiEnabled,
       supportEmail,
       apiBaseUrl,
+      landingPageUrl,
+      adminPanelUrl,
       freeTrialDays
     }
   });
@@ -161,6 +172,27 @@ export default async function ConfigPage() {
                     />
                     <Clock className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                 </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Landing Page URL</label>
+                <input 
+                  name="landingPageUrl"
+                  defaultValue={config.landingPageUrl || ""}
+                  placeholder="https://ai-smm-backend.vercel.app/"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Admin Panel URL</label>
+                <input 
+                  name="adminPanelUrl"
+                  defaultValue={config.adminPanelUrl || ""}
+                  placeholder="https://ai-smm-backend.vercel.app/admin"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium text-xs"
+                />
               </div>
             </div>
           </section>

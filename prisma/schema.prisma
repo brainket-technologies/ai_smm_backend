@@ -91,6 +91,8 @@ model AppConfig {
   developerMode      Boolean?  @default(false) @map("developer_mode")
   globalAiEnabled    Boolean?  @default(true) @map("global_ai_enabled")
   apiBaseUrl         String?   @map("api_base_url")
+  landingPageUrl     String?   @map("landing_page_url")
+  adminPanelUrl      String?   @map("admin_panel_url")
   supportEmail       String?   @map("support_email")
   createdAt          DateTime? @default(now()) @map("created_at")
   updatedAt          DateTime? @default(now()) @map("updated_at")
