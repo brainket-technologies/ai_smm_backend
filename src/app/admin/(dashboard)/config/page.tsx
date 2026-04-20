@@ -130,7 +130,7 @@ export default async function ConfigPage() {
                 <input 
                   name="appName"
                   defaultValue={config.appName}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-emerald-500 outline-none transition-all font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -138,7 +138,7 @@ export default async function ConfigPage() {
                 <input 
                   name="supportEmail"
                   defaultValue={config.supportEmail || ""}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-emerald-500 outline-none transition-all font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -146,7 +146,7 @@ export default async function ConfigPage() {
                 <input 
                   name="apiBaseUrl"
                   defaultValue={config.apiBaseUrl || ""}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-emerald-500 outline-none transition-all font-mono text-xs"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-mono text-xs"
                 />
               </div>
               <div className="space-y-2">
@@ -156,7 +156,7 @@ export default async function ConfigPage() {
                       type="number"
                       name="freeTrialDays"
                       defaultValue={config.freeTrialDays || 7}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-emerald-500 outline-none transition-all font-bold"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-emerald-500 outline-none transition-all font-bold"
                     />
                     <Clock className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                 </div>
@@ -174,11 +174,11 @@ export default async function ConfigPage() {
              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Version</label>
-                    <input name="android_appVersion" defaultValue={androidData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
+                    <input name="android_appVersion" defaultValue={androidData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Build Code</label>
-                    <input type="number" name="android_appVersionCode" defaultValue={androidData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
+                    <input type="number" name="android_appVersionCode" defaultValue={androidData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-amber-500/5 rounded-xl border border-amber-500/10">
                     <label className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Min Version</label>
@@ -192,11 +192,11 @@ export default async function ConfigPage() {
              <div className="space-y-4">
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
-                    <input name="android_storeUrl" defaultValue={androidData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium" />
+                    <input name="android_storeUrl" defaultValue={androidData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
-                    <textarea name="android_updateDescription" defaultValue={androidData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none" rows={2} />
+                    <textarea name="android_updateDescription" defaultValue={androidData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none text-slate-900 dark:text-white" rows={2} />
                 </div>
              </div>
           </section>
@@ -211,11 +211,11 @@ export default async function ConfigPage() {
              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Version</label>
-                    <input name="ios_appVersion" defaultValue={iosData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
+                    <input name="ios_appVersion" defaultValue={iosData.appVersion || "1.0.0"} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Build Code</label>
-                    <input type="number" name="ios_appVersionCode" defaultValue={iosData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm" />
+                    <input type="number" name="ios_appVersionCode" defaultValue={iosData.appVersionCode || 1} className="w-full bg-transparent border-0 focus:ring-0 font-bold p-0 text-sm text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5 p-3 bg-blue-500/5 rounded-xl border border-blue-500/10">
                     <label className="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Min Version</label>
@@ -229,11 +229,11 @@ export default async function ConfigPage() {
              <div className="space-y-4">
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Store URL</label>
-                    <input name="ios_storeUrl" defaultValue={iosData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium" />
+                    <input name="ios_storeUrl" defaultValue={iosData.storeUrl || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white" />
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Update Notes</label>
-                    <textarea name="ios_updateDescription" defaultValue={iosData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none" rows={2} />
+                    <textarea name="ios_updateDescription" defaultValue={iosData.updateDescription || ""} className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium resize-none text-slate-900 dark:text-white" rows={2} />
                 </div>
              </div>
           </section>
@@ -293,7 +293,7 @@ export default async function ConfigPage() {
                         name="maintenanceMessage"
                         defaultValue={config.maintenanceMessage || ""}
                         rows={3}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-medium resize-none"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-medium resize-none text-slate-900 dark:text-white"
                         placeholder="Maintenance notification..."
                       />
                     </div>
