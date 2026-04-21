@@ -1,11 +1,8 @@
-import Navbar from "@/components/landing/Navbar";
-import Hero from "@/components/landing/Hero";
-import Features from "@/components/landing/Features";
-import HowItWorks from "@/components/landing/HowItWorks";
-import DashboardPreview from "@/components/landing/DashboardPreview";
+import { ZomatoHeader, ZomatoHero } from "@/components/landing/zomato/Hero";
+import FeaturesCollection from "@/components/landing/zomato/FeaturesCollection";
+import { ZomatoHowItWorks, ZomatoDashboardPreview, ZomatoCTA, ZomatoFooter } from "@/components/landing/zomato/Dashboard";
 import Pricing from "@/components/landing/Pricing";
 import Testimonials from "@/components/landing/Testimonials";
-import { CTA, Footer } from "@/components/landing/Footer";
 import prisma from "@/lib/prisma";
 
 export const dynamic = 'force-dynamic';
@@ -25,18 +22,19 @@ async function getLandingData() {
 export default async function LandingPage() {
   const { config } = await getLandingData();
   const primaryColor = config?.primaryColor || "#2ECC71";
+  const heroImage = "/landing/zomato_style_hero_social_media_1776720288190.png";
 
   return (
-    <main className="bg-white min-h-screen text-slate-900 selection:bg-emerald-500/10 selection:text-emerald-900">
-      <Navbar primaryColor={primaryColor} />
-      <Hero primaryColor={primaryColor} config={config} />
-      <Features primaryColor={primaryColor} />
-      <HowItWorks primaryColor={primaryColor} />
-      <DashboardPreview primaryColor={primaryColor} />
+    <main className="bg-white min-h-screen text-slate-900 selection:bg-emerald-500/10 selection:text-emerald-900 font-sans">
+      <ZomatoHeader primaryColor={primaryColor} />
+      <ZomatoHero primaryColor={primaryColor} heroImage={heroImage} />
+      <FeaturesCollection primaryColor={primaryColor} />
+      <ZomatoHowItWorks primaryColor={primaryColor} />
+      <ZomatoDashboardPreview primaryColor={primaryColor} />
       <Pricing primaryColor={primaryColor} config={config} />
       <Testimonials primaryColor={primaryColor} />
-      <CTA primaryColor={primaryColor} />
-      <Footer primaryColor={primaryColor} />
+      <ZomatoCTA primaryColor={primaryColor} />
+      <ZomatoFooter primaryColor={primaryColor} />
     </main>
   );
 }
