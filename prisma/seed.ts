@@ -124,8 +124,8 @@ async function main() {
       developerMode: appConfigJson.developer_mode,
       globalAiEnabled: appConfigJson.global_ai_enabled,
       freeTrialDays: appConfigJson.free_trial_days,
-      apiBaseUrl: appConfigJson.api_base_url,
-      supportEmail: appConfigJson.support_email,
+      apiBaseUrl: "https://ai-smm-backend.vercel.app/api/v1",
+      supportEmail: "support@ai-smm.com",
     },
     create: {
       id: BigInt(1),
@@ -135,8 +135,8 @@ async function main() {
       developerMode: appConfigJson.developer_mode,
       globalAiEnabled: appConfigJson.global_ai_enabled,
       freeTrialDays: appConfigJson.free_trial_days,
-      apiBaseUrl: appConfigJson.api_base_url,
-      supportEmail: appConfigJson.support_email,
+      apiBaseUrl: "https://ai-smm-backend.vercel.app/api/v1",
+      supportEmail: "support@ai-smm.com",
     },
   });
 
@@ -1204,7 +1204,7 @@ async function main() {
         nativeUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
         appOpenUnitId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
       },
-      isActive: false,
+      isActive: true,
       isDefault: true
     },
     {
@@ -1229,7 +1229,7 @@ async function main() {
     },
     {
       category: 'login',
-      provider: 'password',
+      provider: 'email_otp',
       config: {},
       isActive: true,
       isDefault: false
@@ -1239,7 +1239,6 @@ async function main() {
       provider: 'google',
       config: {
         clientId: '332307306449-0pb9b6ic5b9l2dq9te7le0v5quurq5vb.apps.googleusercontent.com',
-        clientSecret: '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'
       },
       isActive: true,
       isDefault: false
