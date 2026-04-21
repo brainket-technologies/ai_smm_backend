@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     const externalConfigs = await prisma.externalServiceConfig.findMany();
     
     // Auth Config Construction
-    const authProviders = externalConfigs.filter(c => c.category === 'auth');
+    const authProviders = externalConfigs.filter(c => c.category === 'login');
     const dynamicAuth: Record<string, any> = { 
       phone_otp_enabled: false,
       email_otp_enabled: false,
