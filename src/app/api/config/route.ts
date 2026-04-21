@@ -143,19 +143,11 @@ export async function GET(request: Request) {
 
     // 7. Fetch Static Pages
     const staticPagesRecords = await prisma.staticPage.findMany({ where: { isActive: true } });
-    const defaultStaticPages = [
-      { id: "privacy-policy", title: "Privacy Policy", url: "https://ai-smm-backend.vercel.app/pages/privacy-policy" },
-      { id: "terms-of-service", title: "Terms of Service", url: "https://ai-smm-backend.vercel.app/pages/terms-of-service" },
-      { id: "about-us", title: "About Us", url: "https://ai-smm-backend.vercel.app/pages/about-us" }
-    ];
-    
-    const dynamicStaticPages = staticPagesRecords.length > 0 
-      ? staticPagesRecords.map(page => ({
-          id: page.slug,
-          title: page.title,
-          url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
-        }))
-      : defaultStaticPages;
+    const dynamicStaticPages = staticPagesRecords.map(page => ({
+        id: page.slug,
+        title: page.title,
+        url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
+    }));
 
     // 8. Feature Config Construction (Using appConfig.featuresJson or DB feature blocks)
     const defaultFeatures = {
