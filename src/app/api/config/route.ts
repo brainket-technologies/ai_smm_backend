@@ -100,7 +100,7 @@ export async function GET(request: Request) {
         
         if (providerName === 'google_admob') {
           dynamicAds[providerName] = {
-            enabled: p.isActive,
+            enabled: p.isDefault || false,
             app_id: cfg.appId || '',
             banner_unit_id: cfg.bannerUnitId || '',
             interstitial_unit_id: cfg.interstitialUnitId || '',
@@ -110,7 +110,7 @@ export async function GET(request: Request) {
           };
         } else if (providerName === 'facebook_audience_network') {
           dynamicAds[providerName] = {
-            enabled: p.isActive,
+            enabled: p.isDefault || false,
             app_id: cfg.appId || '',
             banner_placement_id: cfg.bannerPlacementId || '',
             interstitial_placement_id: cfg.interstitialPlacementId || '',
@@ -118,7 +118,7 @@ export async function GET(request: Request) {
             rewarded_placement_id: cfg.rewardedPlacementId || ''
           };
         } else {
-          dynamicAds[providerName] = { enabled: p.isActive, ...cfg };
+          dynamicAds[providerName] = { enabled: p.isDefault || false, ...cfg };
         }
       });
     }
@@ -131,13 +131,13 @@ export async function GET(request: Request) {
         const cfg = (typeof p.config === 'object' && p.config !== null ? p.config : {}) as any;
         if (p.provider === 'firebase') {
           dynamicOtp[p.provider] = {
-            enabled: p.isActive,
+            enabled: p.isDefault || false,
             api_key: cfg.apiKey || '',
             auth_domain: cfg.authDomain || '',
             project_id: cfg.projectId || ''
           };
         } else {
-          dynamicOtp[p.provider] = { enabled: p.isActive, ...cfg };
+          dynamicOtp[p.provider] = { enabled: p.isDefault || false, ...cfg };
         }
       });
     }
