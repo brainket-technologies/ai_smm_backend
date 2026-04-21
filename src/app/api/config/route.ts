@@ -369,7 +369,7 @@ export async function GET(request: Request) {
               daily_posts: 10,
               daily_ai_chats: 50,
               daily_ai_images: 10,
-              max_customers": 500,
+              "max_customers": 500,
               max_products: 100,
               max_services: 50,
               max_keyword_searches: 50,
@@ -389,7 +389,7 @@ export async function GET(request: Request) {
             price_amount: 1999,
             price_period: "month",
             badge: "Best Value",
-            highlight_features": [
+            "highlight_features": [
               "50 Daily Posts",
               "AI Caption & Hashtag Gen",
               "Post Scheduling",
@@ -454,7 +454,7 @@ export async function GET(request: Request) {
             limits: {
               unlimited: false,
               daily_posts: 50,
-              daily_ai_chats": 200,
+              "daily_ai_chats": 200,
               daily_ai_images: 50,
               max_customers: 5000,
               max_products: 1000,
