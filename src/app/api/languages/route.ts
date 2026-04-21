@@ -20,14 +20,14 @@ export async function GET(request: Request) {
       orderBy: { displayName: 'asc' },
     });
 
-    // Map into the requested structure
+    // Map into the requested structure (snake_case)
     const languageList = languages.map((l) => ({
       "id": Number(l.id),
-      "image-url": l.media?.fileUrl || "",
-      "display-name": l.displayName,
-      "language-code": l.languageCode,
-      "country-code": l.countryCode,
-      "is-default": l.isDefault,
+      "image_url": l.media?.fileUrl || "",
+      "display_name": l.displayName,
+      "language_code": l.languageCode,
+      "country_code": l.countryCode,
+      "is_default": l.isDefault,
     }));
 
     // Map translations into a dictionary keyed by language code
@@ -37,8 +37,8 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({
-      "res": "success",
-      "message": "Languages loaded",
+      "success": true,
+      "message": "Languages loaded successfully",
       "data": {
         "languages": languageList,
         "translations": translationsMap
