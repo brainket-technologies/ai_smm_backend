@@ -110,30 +110,30 @@ export async function GET(request: Request) {
 
     // Construct the data object exactly as requested, merging DB values if they exist
     const configData = {
-      app_name: appConfig?.appName || "BrandBoost AI",
-      maintenance_mode: appConfig?.maintenanceMode || false,
-      maintenance_message: appConfig?.maintenanceMessage || "We are currently performing scheduled maintenance to improve your experience. We will be back online shortly!",
-      developer_mode: appConfig?.developerMode || false,
+      app_name: appConfig?.appName ?? null,
+      maintenance_mode: appConfig?.maintenanceMode ?? false,
+      maintenance_message: appConfig?.maintenanceMessage ?? null,
+      developer_mode: appConfig?.developerMode ?? false,
       global_ai_enabled: appConfig?.globalAiEnabled ?? true,
       config: {
         android: {
-          app_version: android?.appVersion || "1.0.0",
-          app_version_code: android?.appVersionCode || 1,
-          force_update_version: android?.forceUpdateVersion || "1.0.0",
-          force_update_version_code: android?.forceUpdateVersionCode || 1,
-          store_url: android?.storeUrl || "https://play.google.com/store/apps/details?id=com.brandboost.ai",
-          update_description: android?.updateDescription || "We've added new AI features and improved app stability!"
+          app_version: android?.appVersion ?? null,
+          app_version_code: android?.appVersionCode ?? null,
+          force_update_version: android?.forceUpdateVersion ?? null,
+          force_update_version_code: android?.forceUpdateVersionCode ?? null,
+          store_url: android?.storeUrl ?? null,
+          update_description: android?.updateDescription ?? null
         },
         ios: {
-          app_version: ios?.appVersion || "1.0.0",
-          app_version_code: ios?.appVersionCode || 1,
-          force_update_version: ios?.forceUpdateVersion || "1.0.0",
-          force_update_version_code: ios?.forceUpdateVersionCode || 1,
-          store_url: ios?.storeUrl || "https://apps.apple.com/app/brandboost-ai/id123456789",
-          update_description: ios?.updateDescription || "New UI enhancements and bug fixes for a smoother experience."
+          app_version: ios?.appVersion ?? null,
+          app_version_code: ios?.appVersionCode ?? null,
+          force_update_version: ios?.forceUpdateVersion ?? null,
+          force_update_version_code: ios?.forceUpdateVersionCode ?? null,
+          store_url: ios?.storeUrl ?? null,
+          update_description: ios?.updateDescription ?? null
         },
-        api_base_url: appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1",
-        support_email: appConfig?.supportEmail || "support@brandboostai.com",
+        api_base_url: appConfig?.apiBaseUrl ?? null,
+        support_email: appConfig?.supportEmail ?? null,
         auth: dynamicAuth,
         ads_config: dynamicAds,
         otp_config: dynamicOtp,
@@ -141,7 +141,7 @@ export async function GET(request: Request) {
       },
       features: dynamicFeatures,
       subscriptions: {
-        free_trial_days: appConfig?.freeTrialDays || 7,
+        free_trial_days: appConfig?.freeTrialDays ?? 7,
         tiers: serializedTiers
       }
     };
