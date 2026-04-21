@@ -56,7 +56,13 @@ export async function GET(request: Request) {
     
     // Auth Config Construction
     const authProviders = externalConfigs.filter(c => c.category === 'auth');
-    const dynamicAuth: Record<string, any> = { credentials: {} };
+    const dynamicAuth: Record<string, any> = { 
+      phone_otp_enabled: false,
+      email_otp_enabled: false,
+      google_login_enabled: false,
+      apple_login_enabled: false,
+      credentials: {} 
+    };
     
     if (authProviders.length > 0) {
       dynamicAuth.phone_otp_enabled = authProviders.find(p => p.provider === 'phone')?.isActive ?? false;
