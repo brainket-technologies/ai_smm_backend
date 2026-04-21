@@ -67,7 +67,6 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
         badge: '',
         subscriptionLimit: 1,
         loginDeviceLimit: 1,
-        highlightFeatures: [],
         limits: {
           unlimited: false,
           daily_posts: 0,
