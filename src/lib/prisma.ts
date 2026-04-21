@@ -19,3 +19,8 @@ export const prisma = globalThis.prisma ?? prismaClientSingleton()
 export default prisma
 
 if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
+
+// Add BigInt toJSON prototype for JSON serialization support
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
