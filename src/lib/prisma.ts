@@ -21,6 +21,8 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 export default prisma
 
 // Add BigInt toJSON prototype for JSON serialization support
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
+if (typeof BigInt !== 'undefined' && !(BigInt.prototype as any).toJSON) {
+  (BigInt.prototype as any).toJSON = function () {
+    return this.toString();
+  };
+}
