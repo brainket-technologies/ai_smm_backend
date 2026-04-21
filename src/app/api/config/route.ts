@@ -28,49 +28,49 @@ export async function GET(request: Request) {
 
     // 4. Fetch Tiers + Permissions together
     const tiers = await prisma.subscriptionTier.findMany({
-        where: { isActive: true },
-        orderBy: { id: 'asc' }
+      where: { isActive: true },
+      orderBy: { id: 'asc' }
     });
 
     // 5. Fetch all tier permissions and group by tierKey
     const allPermissions = await prisma.subscriptionPermission.findMany();
     const permissionsByTier: Record<string, string[]> = {};
     allPermissions.forEach(p => {
-        if (!permissionsByTier[p.tierKey]) permissionsByTier[p.tierKey] = [];
-        permissionsByTier[p.tierKey].push(p.permissionKey);
+      if (!permissionsByTier[p.tierKey]) permissionsByTier[p.tierKey] = [];
+      permissionsByTier[p.tierKey].push(p.permissionKey);
     });
 
     const serializedTiers = tiers.map(t => ({
-        id: String(t.id),
-        tiers_key: t.tierKey,
-        name: t.name,
-        price_amount: Number(t.priceAmount),
-        price_period: t.pricePeriod,
-        badge: t.badge,
-        highlight_features: t.highlightFeatures,
-        permissions: permissionsByTier[t.tierKey] || [],
-        limits: t.limits
+      id: String(t.id),
+      tiers_key: t.tierKey,
+      name: t.name,
+      price_amount: Number(t.priceAmount),
+      price_period: t.pricePeriod,
+      badge: t.badge,
+      highlight_features: t.highlightFeatures,
+      permissions: permissionsByTier[t.tierKey] || [],
+      limits: t.limits
     }));
 
     // 6. Fetch External Services (Auth, Ads, OTP)
     const externalConfigs = await prisma.externalServiceConfig.findMany();
-    
+
     // Auth Config Construction
     const authProviders = externalConfigs.filter(c => c.category === 'login');
-    const dynamicAuth: Record<string, any> = { 
+    const dynamicAuth: Record<string, any> = {
       phone_otp_enabled: false,
       email_otp_enabled: false,
       google_login_enabled: false,
       apple_login_enabled: false,
-      credentials: {} 
+      credentials: {}
     };
-    
+
     if (authProviders.length > 0) {
       dynamicAuth.phone_otp_enabled = authProviders.find(p => p.provider === 'otp_login')?.isActive ?? false;
       dynamicAuth.email_otp_enabled = authProviders.find(p => p.provider === 'email_otp')?.isActive ?? false;
       dynamicAuth.google_login_enabled = authProviders.find(p => p.provider === 'google')?.isActive ?? false;
       dynamicAuth.apple_login_enabled = authProviders.find(p => p.provider === 'apple')?.isActive ?? false;
-      
+
       authProviders.forEach(p => {
         if (p.config && typeof p.config === 'object' && Object.keys(p.config).length > 0) {
           const cfg = p.config as any;
@@ -95,13 +95,14 @@ export async function GET(request: Request) {
     if (adsProviders.length > 0) {
       adsProviders.forEach(p => {
         const cfg = (typeof p.config === 'object' && p.config !== null ? p.config : {}) as any;
-        const providerName = p.provider === 'admob' ? 'google_admob' 
-                           : p.provider === 'facebook' ? 'facebook_audience_network' 
-                           : p.provider;
-        
+        const providerName = p.provider === 'admob' ? 'google_admob'
+          : p.provider === 'facebook' ? 'facebook_audience_network'
+            : p.provider;
+
         if (providerName === 'google_admob') {
           dynamicAds[providerName] = {
             enabled: p.isDefault || false,
+            mode: cfg.mode || 'test',
             app_id: cfg.appId || '',
             banner_unit_id: cfg.bannerUnitId || '',
             interstitial_unit_id: cfg.interstitialUnitId || '',
@@ -112,6 +113,7 @@ export async function GET(request: Request) {
         } else if (providerName === 'facebook_audience_network') {
           dynamicAds[providerName] = {
             enabled: p.isDefault || false,
+            mode: cfg.mode || 'test',
             app_id: cfg.appId || '',
             banner_placement_id: cfg.bannerPlacementId || '',
             interstitial_placement_id: cfg.interstitialPlacementId || '',
@@ -133,12 +135,17 @@ export async function GET(request: Request) {
         if (p.provider === 'firebase') {
           dynamicOtp[p.provider] = {
             enabled: p.isDefault || false,
+            mode: cfg.mode || 'test',
             api_key: cfg.apiKey || '',
             auth_domain: cfg.authDomain || '',
             project_id: cfg.projectId || ''
           };
         } else {
-          dynamicOtp[p.provider] = { enabled: p.isDefault || false, ...cfg };
+          dynamicOtp[p.provider] = { 
+            enabled: p.isDefault || false, 
+            mode: cfg.mode || 'test',
+            ...cfg 
+          };
         }
       });
     }
@@ -146,9 +153,9 @@ export async function GET(request: Request) {
     // 7. Fetch Static Pages
     const staticPagesRecords = await prisma.staticPage.findMany({ where: { isActive: true } });
     const dynamicStaticPages = staticPagesRecords.map(page => ({
-        id: page.slug,
-        title: page.title,
-        url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
+      id: page.slug,
+      title: page.title,
+      url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
     }));
 
     // 8. Feature Config Construction (Using appConfig.featuresJson or DB feature blocks)
