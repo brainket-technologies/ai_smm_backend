@@ -73,7 +73,7 @@ const PROVIDERS: Record<string, { id: string; label: string; icon: any }[]> = {
   ],
   login: [
     { id: 'otp_login', label: 'Phone OTP Login', icon: Smartphone },
-    { id: 'password', label: 'Email/Password Login', icon: Shield },
+    { id: 'email_otp', label: 'Email OTP Login', icon: Mail },
     { id: 'google', label: 'Google Sign-In', icon: Globe },
     { id: 'apple', label: 'Apple Login', icon: AppleIcon },
   ],

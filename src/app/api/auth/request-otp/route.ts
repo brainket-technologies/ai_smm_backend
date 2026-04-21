@@ -3,11 +3,11 @@ import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
     try {
-        const { phone } = await request.json();
+        const { phone, email } = await request.json();
 
-        if (!phone) {
+        if (!phone && !email) {
             return NextResponse.json(
-                { success: false, message: 'Phone number is required' },
+                { success: false, message: 'Phone number or email is required' },
                 { status: 400 }
             );
         }
@@ -15,22 +15,29 @@ export async function POST(request: Request) {
         const otp = '123456'; // Default OTP as per existing logic
         const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-        // Using upsert to match previous logic
-        const user = await prisma.user.upsert({
-            where: { phone },
-            update: { isVerified: false }, // Reset verification on new request
-            create: { phone, isVerified: false },
-        });
+        // Search for user by email or phone
+        let user;
+        if (email) {
+             user = await prisma.user.upsert({
+                where: { email },
+                update: { isVerified: false },
+                create: { email, isVerified: false },
+            });
+        } else {
+             user = await prisma.user.upsert({
+                where: { phone: phone! },
+                update: { isVerified: false },
+                create: { phone: phone!, isVerified: false },
+            });
+        }
 
-        // We also need to store OTP somewhere. 
-        // Note: The provided schema doesn't have otp/otpExpiry fields in User table, 
-        // unlike the previous Express app schema preview. 
-        // I will check the schema again.
-        
         return NextResponse.json({
             success: true,
-            message: 'OTP sent successfully (local: 123456)',
-            phone: user.phone
+            message: `OTP sent successfully to ${email ? 'email' : 'phone'} (local: 123456)`,
+            data: {
+                email: user.email,
+                phone: user.phone
+            }
         });
     } catch (error: any) {
         console.error('Request OTP Error:', error);

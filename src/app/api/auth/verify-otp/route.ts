@@ -4,18 +4,18 @@ import { generateToken } from '@/lib/jwt';
 
 export async function POST(request: Request) {
     try {
-        const { phone, otp } = await request.json();
+        const { phone, email, otp } = await request.json();
 
-        if (!phone || !otp) {
+        if ((!phone && !email) || !otp) {
             return NextResponse.json(
-                { success: false, message: 'Phone and OTP are required' },
+                { success: false, message: 'Phone/Email and OTP are required' },
                 { status: 400 }
             );
         }
 
         // Search for user
         const user = await prisma.user.findUnique({
-            where: { phone },
+            where: email ? { email } : { phone: phone! },
             include: { role: true }
         });
 
