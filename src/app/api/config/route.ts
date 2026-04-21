@@ -62,8 +62,8 @@ export async function GET(request: Request) {
       google_login_enabled: true,
       apple_login_enabled: true,
       credentials: {
-        google: { web_client_id: "332307306449-0pb9b6ic5b9l2dq9te7le0v5quurq5vb.apps.googleusercontent.com" },
-        apple: { service_id: "YOUR_APPLE_CLIENT_ID", team_id: "YOUR_APPLE_TEAM_ID", key_id: "YOUR_APPLE_KEY_ID", private_key: "YOUR_APPLE_PRIVATE_KEY" }
+        google: { web_client_id: "" },
+        apple: { service_id: "", team_id: "", key_id: "", private_key: "" }
       }
     };
     
@@ -86,20 +86,20 @@ export async function GET(request: Request) {
     const defaultAds = {
       google_admob: {
         enabled: true,
-        app_id: "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
-        banner_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-        interstitial_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-        rewarded_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-        native_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-        app_open_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+        app_id: "",
+        banner_unit_id: "",
+        interstitial_unit_id: "",
+        rewarded_unit_id: "",
+        native_unit_id: "",
+        app_open_unit_id: ""
       },
       facebook_audience_network: {
         enabled: false,
-        app_id: "YOUR_FACEBOOK_APP_ID",
-        banner_placement_id: "YOUR_BANNER_PLACEMENT_ID",
-        interstitial_placement_id: "YOUR_INTERSTITIAL_PLACEMENT_ID",
-        native_placement_id: "YOUR_NATIVE_PLACEMENT_ID",
-        rewarded_placement_id: "YOUR_REWARDED_PLACEMENT_ID"
+        app_id: "",
+        banner_placement_id: "",
+        interstitial_placement_id: "",
+        native_placement_id: "",
+        rewarded_placement_id: ""
       }
     };
     
@@ -120,9 +120,9 @@ export async function GET(request: Request) {
     const defaultOtp = {
       firebase: {
         enabled: true,
-        api_key: "AlzaSyA5SVlOwGfeSrfOpRrRry5a-1kkoHl_m_Fg",
-        auth_domain: "fir-notes-20c44.firebaseapp.com",
-        project_id: "fir-notes-20c44"
+        api_key: "",
+        auth_domain: "",
+        project_id: ""
       },
       msg91: {
         enabled: false
