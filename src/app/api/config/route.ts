@@ -56,55 +56,136 @@ export async function GET(request: Request) {
     
     // Auth Config Construction
     const authProviders = externalConfigs.filter(c => c.category === 'auth');
-    const dynamicAuth = {
-      phone_otp_enabled: authProviders.find(p => p.provider === 'phone')?.isActive ?? false,
-      email_otp_enabled: authProviders.find(p => p.provider === 'email')?.isActive ?? false,
-      google_login_enabled: authProviders.find(p => p.provider === 'google')?.isActive ?? false,
-      apple_login_enabled: authProviders.find(p => p.provider === 'apple')?.isActive ?? false,
-      credentials: {} as Record<string, any>
+    const defaultAuth = {
+      phone_otp_enabled: true,
+      email_otp_enabled: true,
+      google_login_enabled: true,
+      apple_login_enabled: true,
+      credentials: {
+        google: { web_client_id: "332307306449-0pb9b6ic5b9l2dq9te7le0v5quurq5vb.apps.googleusercontent.com" },
+        apple: { service_id: "YOUR_APPLE_CLIENT_ID", team_id: "YOUR_APPLE_TEAM_ID", key_id: "YOUR_APPLE_KEY_ID", private_key: "YOUR_APPLE_PRIVATE_KEY" }
+      }
     };
     
-    authProviders.forEach(p => {
-      if (p.config && typeof p.config === 'object' && Object.keys(p.config).length > 0) {
-        dynamicAuth.credentials[p.provider] = p.config;
-      }
-    });
+    const dynamicAuth = { ...defaultAuth, credentials: { ...defaultAuth.credentials } };
+    if (authProviders.length > 0) {
+      dynamicAuth.phone_otp_enabled = authProviders.find(p => p.provider === 'phone')?.isActive ?? defaultAuth.phone_otp_enabled;
+      dynamicAuth.email_otp_enabled = authProviders.find(p => p.provider === 'email')?.isActive ?? defaultAuth.email_otp_enabled;
+      dynamicAuth.google_login_enabled = authProviders.find(p => p.provider === 'google')?.isActive ?? defaultAuth.google_login_enabled;
+      dynamicAuth.apple_login_enabled = authProviders.find(p => p.provider === 'apple')?.isActive ?? defaultAuth.apple_login_enabled;
+      
+      authProviders.forEach(p => {
+        if (p.config && typeof p.config === 'object' && Object.keys(p.config).length > 0) {
+          dynamicAuth.credentials[p.provider as keyof typeof dynamicAuth.credentials] = p.config as any;
+        }
+      });
+    }
 
     // Ads Config Construction
     const adsProviders = externalConfigs.filter(c => c.category === 'ads');
-    const dynamicAds: Record<string, any> = {};
-    adsProviders.forEach(p => {
-      dynamicAds[p.provider] = {
-        enabled: p.isActive,
-        ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
-      };
-    });
+    const defaultAds = {
+      google_admob: {
+        enabled: true,
+        app_id: "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
+        banner_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+        interstitial_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+        rewarded_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+        native_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+        app_open_unit_id: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+      },
+      facebook_audience_network: {
+        enabled: false,
+        app_id: "YOUR_FACEBOOK_APP_ID",
+        banner_placement_id: "YOUR_BANNER_PLACEMENT_ID",
+        interstitial_placement_id: "YOUR_INTERSTITIAL_PLACEMENT_ID",
+        native_placement_id: "YOUR_NATIVE_PLACEMENT_ID",
+        rewarded_placement_id: "YOUR_REWARDED_PLACEMENT_ID"
+      }
+    };
+    
+    // Merge DB values with defaults for Ads
+    const dynamicAds = { ...defaultAds } as Record<string, any>;
+    if (adsProviders.length > 0) {
+      adsProviders.forEach(p => {
+        dynamicAds[p.provider] = {
+          ...(dynamicAds[p.provider] || {}), // Preserve default nested keys
+          enabled: p.isActive,
+          ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
+        };
+      });
+    }
 
     // OTP Config Construction
     const otpProviders = externalConfigs.filter(c => c.category === 'otp');
-    const dynamicOtp: Record<string, any> = {};
-    otpProviders.forEach(p => {
-      dynamicOtp[p.provider] = {
-        enabled: p.isActive,
-        ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
-      };
-    });
+    const defaultOtp = {
+      firebase: {
+        enabled: true,
+        api_key: "AlzaSyA5SVlOwGfeSrfOpRrRry5a-1kkoHl_m_Fg",
+        auth_domain: "fir-notes-20c44.firebaseapp.com",
+        project_id: "fir-notes-20c44"
+      },
+      msg91: {
+        enabled: false
+      }
+    };
+
+    // Merge DB values with defaults for OTP
+    const dynamicOtp = { ...defaultOtp } as Record<string, any>;
+    if (otpProviders.length > 0) {
+      otpProviders.forEach(p => {
+        dynamicOtp[p.provider] = {
+          ...(dynamicOtp[p.provider] || {}), // Preserve default nested keys
+          enabled: p.isActive,
+          ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
+        };
+      });
+    }
 
     // 7. Fetch Static Pages
     const staticPagesRecords = await prisma.staticPage.findMany({ where: { isActive: true } });
-    const dynamicStaticPages = staticPagesRecords.map(page => ({
-        id: page.slug,
-        title: page.title,
-        url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
-    }));
+    const defaultStaticPages = [
+      { id: "privacy-policy", title: "Privacy Policy", url: "https://ai-smm-backend.vercel.app/pages/privacy-policy" },
+      { id: "terms-of-service", title: "Terms of Service", url: "https://ai-smm-backend.vercel.app/pages/terms-of-service" },
+      { id: "about-us", title: "About Us", url: "https://ai-smm-backend.vercel.app/pages/about-us" }
+    ];
+    
+    const dynamicStaticPages = staticPagesRecords.length > 0 
+      ? staticPagesRecords.map(page => ({
+          id: page.slug,
+          title: page.title,
+          url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
+        }))
+      : defaultStaticPages;
 
     // 8. Feature Config Construction (Using appConfig.featuresJson or DB feature blocks)
-    let dynamicFeatures: Record<string, any> = {};
+    const defaultFeatures = {
+      dashboard: { dash_analytics_cards: true, dash_ai_actions: true, dash_schedule_view: true, dash_smart_suggestions: true, dash_platform_selector: true, dash_recent_activity: true, dash_special_day_alert: true },
+      ai_studio: { ai_chat_access: true, ai_voice_input: true, ai_vision_input: true, ai_history_drawer: true, ai_structured_replies: false },
+      marketing: { post_create_access: true, post_ai_generator_btn: true, post_scheduling_logic: true, post_ai_caption_gen: true, post_ai_hashtag_gen: true, post_cta_manager: true, post_multi_platform_sync: true, post_media_ai_library: true, post_remove_watermark: true },
+      finance: { ledger_customer_view: true, ledger_supplier_view: true, ledger_add_entry: true, ledger_search_filter: true, ledger_analytics_card: true, ledger_reports_pro: true },
+      library: { library_access: true, library_category_filters: true, library_ai_generated_view: true, library_cloud_upload: true, library_ai_generator_shortcut: true },
+      brand: { biz_brand_kit: true, biz_target_audience: true, biz_social_connect: true },
+      engagement: { inbox_access: true, inbox_platform_filters: true, inbox_auto_reply_ai: true, inbox_leads_tracking: true },
+      planner: { planner_access: true, planner_view_toggle: true, planner_festival_highlights: true, planner_post_markers: true, planner_reschedule_action: true, planner_ai_shortcuts: true },
+      vcard: { vcard_share_access: true, vcard_designer_carousel: true, vcard_whatsapp_direct: true, vcard_premium_themes: true },
+      preferences: { pref_profile_edit: true, pref_account_mgmt: true, pref_subscription_mgmt: true, pref_notification_ctrl: true, pref_business_profile: true, pref_security_auth: true },
+      analytics: { analytics_platform_metrics: true, analytics_reach_trends: true, analytics_ai_insights: true, analytics_viral_analysis: true, analytics_viral_v2_cards: true, analytics_sticky_dashboard: true, analytics_content_performance: true, analytics_gmb_insights: true, analytics_audience_demo: true, analytics_export_report: true },
+      catalog: { catalog_product_mgmt: true, catalog_service_mgmt: true, catalog_inventory_tracking: true, catalog_search_filter: true },
+      keywords: { keyword_search_access: true, keyword_regional_lookup: true, keyword_difficulty_score: true, keyword_save_to_leads: true },
+      settings: { "settings_theme_switch": true, settings_currency_switch: true, settings_language_switch: true, settings_legal_view: true, settings_feedback_submit: true, settings_account_delete: true, settings_help_support: true },
+      notifications: { notifications_view_access: true, notifications_clear_action: true },
+      monetization: { "ads_free_experience": false, ai_rewarded_ads: true }
+    };
+    
+    let dynamicFeatures = { ...defaultFeatures };
     if (appConfig?.featuresJson && typeof appConfig.featuresJson === 'object' && Object.keys(appConfig.featuresJson).length > 0) {
       dynamicFeatures = appConfig.featuresJson as any;
     } else if (Object.keys(features).length > 0) {
       Object.keys(features).forEach(module => {
-        dynamicFeatures[module] = features[module];
+        dynamicFeatures[module as keyof typeof dynamicFeatures] = {
+          ...dynamicFeatures[module as keyof typeof dynamicFeatures],
+          ...features[module]
+        };
       });
     }
 
