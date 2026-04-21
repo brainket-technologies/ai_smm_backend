@@ -32,7 +32,6 @@ export async function GET(request: Request) {
       media_id: t.mediaId?.toString(),
       background_image: t.media?.fileUrl || null,
       created_at: t.createdAt,
-      updated_at: t.updatedAt,
     }));
 
     return NextResponse.json({

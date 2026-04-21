@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Fetch languages error:', error);
     return NextResponse.json(
-      { res: "error", message: 'Internal server error' },
+      { success: false, message: 'Internal server error' },
       { status: 500 }
     );
   }
