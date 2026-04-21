@@ -39,7 +39,8 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
       max_video_length_seconds: 0,
       allowed_platforms: []
     },
-    permissions: []
+    permissions: [],
+    highlightFeatures: []
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,7 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
         limits: {
           ...tier.limits || {}
         },
+        highlightFeatures: tier.highlightFeatures || [],
         permissions: tier.permissions || []
       });
     } else {
@@ -65,6 +67,7 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
         badge: '',
         subscriptionLimit: 1,
         loginDeviceLimit: 1,
+        highlightFeatures: [],
         limits: {
           unlimited: false,
           daily_posts: 0,
@@ -78,7 +81,8 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
           max_video_length_seconds: 0,
           allowed_platforms: []
         },
-        permissions: []
+        permissions: [],
+        highlightFeatures: []
       });
     }
   }, [tier, isOpen]);
@@ -112,6 +116,24 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
       ...formData,
       limits: { ...formData.limits, allowed_platforms: newPlatforms }
     });
+  };
+
+  const addHighlight = () => {
+    setFormData({
+      ...formData,
+      highlightFeatures: [...formData.highlightFeatures, '']
+    });
+  };
+
+  const removeHighlight = (index: number) => {
+    const newHighlights = formData.highlightFeatures.filter((_: any, i: number) => i !== index);
+    setFormData({ ...formData, highlightFeatures: newHighlights });
+  };
+
+  const updateHighlight = (index: number, value: string) => {
+    const newHighlights = [...formData.highlightFeatures];
+    newHighlights[index] = value;
+    setFormData({ ...formData, highlightFeatures: newHighlights });
   };
 
   const groupedFeatures = availableFeatures.reduce((acc: any, feature) => {
@@ -223,6 +245,47 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
                        ))}
                    </div>
                 </div>
+             </div>
+          </div>
+
+          {/* Section: Highlights */}
+          <div className="space-y-4">
+             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest">Highlight Features (Bullets)</h3>
+                <button 
+                  type="button" 
+                  onClick={addHighlight}
+                  className="text-[10px] font-black uppercase text-blue-600 hover:text-blue-700 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded border border-blue-100 dark:border-blue-800 transition-colors"
+                >
+                  + Add Bullet
+                </button>
+             </div>
+             
+             <div className="space-y-2">
+                {formData.highlightFeatures && formData.highlightFeatures.map((highlight: string, index: number) => (
+                  <div key={index} className="flex items-center space-x-2 animate-in slide-in-from-left-2 duration-200" style={{ animationDelay: `${index * 50}ms` }}>
+                    <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0" />
+                    <input 
+                      value={highlight}
+                      onChange={(e) => updateHighlight(index, e.target.value)}
+                      className="flex-1 px-3 py-1.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:border-blue-500 outline-none transition-all text-xs font-medium shadow-sm"
+                      placeholder="e.g. 50 AI Chats/day"
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => removeHighlight(index)}
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+                
+                {(!formData.highlightFeatures || formData.highlightFeatures.length === 0) && (
+                  <div className="py-4 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-lg">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase italic tracking-wider">No highlights defined</p>
+                  </div>
+                )}
              </div>
           </div>
 
