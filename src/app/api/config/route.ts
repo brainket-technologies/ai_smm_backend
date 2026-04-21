@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     });
 
     const serializedTiers = tiers.map(t => ({
-        id: t.id,
+        id: String(t.id),
         tiers_key: t.tierKey,
         name: t.name,
         price_amount: Number(t.priceAmount),
