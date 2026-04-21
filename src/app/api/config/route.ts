@@ -65,14 +65,25 @@ export async function GET(request: Request) {
     };
     
     if (authProviders.length > 0) {
-      dynamicAuth.phone_otp_enabled = authProviders.find(p => p.provider === 'phone')?.isActive ?? false;
-      dynamicAuth.email_otp_enabled = authProviders.find(p => p.provider === 'email')?.isActive ?? false;
+      dynamicAuth.phone_otp_enabled = authProviders.find(p => p.provider === 'otp_login')?.isActive ?? false;
+      dynamicAuth.email_otp_enabled = authProviders.find(p => p.provider === 'email_otp')?.isActive ?? false;
       dynamicAuth.google_login_enabled = authProviders.find(p => p.provider === 'google')?.isActive ?? false;
       dynamicAuth.apple_login_enabled = authProviders.find(p => p.provider === 'apple')?.isActive ?? false;
       
       authProviders.forEach(p => {
         if (p.config && typeof p.config === 'object' && Object.keys(p.config).length > 0) {
-          dynamicAuth.credentials[p.provider] = p.config;
+          const cfg = p.config as any;
+          if (p.provider === 'google') {
+            dynamicAuth.credentials['google'] = { web_client_id: cfg.clientId || '' };
+          } else if (p.provider === 'apple') {
+            dynamicAuth.credentials['apple'] = {
+              service_id: cfg.serviceId || '',
+              team_id: cfg.teamId || '',
+              key_id: cfg.keyId || '',
+              private_key: cfg.privateKey || ''
+            };
+          }
+          // Do not map otp_login/email_otp into credentials unless specifically required by flutter
         }
       });
     }
@@ -82,10 +93,33 @@ export async function GET(request: Request) {
     const dynamicAds: Record<string, any> = {};
     if (adsProviders.length > 0) {
       adsProviders.forEach(p => {
-        dynamicAds[p.provider] = {
-          enabled: p.isActive,
-          ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
-        };
+        const cfg = (typeof p.config === 'object' && p.config !== null ? p.config : {}) as any;
+        const providerName = p.provider === 'admob' ? 'google_admob' 
+                           : p.provider === 'facebook' ? 'facebook_audience_network' 
+                           : p.provider;
+        
+        if (providerName === 'google_admob') {
+          dynamicAds[providerName] = {
+            enabled: p.isActive,
+            app_id: cfg.appId || '',
+            banner_unit_id: cfg.bannerUnitId || '',
+            interstitial_unit_id: cfg.interstitialUnitId || '',
+            rewarded_unit_id: cfg.rewardedUnitId || '',
+            native_unit_id: cfg.nativeUnitId || '',
+            app_open_unit_id: cfg.appOpenUnitId || ''
+          };
+        } else if (providerName === 'facebook_audience_network') {
+          dynamicAds[providerName] = {
+            enabled: p.isActive,
+            app_id: cfg.appId || '',
+            banner_placement_id: cfg.bannerPlacementId || '',
+            interstitial_placement_id: cfg.interstitialPlacementId || '',
+            native_placement_id: cfg.nativePlacementId || '',
+            rewarded_placement_id: cfg.rewardedPlacementId || ''
+          };
+        } else {
+          dynamicAds[providerName] = { enabled: p.isActive, ...cfg };
+        }
       });
     }
 
@@ -94,10 +128,17 @@ export async function GET(request: Request) {
     const dynamicOtp: Record<string, any> = {};
     if (otpProviders.length > 0) {
       otpProviders.forEach(p => {
-        dynamicOtp[p.provider] = {
-          enabled: p.isActive,
-          ...((typeof p.config === 'object' && p.config !== null ? p.config : {}) as any)
-        };
+        const cfg = (typeof p.config === 'object' && p.config !== null ? p.config : {}) as any;
+        if (p.provider === 'firebase') {
+          dynamicOtp[p.provider] = {
+            enabled: p.isActive,
+            api_key: cfg.apiKey || '',
+            auth_domain: cfg.authDomain || '',
+            project_id: cfg.projectId || ''
+          };
+        } else {
+          dynamicOtp[p.provider] = { enabled: p.isActive, ...cfg };
+        }
       });
     }
 
