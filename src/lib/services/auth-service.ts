@@ -74,7 +74,7 @@ export class AuthService {
     ));
     
     // Format response: add image URL and remove redundant IDs/objects
-    userData.image = user.profileMedia?.fileUrl || null;
+    userData.image = (user as any)!.profileMedia?.fileUrl || null;
     delete userData.roleId;
     delete userData.mediaId;
     delete userData.profileMedia;
