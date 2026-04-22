@@ -179,8 +179,6 @@ export class AuthService {
     delete userData.deviceTokens;
 
     return {
-      success: true,
-      otp_verified: true,
       is_new_user: isNewUser,
       has_business: hasBusiness,
       token,
