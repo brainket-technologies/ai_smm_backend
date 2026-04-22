@@ -26,8 +26,8 @@ export class AuthService {
       const isFirebase = provider === 'firebase';
       const isSmtp = provider === 'smtp';
       
-      // Email/Firebase: 6 digits (123456), MSG91: 4 digits (1234)
-      let otp = (isFirebase || isSmtp) ? '123456' : '1234';
+      // Use 6 digits OTP for all providers
+      let otp = '123456';
       const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
       // 3. Find or Create User (Upsert)
