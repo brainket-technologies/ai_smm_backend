@@ -109,6 +109,7 @@ export class AuthService {
       delete userData.mediaId;
       delete userData.profileMedia;
       delete userData.deviceTokens;
+      userData.otp = otp;
 
       return { 
         success: true, 
