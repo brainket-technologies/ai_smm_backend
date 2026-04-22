@@ -14,36 +14,19 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							},
-							{
-								"key": "device-id",
-								"value": "unique_device_id_123",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"type\": \"phone\",\n    \"phone\": \"+919876543210\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/send-otp",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"send-otp"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "send-otp"]
 						}
 					},
 					"response": []
@@ -53,31 +36,19 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"type\": \"phone\",\n    \"phone\": \"+919876543210\",\n    \"otp\": \"123456\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/verify-otp",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"verify-otp"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "verify-otp"]
 						}
 					},
 					"response": []
@@ -87,31 +58,19 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"login_type\": \"google\",\n    \"token\": \"G-TOKEN-HERE\",\n    \"email\": \"user@gmail.com\",\n    \"name\": \"John Doe\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/social-login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"social-login"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "social-login"]
 						}
 					},
 					"response": []
@@ -121,27 +80,15 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/auth/me",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"auth",
-								"me"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "me"]
 						}
 					},
 					"response": []
@@ -156,21 +103,14 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/currencies",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"currencies"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "currencies"]
 						}
 					},
 					"response": []
@@ -180,21 +120,14 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/languages",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"languages"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "languages"]
 						}
 					},
 					"response": []
@@ -204,27 +137,15 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/categories?type=business",
-							"host": [
-								"{{base_url}}"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "business"
-								}
-							],
-							"path": [
-								"api",
-								"categories"
-							]
+							"host": ["{{base_url}}"],
+							"query": [{ "key": "type", "value": "business" }],
+							"path": ["api", "categories"]
 						}
 					},
 					"response": []
@@ -234,21 +155,14 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/themes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"themes"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "themes"]
 						}
 					},
 					"response": []
@@ -263,21 +177,14 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "apikey",
-								"value": "{{apikey}}",
-								"type": "text"
-							}
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/config",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"config"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["api", "config"]
 						}
 					},
 					"response": []
@@ -286,17 +193,8 @@
 		}
 	],
 	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:3000"
-		},
-		{
-			"key": "apikey",
-			"value": "brandboost_ai_key_789"
-		},
-		{
-			"key": "token",
-			"value": "YOUR_JWT_TOKEN_HERE"
-		}
+		{ "key": "base_url", "value": "https://ai-smm-backend.vercel.app" },
+		{ "key": "apikey", "value": "brandboost_ai_key_789" },
+		{ "key": "token", "value": "YOUR_JWT_TOKEN_HERE" }
 	]
 }

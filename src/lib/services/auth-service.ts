@@ -8,7 +8,7 @@ export class AuthService {
   /**
    * Sends OTP to the specified value (phone or email).
    */
-  static async sendOtp(type: 'phone' | 'email', value: string, deviceId?: string) {
+  static async sendOtp(type: 'phone' | 'email', value: string, deviceId?: string, deviceType?: string) {
     // 1. Fetch Active Provider Configuration
     const category = type === 'phone' ? 'phone_otp' : 'email_otp';
     const activeConfig = await prisma.externalServiceConfig.findFirst({
@@ -56,10 +56,15 @@ export class AuthService {
     if (deviceId && user) {
       await prisma.deviceToken.upsert({
         where: { userId_deviceId: { userId: user.id, deviceId: deviceId } },
-        update: { lastLoggedIn: new Date(), isActive: true },
+        update: { 
+          lastLoggedIn: new Date(), 
+          isActive: true,
+          deviceType: deviceType || undefined 
+        },
         create: {
           userId: user.id,
           deviceId: deviceId,
+          deviceType: deviceType || null,
           isActive: true,
           lastLoggedIn: new Date(),
         },
