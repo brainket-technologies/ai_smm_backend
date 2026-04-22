@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_development_replace_this';
 
-export const generateToken = (userId: string | bigint, version: number = 0) => {
+export const generateToken = (userId: string | bigint, version: number = 0, deviceId?: string) => {
     // Convert BigInt to string if necessary, as JWT payload must be JSON serializable
     const id = typeof userId === 'bigint' ? userId.toString() : userId;
-    return jwt.sign({ id, version }, JWT_SECRET, {
+    return jwt.sign({ id, version, deviceId }, JWT_SECRET, {
         expiresIn: '30d',
     });
 };

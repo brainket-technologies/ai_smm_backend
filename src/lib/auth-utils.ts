@@ -35,7 +35,7 @@ export async function validateAuth(request: Request) {
   }
 
   const token = authHeader.split(' ')[1];
-  const decoded = verifyToken(token) as { id: string; version: number };
+  const decoded = verifyToken(token) as { id: string; version: number; deviceId?: string };
   
   if (!decoded) {
     return {
@@ -44,18 +44,25 @@ export async function validateAuth(request: Request) {
     };
   }
 
-  // Check version in DB
-  const user = await prisma.user.findUnique({
-    where: { id: BigInt(decoded.id) },
-    select: { tokenVersion: true }
-  });
+  // If deviceId was included in token, check version in DeviceToken table
+  if (decoded.deviceId) {
+    const device = await prisma.deviceToken.findUnique({
+      where: { 
+        userId_deviceId: { 
+          userId: BigInt(decoded.id), 
+          deviceId: decoded.deviceId 
+        } 
+      },
+      select: { tokenVersion: true }
+    });
 
-  if (!user || user.tokenVersion !== decoded.version) {
-    return {
-      isValid: false,
-      response: NextResponse.json({ success: false, message: 'Session expired or logged in from another device' }, { status: 401 })
-    };
+    if (!device || device.tokenVersion !== decoded.version) {
+      return {
+        isValid: false,
+        response: NextResponse.json({ success: false, message: 'Session expired or logged in from another device' }, { status: 401 })
+      };
+    }
   }
 
-  return { isValid: true, userId: BigInt(decoded.id) };
+  return { isValid: true, userId: BigInt(decoded.id), deviceId: decoded.deviceId };
 }

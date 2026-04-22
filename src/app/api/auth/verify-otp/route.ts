@@ -22,7 +22,10 @@ export async function POST(request: Request) {
             );
         }
 
-        const result = await AuthService.verifyOtp(authType as 'phone' | 'email', value, otp);
+        const deviceId = request.headers.get('device-id') || request.headers.get('device_id') || undefined;
+        const deviceType = request.headers.get('device-type') || request.headers.get('device_type') || undefined;
+
+        const result = await AuthService.verifyOtp(authType as 'phone' | 'email', value, otp, deviceId, deviceType);
 
         return NextResponse.json({
             success: true,

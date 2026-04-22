@@ -25,12 +25,17 @@ export async function POST(request: Request) {
             );
         }
 
+        const deviceId = request.headers.get('device-id') || request.headers.get('device_id') || undefined;
+        const deviceType = request.headers.get('device-type') || request.headers.get('device_type') || undefined;
+
         const result = await AuthService.socialLogin({
             loginType: login_type as 'google' | 'apple',
             token,
             name,
             email,
             image,
+            deviceId,
+            deviceType,
         });
 
         return NextResponse.json({

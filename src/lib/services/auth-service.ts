@@ -119,7 +119,7 @@ export class AuthService {
   /**
    * Verifies OTP and returns user data with JWT and business status.
    */
-  static async verifyOtp(type: 'phone' | 'email', value: string, otp: string) {
+  static async verifyOtp(type: 'phone' | 'email', value: string, otp: string, deviceId?: string, deviceType?: string) {
     // 1. Find the latest OTP for this value
     const verification = await prisma.otpVerification.findFirst({
       where: { [type]: value },
@@ -133,32 +133,50 @@ export class AuthService {
     // 2. Clear used OTP
     await prisma.otpVerification.delete({ where: { id: verification.id } });
 
-    // 3. Get User with Business count
+    // 3. Get User
     const user = await prisma.user.findUnique({
       where: type === 'phone' ? { phone: value } : { email: value },
-      include: {
-        businesses: { select: { id: true } }
-      }
     });
 
     if (!user) throw new Error('User not found.');
 
-    const isNewUser = !user.name; // Simple heuristic: if name is null, it's a new sign-up
-    const hasBusiness = user.businesses.length > 0;
+    const isNewUser = !user.name;
 
-    // 4. Update user verification status and increment token version
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: { 
-        isVerified: true,
-        tokenVersion: { increment: 1 }
-      },
-    });
+    // 4. Handle Device Token and Versioning
+    let currentVersion = 0;
+    if (deviceId) {
+      const deviceToken = await prisma.deviceToken.upsert({
+        where: { userId_deviceId: { userId: user.id, deviceId } },
+        update: { 
+          tokenVersion: { increment: 1 },
+          deviceType: deviceType || undefined,
+          lastLoggedIn: new Date(),
+          isActive: true
+        },
+        create: {
+          userId: user.id,
+          deviceId,
+          deviceType: deviceType || null,
+          tokenVersion: 1,
+          isActive: true,
+          lastLoggedIn: new Date(),
+        },
+      });
+      currentVersion = deviceToken.tokenVersion;
+    }
 
-    // 5. Generate JWT with the new version
-    const token = generateToken(user.id, updatedUser.tokenVersion);
+    // 5. Update user verification status
+    if (!user.isVerified) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { isVerified: true },
+      });
+    }
 
-    // 4. Return full user data (similar to sendOtp)
+    // 6. Generate JWT
+    const token = generateToken(user.id, currentVersion, deviceId);
+
+    // 7. Return full user data
     const userData = await this.getFormattedUserData(user.id);
     const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
 
@@ -179,6 +197,8 @@ export class AuthService {
     name?: string;
     email?: string;
     image?: string;
+    deviceId?: string;
+    deviceType?: string;
   }) {
     // 1. Verify Social Token
     const activeConfig = await prisma.externalServiceConfig.findFirst({
@@ -237,15 +257,31 @@ export class AuthService {
       });
     }
 
-    // 3. Update token version and get new version
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: { tokenVersion: { increment: 1 } },
-      select: { tokenVersion: true }
-    });
+    // 3. Handle Device Token and Versioning
+    let currentVersion = 0;
+    if (payload.deviceId) {
+      const deviceToken = await prisma.deviceToken.upsert({
+        where: { userId_deviceId: { userId: user.id, deviceId: payload.deviceId } },
+        update: { 
+          tokenVersion: { increment: 1 },
+          deviceType: payload.deviceType || undefined,
+          lastLoggedIn: new Date(),
+          isActive: true
+        },
+        create: {
+          userId: user.id,
+          deviceId: payload.deviceId,
+          deviceType: payload.deviceType || null,
+          tokenVersion: 1,
+          isActive: true,
+          lastLoggedIn: new Date(),
+        },
+      });
+      currentVersion = deviceToken.tokenVersion;
+    }
 
     // 4. Generate JWT
-    const token = generateToken(user.id, updatedUser.tokenVersion);
+    const token = generateToken(user.id, currentVersion, payload.deviceId);
 
     const userData = await this.getFormattedUserData(user.id);
 
