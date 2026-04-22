@@ -1,6 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
 import appleSignin from 'apple-signin-auth';
-import prisma from '../../lib/prisma';
+import prisma from '@/lib/prisma';
 
 export class SocialProvider {
   /**

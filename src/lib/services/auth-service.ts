@@ -1,4 +1,4 @@
-import prisma from '../prisma';
+import prisma from '@/lib/prisma';
 import { generateToken } from '@/lib/jwt';
 import { SmsProvider } from './providers/sms-provider';
 import { EmailProvider } from './providers/email-provider';
