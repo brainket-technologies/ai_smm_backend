@@ -18,6 +18,11 @@
 								"key": "apikey",
 								"value": "{{apikey}}",
 								"type": "text"
+							},
+							{
+								"key": "device-id",
+								"value": "unique_device_id_123",
+								"type": "text"
 							}
 						],
 						"body": {
