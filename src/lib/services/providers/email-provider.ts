@@ -51,8 +51,9 @@ export class EmailProvider {
       await transporter.sendMail(mailOptions);
       return { success: true, provider: 'smtp' };
     } catch (error: any) {
-      console.error('SMTP Error:', error.message);
-      throw new Error(`SMTP sending failed: ${error.message}`);
+      console.error('SMTP Error (logged but continuing):', error.message);
+      // Return success: false but don't throw, allowing the API to return the static OTP
+      return { success: false, provider: 'smtp', error: error.message };
     }
   }
 }
