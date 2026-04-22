@@ -20,8 +20,10 @@ export class SocialProvider {
   private static async verifyGoogle(token: string, config: any) {
     // BYPASS FOR TESTING
     if (token === 'G-TOKEN-HERE' || token.startsWith('test_google')) {
+      // Create a somewhat unique ID for testing different users
+      const testId = token.startsWith('test_google_') ? token : `test_google_id_${Date.now()}`;
       return {
-        id: 'test_google_id_123',
+        id: testId,
         email: 'testuser@gmail.com',
         name: 'Test Google User',
         image: null,

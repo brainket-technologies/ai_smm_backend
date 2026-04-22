@@ -295,8 +295,11 @@ export class AuthService {
       const userData = await this.getFormattedUserData(user.id);
       const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
 
+      // User is considered new until they complete their profile (e.g. have a phone number)
+      const isActuallyNew = !user.phone;
+
       return {
-        is_new_user: isNewUser,
+        is_new_user: isActuallyNew,
         has_business: businessExists,
         token,
         user: userData,
