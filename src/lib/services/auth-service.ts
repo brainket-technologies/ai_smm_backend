@@ -73,8 +73,14 @@ export class AuthService {
       typeof value === 'bigint' ? value.toString() : value
     ));
     
-    // Format response: add image URL and remove redundant IDs/objects
+    // Check if user is blocked in UserBlock table
+    const blockCount = await prisma.userBlock.count({
+      where: { userId: user.id }
+    });
+    
+    // Format response: add image URL, block status and remove redundant IDs/objects
     userData.image = (user as any)!.profileMedia?.fileUrl || null;
+    userData.is_blocked = blockCount > 0;
     delete userData.roleId;
     delete userData.mediaId;
     delete userData.profileMedia;
