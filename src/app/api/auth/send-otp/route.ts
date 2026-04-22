@@ -10,8 +10,8 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const { phone, email, type } = body;
-        const deviceId = request.headers.get('device-id') || undefined;
-        const deviceType = request.headers.get('device-type') || undefined;
+        const deviceId = request.headers.get('device-id') || request.headers.get('device_id') || undefined;
+        const deviceType = request.headers.get('device-type') || request.headers.get('device_type') || undefined;
 
         // Determine type if not provided explicitly
         const authType = type || (phone ? 'phone' : (email ? 'email' : null));
