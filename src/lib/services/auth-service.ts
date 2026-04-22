@@ -42,7 +42,14 @@ export class AuthService {
           isVerified: false,
           roleId: userRole?.id,
         },
+        include: { role: true },
       });
+    } else {
+      // Re-fetch user with role included if it wasn't already included
+      user = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { role: true },
+      }) as any;
     }
 
     // 4. Save OTP to Database
