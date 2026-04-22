@@ -146,16 +146,17 @@ export class AuthService {
     const isNewUser = !user.name; // Simple heuristic: if name is null, it's a new sign-up
     const hasBusiness = user.businesses.length > 0;
 
-    // 4. Update user verification status if needed
-    if (!user.isVerified) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { isVerified: true },
-      });
-    }
+    // 4. Update user verification status and increment token version
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { 
+        isVerified: true,
+        tokenVersion: { increment: 1 }
+      },
+    });
 
-    // 5. Generate JWT
-    const token = generateToken(user.id);
+    // 5. Generate JWT with the new version
+    const token = generateToken(user.id, updatedUser.tokenVersion);
 
     // 4. Return full user data (similar to sendOtp)
     const userData = await this.getFormattedUserData(user.id);
@@ -236,19 +237,23 @@ export class AuthService {
       });
     }
 
-    // 3. Generate JWT
-    const token = generateToken(user.id);
+    // 3. Update token version and get new version
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenVersion: { increment: 1 } },
+      select: { tokenVersion: true }
+    });
+
+    // 4. Generate JWT
+    const token = generateToken(user.id, updatedUser.tokenVersion);
+
+    const userData = await this.getFormattedUserData(user.id);
 
     return {
       success: true,
       token,
       isNewUser,
-      user: {
-        id: user.id.toString(),
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-      },
+      user: userData,
     };
   }
 
@@ -281,7 +286,7 @@ export class AuthService {
   /**
    * Helper to fetch and format user data with relations.
    */
-  private static async getFormattedUserData(userId: bigint) {
+  static async getFormattedUserData(userId: bigint) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { role: true, profileMedia: true, deviceTokens: true },

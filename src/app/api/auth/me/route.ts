@@ -1,52 +1,30 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/jwt';
+import { AuthService } from '@/lib/services/auth-service';
+import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { BusinessService } from '@/lib/services/business-service';
 import { registerMedia } from '@/lib/media';
-
+import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 export async function GET(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+    // 1. Validate API Key
+    const apiCheck = validateApiKey(request);
+    if (!apiCheck.isValid) return apiCheck.response;
 
-    const token = authHeader.split(' ')[1];
-    const decoded: any = verifyToken(token);
+    // 2. Authenticate User
+    const auth = await validateAuth(request);
+    if (!auth.isValid) return auth.response;
 
-    if (!decoded || !decoded.id) {
-      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: BigInt(decoded.id) },
-      include: {
-        role: true,
-        profileMedia: { select: { fileUrl: true } }
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
-    }
-
-    // Prepare serializable data (convert BigInt to string)
-    const userData = {
-      id: user.id.toString(),
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      image: user.profileMedia?.fileUrl || null,
-      role: user.role ? {
-        id: user.role.id.toString(),
-        name: user.role.name,
-      } : null,
-    };
+    const userData = await AuthService.getFormattedUserData(auth.userId!);
+    const hasBusiness = await BusinessService.hasBusiness(auth.userId!);
 
     return NextResponse.json({
       success: true,
-      data: userData
+      data: {
+        has_business: hasBusiness,
+        user: userData
+      }
     });
 
   } catch (error: any) {
@@ -57,17 +35,13 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+    // 1. Validate API Key
+    const apiCheck = validateApiKey(request);
+    if (!apiCheck.isValid) return apiCheck.response;
 
-    const token = authHeader.split(' ')[1];
-    const decoded: any = verifyToken(token);
-
-    if (!decoded || !decoded.id) {
-      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
-    }
+    // 2. Authenticate User
+    const auth = await validateAuth(request);
+    if (!auth.isValid) return auth.response;
 
     const body = await request.json();
     const { name, email, phone, bio, image, password } = body;
@@ -96,26 +70,12 @@ export async function PATCH(request: Request) {
 
     updateData.updatedAt = new Date();
 
-    const updatedUser = await prisma.user.update({
-      where: { id: BigInt(decoded.id) },
+    await prisma.user.update({
+      where: { id: auth.userId! },
       data: updateData,
-      include: { 
-        role: true,
-        profileMedia: { select: { fileUrl: true } }
-      }
     });
 
-    const userData = {
-      id: updatedUser.id.toString(),
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-      image: updatedUser.profileMedia?.fileUrl || null,
-      role: updatedUser.role ? {
-        id: updatedUser.role.id.toString(),
-        name: updatedUser.role.name,
-      } : null,
-    };
+    const userData = await AuthService.getFormattedUserData(auth.userId!);
 
     return NextResponse.json({
       success: true,
