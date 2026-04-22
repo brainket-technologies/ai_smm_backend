@@ -9,11 +9,7 @@ export class AuthService {
    * Sends OTP to the specified value (phone or email).
    */
   static async sendOtp(type: 'phone' | 'email', value: string) {
-    // 1. Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-    // 2. Fetch Active Provider Configuration
+    // 1. Fetch Active Provider Configuration
     const category = type === 'phone' ? 'phone_otp' : 'email_otp';
     const activeConfig = await prisma.externalServiceConfig.findFirst({
       where: { category, isActive: true },
@@ -24,7 +20,32 @@ export class AuthService {
       throw new Error(`No active ${type} OTP provider configured.`);
     }
 
-    // 3. Save OTP to Database
+    // 2. Generate OTP based on provider
+    // Firebase: 6 digits, others: 4 digits
+    const isFirebase = activeConfig.provider.toLowerCase() === 'firebase';
+    const otpLength = isFirebase ? 6 : 4;
+    const min = Math.pow(10, otpLength - 1);
+    const max = Math.pow(10, otpLength) - 1;
+    const otp = Math.floor(min + Math.random() * (max - min + 1)).toString();
+    const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+    // 3. Find or Create User (Upsert)
+    let user = await prisma.user.findUnique({
+      where: type === 'phone' ? { phone: value } : { email: value },
+    });
+
+    if (!user) {
+      const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
+      user = await prisma.user.create({
+        data: {
+          [type]: value,
+          isVerified: false,
+          roleId: userRole?.id,
+        },
+      });
+    }
+
+    // 4. Save OTP to Database
     await prisma.otpVerification.create({
       data: {
         [type]: value,
@@ -33,18 +54,31 @@ export class AuthService {
       },
     });
 
-    // 4. Send OTP via Provider
+    // 5. Send OTP via Provider
     if (type === 'phone') {
       await SmsProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     } else {
       await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     }
 
-    return { success: true, message: `OTP sent via ${activeConfig.provider}` };
+    // Prepare serializable user data
+    const userData = {
+      id: user.id.toString(),
+      name: user.name || null,
+      email: user.email || null,
+      phone: user.phone || null,
+      image: null, // Placeholder if no profileMedia
+    };
+
+    return { 
+      success: true, 
+      message: `OTP sent successfully to ${value}`,
+      data: userData
+    };
   }
 
   /**
-   * Verifies OTP and returns user data with JWT.
+   * Verifies OTP and returns user data with JWT and business status.
    */
   static async verifyOtp(type: 'phone' | 'email', value: string, otp: string) {
     // 1. Find the latest OTP for this value
@@ -57,44 +91,44 @@ export class AuthService {
     if (verification.otp !== otp) throw new Error('Invalid OTP.');
     if (new Date() > verification.expiry) throw new Error('OTP expired.');
 
-    // 2. Clear used OTP (optional but recommended)
+    // 2. Clear used OTP
     await prisma.otpVerification.delete({ where: { id: verification.id } });
 
-    // 3. Find or Create User
-    let user = await prisma.user.findUnique({
+    // 3. Get User with Business count
+    const user = await prisma.user.findUnique({
       where: type === 'phone' ? { phone: value } : { email: value },
+      include: {
+        businesses: { select: { id: true } }
+      }
     });
 
-    let isNewUser = false;
-    if (!user) {
-      const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
-      user = await prisma.user.create({
-        data: {
-          [type]: value,
-          isVerified: true,
-          roleId: userRole?.id,
-        },
-      });
-      isNewUser = true;
-    } else if (!user.isVerified) {
+    if (!user) throw new Error('User not found.');
+
+    const isNewUser = !user.name; // Simple heuristic: if name is null, it's a new sign-up
+    const hasBusiness = user.businesses.length > 0;
+
+    // 4. Update user verification status if needed
+    if (!user.isVerified) {
       await prisma.user.update({
         where: { id: user.id },
         data: { isVerified: true },
       });
     }
 
-    // 4. Generate JWT
+    // 5. Generate JWT
     const token = generateToken(user.id);
 
     return {
       success: true,
+      otp_verified: true,
+      is_new_user: isNewUser,
+      has_business: hasBusiness,
       token,
-      isNewUser,
       user: {
         id: user.id.toString(),
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
+        name: user.name || null,
+        email: user.email || null,
+        phone: user.phone || null,
       },
     };
   }

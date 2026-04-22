@@ -195,6 +195,36 @@
 					"response": []
 				},
 				{
+					"name": "Get Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "{{apikey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories?type=business",
+							"host": [
+								"{{base_url}}"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "business"
+								}
+							],
+							"path": [
+								"api",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Themes",
 					"request": {
 						"method": "GET",
