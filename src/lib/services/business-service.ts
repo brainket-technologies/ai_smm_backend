@@ -39,4 +39,26 @@ export class BusinessService {
     });
     return count > 0;
   }
+
+  /**
+   * Fetches all businesses for a user.
+   */
+  static async list(userId: bigint) {
+    const businesses = await prisma.business.findMany({
+      where: { ownerId: userId },
+      include: {
+        businessCategories: {
+          include: {
+            category: true,
+          },
+        },
+        media: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return JSON.parse(JSON.stringify(businesses, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+  }
 }

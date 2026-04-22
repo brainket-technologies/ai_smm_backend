@@ -87,7 +87,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\"\n}",
+							"raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\",\n    \"number\": \"+919876543210\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -140,6 +140,24 @@
 							"raw": "{{base_url}}/api/business/register",
 							"host": ["{{base_url}}"],
 							"path": ["api", "business", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Business List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/business/list",
+							"host": ["{{base_url}}"],
+							"path": ["api", "business", "list"]
 						}
 					},
 					"response": []

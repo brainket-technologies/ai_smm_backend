@@ -284,11 +284,12 @@ export class AuthService {
     const token = generateToken(user.id, currentVersion, payload.deviceId);
 
     const userData = await this.getFormattedUserData(user.id);
+    const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
 
     return {
-      success: true,
+      is_new_user: isNewUser,
+      has_business: businessExists,
       token,
-      isNewUser,
       user: userData,
     };
   }

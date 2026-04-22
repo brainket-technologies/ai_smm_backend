@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            message: 'Social login successful',
+            message: 'Logged in successfully',
             data: result
         });
     } catch (error: any) {
