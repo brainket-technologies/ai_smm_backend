@@ -200,125 +200,142 @@ export class AuthService {
     deviceId?: string;
     deviceType?: string;
   }) {
-    // 1. Verify Social Token
-    const activeConfig = await prisma.externalServiceConfig.findFirst({
-      where: { category: 'social_login', provider: payload.loginType, isActive: true },
-    });
+    try {
+      // 1. Verify Social Token
+      const activeConfig = await prisma.externalServiceConfig.findFirst({
+        where: { category: 'social_login', provider: payload.loginType, isActive: true },
+      });
 
-    if (!activeConfig) {
-      throw new Error(`Social login via ${payload.loginType} is currently disabled.`);
-    }
-
-    const socialData = await SocialProvider.verify(
-      payload.loginType,
-      payload.token,
-      activeConfig.config as any
-    );
-
-    const email = payload.email || socialData.email;
-    const socialId = socialData.id;
-
-    if (!email) {
-      throw new Error('Email is required for social login but was not provided by the provider.');
-    }
-
-    // 2. Account Linking Logic
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email },
-          { [payload.loginType === 'google' ? 'googleId' : 'appleId']: socialId }
-        ]
+      if (!activeConfig) {
+        throw new Error(`Social login via ${payload.loginType} is currently disabled.`);
       }
-    });
 
-    let isNewUser = false;
-    if (!user) {
-      const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
-      user = await prisma.user.create({
-        data: {
-          email,
-          name: payload.name || socialData.name,
-          isVerified: true,
-          [payload.loginType === 'google' ? 'googleId' : 'appleId']: socialId,
-          roleId: userRole?.id,
-        },
+      const socialData = await SocialProvider.verify(
+        payload.loginType,
+        payload.token,
+        activeConfig.config as any
+      );
+
+      const email = payload.email || socialData.email;
+      const socialId = socialData.id;
+
+      if (!email) {
+        throw new Error('Email is required for social login but was not provided by the provider.');
+      }
+
+      // 2. Account Linking Logic
+      let user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email },
+            { [payload.loginType === 'google' ? 'googleId' : 'appleId']: socialId }
+          ]
+        }
       });
-      isNewUser = true;
-    } else {
-      // Link the account if not already linked
-      const updateData: any = { isVerified: true };
-      if (payload.loginType === 'google' && !user.googleId) updateData.googleId = socialId;
-      if (payload.loginType === 'apple' && !user.appleId) updateData.appleId = socialId;
-      
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: updateData,
-      });
+
+      let isNewUser = false;
+      if (!user) {
+        const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
+        user = await prisma.user.create({
+          data: {
+            email,
+            name: payload.name || socialData.name,
+            isVerified: true,
+            [payload.loginType === 'google' ? 'googleId' : 'appleId']: socialId,
+            roleId: userRole?.id,
+          },
+        });
+        isNewUser = true;
+      } else {
+        // Link the account if not already linked
+        const updateData: any = { isVerified: true };
+        if (payload.loginType === 'google' && !user.googleId) updateData.googleId = socialId;
+        if (payload.loginType === 'apple' && !user.appleId) updateData.appleId = socialId;
+        
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: updateData,
+        });
+      }
+
+      // 3. Handle Device Token and Versioning
+      let currentVersion = 0;
+      if (payload.deviceId) {
+        const deviceToken = await prisma.deviceToken.upsert({
+          where: { userId_deviceId: { userId: user.id, deviceId: payload.deviceId } },
+          update: { 
+            tokenVersion: { increment: 1 },
+            deviceType: payload.deviceType || undefined,
+            lastLoggedIn: new Date(),
+            isActive: true
+          },
+          create: {
+            userId: user.id,
+            deviceId: payload.deviceId,
+            deviceType: payload.deviceType || null,
+            tokenVersion: 1,
+            isActive: true,
+            lastLoggedIn: new Date(),
+          },
+        });
+        currentVersion = deviceToken.tokenVersion;
+      }
+
+      // 4. Generate JWT
+      const token = generateToken(user.id, currentVersion, payload.deviceId);
+
+      const userData = await this.getFormattedUserData(user.id);
+      const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
+
+      return {
+        is_new_user: isNewUser,
+        has_business: businessExists,
+        token,
+        user: userData,
+      };
+    } catch (error: any) {
+      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+        throw new Error('Email already in use by another account.');
+      }
+      throw error;
     }
-
-    // 3. Handle Device Token and Versioning
-    let currentVersion = 0;
-    if (payload.deviceId) {
-      const deviceToken = await prisma.deviceToken.upsert({
-        where: { userId_deviceId: { userId: user.id, deviceId: payload.deviceId } },
-        update: { 
-          tokenVersion: { increment: 1 },
-          deviceType: payload.deviceType || undefined,
-          lastLoggedIn: new Date(),
-          isActive: true
-        },
-        create: {
-          userId: user.id,
-          deviceId: payload.deviceId,
-          deviceType: payload.deviceType || null,
-          tokenVersion: 1,
-          isActive: true,
-          lastLoggedIn: new Date(),
-        },
-      });
-      currentVersion = deviceToken.tokenVersion;
-    }
-
-    // 4. Generate JWT
-    const token = generateToken(user.id, currentVersion, payload.deviceId);
-
-    const userData = await this.getFormattedUserData(user.id);
-    const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
-
-    return {
-      is_new_user: isNewUser,
-      has_business: businessExists,
-      token,
-      user: userData,
-    };
   }
 
   /**
    * Updates user profile (name and email).
    */
   static async updateProfile(userId: bigint, data: { name?: string; email?: string; phone?: string }) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-      },
-    });
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        },
+      });
 
-    const userData = await this.getFormattedUserData(userId);
-    const hasBusiness = await prisma.business.count({ where: { ownerId: userId } }) > 0;
+      const userData = await this.getFormattedUserData(userId);
+      const hasBusiness = await prisma.business.count({ where: { ownerId: userId } }) > 0;
 
-    return {
-      success: true,
-      message: 'Profile updated successfully',
-      data: {
-        is_new_user: false,
-        has_business: hasBusiness,
-        user: userData,
+      return {
+        success: true,
+        message: 'Profile updated successfully',
+        data: {
+          is_new_user: false,
+          has_business: hasBusiness,
+          user: userData,
+        }
+      };
+    } catch (error: any) {
+      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+        throw new Error('Email already in use by another account.');
       }
-    };
+      if (error.code === 'P2002' && error.meta?.target?.includes('phone')) {
+        throw new Error('Phone number already in use by another account.');
+      }
+      throw error;
+    }
   }
 
   /**
