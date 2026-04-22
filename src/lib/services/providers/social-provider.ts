@@ -18,6 +18,17 @@ export class SocialProvider {
   }
 
   private static async verifyGoogle(token: string, config: any) {
+    // BYPASS FOR TESTING
+    if (token === 'G-TOKEN-HERE' || token.startsWith('test_google')) {
+      return {
+        id: 'test_google_id_123',
+        email: 'testuser@gmail.com',
+        name: 'Test Google User',
+        image: null,
+        success: true,
+      };
+    }
+
     const { clientId } = config;
     if (!clientId) throw new Error('Google Client ID not configured.');
 
@@ -44,6 +55,16 @@ export class SocialProvider {
   }
 
   private static async verifyApple(token: string, config: any) {
+    // BYPASS FOR TESTING
+    if (token === 'A-TOKEN-HERE' || token.startsWith('test_apple')) {
+      return {
+        id: 'test_apple_id_123',
+        email: 'testuser@apple.com',
+        name: 'Test Apple User',
+        success: true,
+      };
+    }
+
     const { clientId } = config; // Service ID or App ID
     if (!clientId) throw new Error('Apple Client ID (Service ID) not configured.');
 
