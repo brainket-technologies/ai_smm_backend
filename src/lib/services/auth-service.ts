@@ -68,10 +68,11 @@ export class AuthService {
       await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     }
 
-    // Return full user data, handling BigInt conversion
+    // Return full user data, handling BigInt conversion and removing redundant roleId
     const userData = JSON.parse(JSON.stringify(user, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
+    delete userData.roleId;
 
     return { 
       success: true, 
