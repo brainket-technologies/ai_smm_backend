@@ -296,12 +296,13 @@ export class AuthService {
   /**
    * Updates user profile (name and email).
    */
-  static async updateProfile(userId: bigint, data: { name?: string; email?: string }) {
+  static async updateProfile(userId: bigint, data: { name?: string; email?: string; phone?: string }) {
     await prisma.user.update({
       where: { id: userId },
       data: {
         name: data.name,
         email: data.email,
+        phone: data.phone,
       },
     });
 

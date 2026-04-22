@@ -13,9 +13,13 @@ export async function POST(request: Request) {
         if (!auth.isValid) return auth.response;
 
         const body = await request.json();
-        const { name, email } = body;
+        const { name, email, phone, number } = body;
 
-        const result = await AuthService.updateProfile(auth.userId!, { name, email });
+        const result = await AuthService.updateProfile(auth.userId!, { 
+            name, 
+            email, 
+            phone: phone || number 
+        });
 
         return NextResponse.json(result);
     } catch (error: any) {
