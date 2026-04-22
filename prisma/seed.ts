@@ -1085,7 +1085,7 @@ async function main() {
   console.log('Seeding External Service Configs...');
   const externalConfigs = [
     {
-      category: 'otp',
+      category: 'phone_otp',
       provider: 'msg91',
       config: {
         authKey: 'YOUR_MSG91_AUTH_KEY',
@@ -1096,12 +1096,25 @@ async function main() {
       isDefault: false
     },
     {
-      category: 'otp',
+      category: 'phone_otp',
       provider: 'firebase',
       config: {
         apiKey: 'AIzaSyA5SVlOwGfeSrfOprRry5a-1kkoHl_m_Fg',
         authDomain: 'fir-notes-20c44.firebaseapp.com',
         projectId: 'fir-notes-20c44'
+      },
+      isActive: true,
+      isDefault: true
+    },
+    {
+      category: 'email_otp',
+      provider: 'smtp',
+      config: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        user: 'brainkettech@gmail.com',
+        pass: 'kuzwqngeywqwvig',
+        from: 'Brainket Tech <brainkettech@gmail.com>'
       },
       isActive: true,
       isDefault: true
