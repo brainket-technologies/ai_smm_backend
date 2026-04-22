@@ -76,6 +76,29 @@
 					"response": []
 				},
 				{
+					"name": "Update Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/update-profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "update-profile"]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Profile (Me)",
 					"request": {
 						"method": "GET",
@@ -89,6 +112,34 @@
 							"raw": "{{base_url}}/api/auth/me",
 							"host": ["{{base_url}}"],
 							"path": ["api", "auth", "me"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Business",
+			"item": [
+				{
+					"name": "Register Business",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"business_name\": \"My Tech Store\",\n    \"number\": \"+919876543210\",\n    \"category_id\": \"1\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/business/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "business", "register"]
 						}
 					},
 					"response": []

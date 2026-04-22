@@ -268,4 +268,59 @@ export class AuthService {
       },
     };
   }
+
+  /**
+   * Updates user profile (name and email).
+   */
+  static async updateProfile(userId: bigint, data: { name?: string; email?: string }) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: data.name,
+        email: data.email,
+      },
+    });
+
+    const userData = await this.getFormattedUserData(userId);
+    const hasBusiness = await prisma.business.count({ where: { userId } }) > 0;
+
+    return {
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        is_new_user: false,
+        has_business: hasBusiness,
+        user: userData,
+      }
+    };
+  }
+
+  /**
+   * Helper to fetch and format user data with relations.
+   */
+  private static async getFormattedUserData(userId: bigint) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { role: true, profileMedia: true, deviceTokens: true },
+    }) as any;
+
+    if (!user) return null;
+
+    const userData = JSON.parse(JSON.stringify(user, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+
+    const blockCount = await prisma.userBlock.count({ where: { userId } });
+    
+    userData.image = user.profileMedia?.fileUrl || null;
+    userData.is_blocked = blockCount > 0;
+    userData.devices = userData.deviceTokens || [];
+    
+    delete userData.roleId;
+    delete userData.mediaId;
+    delete userData.profileMedia;
+    delete userData.deviceTokens;
+
+    return userData;
+  }
 }
