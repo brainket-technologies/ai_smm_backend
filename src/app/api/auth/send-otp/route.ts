@@ -9,28 +9,24 @@ export async function POST(request: Request) {
         if (!apiCheck.isValid) return apiCheck.response;
 
         const body = await request.json();
-        const { phone, email, otp, type } = body;
+        const { phone, email, type } = body;
 
         // Determine type if not provided explicitly
         const authType = type || (phone ? 'phone' : (email ? 'email' : null));
         const value = authType === 'phone' ? phone : email;
 
-        if (!authType || !value || !otp) {
+        if (!authType || !value) {
             return NextResponse.json(
-                { success: false, message: 'Value (phone/email), type and OTP are required' },
+                { success: false, message: 'Value (phone/email) and type are required' },
                 { status: 400 }
             );
         }
 
-        const result = await AuthService.verifyOtp(authType as 'phone' | 'email', value, otp);
+        const result = await AuthService.sendOtp(authType as 'phone' | 'email', value);
 
-        return NextResponse.json({
-            success: true,
-            message: 'Logged in successfully',
-            data: result
-        });
+        return NextResponse.json(result);
     } catch (error: any) {
-        console.error('Verify OTP Error:', error);
+        console.error('Request OTP Error:', error);
         return NextResponse.json(
             { success: false, message: error.message || 'Internal server error' },
             { status: 500 }

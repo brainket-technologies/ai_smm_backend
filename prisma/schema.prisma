@@ -611,6 +611,8 @@ model User {
   deletedAt         DateTime?            @map("deleted_at")
   password          String?
   isVerified        Boolean?             @default(false) @map("is_verified")
+  googleId          String?              @unique @map("google_id")
+  appleId           String?              @unique @map("apple_id")
   mediaId           BigInt?              @map("media_id")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
@@ -642,4 +644,17 @@ model AppTheme {
   media              MediaFile? @relation("ThemeImage", fields: [mediaId], references: [id])
 
   @@map("app_themes")
+}
+
+model OtpVerification {
+  id        BigInt   @id @default(autoincrement())
+  email     String?
+  phone     String?
+  otp       String
+  expiry    DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email, phone])
+  @@map("otp_verifications")
 }

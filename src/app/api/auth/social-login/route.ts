@@ -9,28 +9,37 @@ export async function POST(request: Request) {
         if (!apiCheck.isValid) return apiCheck.response;
 
         const body = await request.json();
-        const { phone, email, otp, type } = body;
+        const { login_type, token, name, email, image } = body;
 
-        // Determine type if not provided explicitly
-        const authType = type || (phone ? 'phone' : (email ? 'email' : null));
-        const value = authType === 'phone' ? phone : email;
-
-        if (!authType || !value || !otp) {
+        if (!login_type || !token) {
             return NextResponse.json(
-                { success: false, message: 'Value (phone/email), type and OTP are required' },
+                { success: false, message: 'login_type and token are required' },
                 { status: 400 }
             );
         }
 
-        const result = await AuthService.verifyOtp(authType as 'phone' | 'email', value, otp);
+        if (login_type !== 'google' && login_type !== 'apple') {
+            return NextResponse.json(
+                { success: false, message: 'Invalid login_type. Must be google or apple' },
+                { status: 400 }
+            );
+        }
+
+        const result = await AuthService.socialLogin({
+            loginType: login_type as 'google' | 'apple',
+            token,
+            name,
+            email,
+            image,
+        });
 
         return NextResponse.json({
             success: true,
-            message: 'Logged in successfully',
+            message: 'Social login successful',
             data: result
         });
     } catch (error: any) {
-        console.error('Verify OTP Error:', error);
+        console.error('Social Login Error:', error);
         return NextResponse.json(
             { success: false, message: error.message || 'Internal server error' },
             { status: 500 }
