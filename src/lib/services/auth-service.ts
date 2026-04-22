@@ -61,14 +61,10 @@ export class AuthService {
       await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     }
 
-    // Prepare serializable user data
-    const userData = {
-      id: user.id.toString(),
-      name: user.name || null,
-      email: user.email || null,
-      phone: user.phone || null,
-      image: null, // Placeholder if no profileMedia
-    };
+    // Return full user data, handling BigInt conversion
+    const userData = JSON.parse(JSON.stringify(user, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
 
     return { 
       success: true, 
