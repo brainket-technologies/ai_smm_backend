@@ -157,18 +157,34 @@ export class AuthService {
     // 5. Generate JWT
     const token = generateToken(user.id);
 
+    // 4. Return full user data (similar to sendOtp)
+    const fullUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { role: true, profileMedia: true, deviceTokens: true },
+    }) as any;
+
+    const userData = JSON.parse(JSON.stringify(fullUser, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+
+    const blockCount = await prisma.userBlock.count({ where: { userId: user.id } });
+    
+    userData.image = fullUser.profileMedia?.fileUrl || null;
+    userData.is_blocked = blockCount > 0;
+    userData.devices = userData.deviceTokens || [];
+    
+    delete userData.roleId;
+    delete userData.mediaId;
+    delete userData.profileMedia;
+    delete userData.deviceTokens;
+
     return {
       success: true,
       otp_verified: true,
       is_new_user: isNewUser,
       has_business: hasBusiness,
       token,
-      user: {
-        id: user.id.toString(),
-        name: user.name || null,
-        email: user.email || null,
-        phone: user.phone || null,
-      },
+      user: userData,
     };
   }
 

@@ -1113,7 +1113,7 @@ async function main() {
         host: 'smtp.gmail.com',
         port: 587,
         user: 'brainkettech@gmail.com',
-        pass: 'kuzwqngeywqwvig',
+        pass: 'rtjqybzilytvdjen',
         from: 'Brainket Tech <brainkettech@gmail.com>'
       },
       isActive: true,
@@ -1126,7 +1126,7 @@ async function main() {
         host: 'smtp.gmail.com',
         port: 587,
         user: 'brainkettech@gmail.com',
-        pass: 'kuzwqngeywqwvig',
+        pass: 'rtjqybzilytvdjen',
         from: 'Brainket Tech <brainkettech@gmail.com>'
       },
       isActive: true,
