@@ -158,29 +158,12 @@ export class AuthService {
     const token = generateToken(user.id);
 
     // 4. Return full user data (similar to sendOtp)
-    const fullUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      include: { role: true, profileMedia: true, deviceTokens: true },
-    }) as any;
-
-    const userData = JSON.parse(JSON.stringify(fullUser, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
-
-    const blockCount = await prisma.userBlock.count({ where: { userId: user.id } });
-    
-    userData.image = fullUser.profileMedia?.fileUrl || null;
-    userData.is_blocked = blockCount > 0;
-    userData.devices = userData.deviceTokens || [];
-    
-    delete userData.roleId;
-    delete userData.mediaId;
-    delete userData.profileMedia;
-    delete userData.deviceTokens;
+    const userData = await this.getFormattedUserData(user.id);
+    const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
 
     return {
       is_new_user: isNewUser,
-      has_business: hasBusiness,
+      has_business: businessExists,
       token,
       user: userData,
     };
@@ -282,7 +265,7 @@ export class AuthService {
     });
 
     const userData = await this.getFormattedUserData(userId);
-    const hasBusiness = await prisma.business.count({ where: { userId } }) > 0;
+    const hasBusiness = await prisma.business.count({ where: { ownerId: userId } }) > 0;
 
     return {
       success: true,

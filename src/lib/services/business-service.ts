@@ -7,10 +7,21 @@ export class BusinessService {
   static async register(userId: bigint, data: { name: string; phone: string; categoryId: string }) {
     const business = await prisma.business.create({
       data: {
-        userId,
+        ownerId: userId,
         name: data.name,
         phone: data.phone,
-        categoryId: BigInt(data.categoryId),
+        businessCategories: {
+          create: {
+            categoryId: BigInt(data.categoryId),
+          },
+        },
+      },
+      include: {
+        businessCategories: {
+          include: {
+            category: true,
+          },
+        },
       },
     });
 
@@ -24,7 +35,7 @@ export class BusinessService {
    */
   static async hasBusiness(userId: bigint) {
     const count = await prisma.business.count({
-      where: { userId },
+      where: { ownerId: userId },
     });
     return count > 0;
   }
