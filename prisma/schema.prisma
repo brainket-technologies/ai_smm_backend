@@ -609,6 +609,7 @@ model User {
   whatsappEnabled   Boolean?             @default(false) @map("whatsapp_enabled")
   isDeleted         Boolean?             @default(false) @map("is_deleted")
   deletedAt         DateTime?            @map("deleted_at")
+  isBlocked         Boolean?             @default(false) @map("is_blocked")
   password          String?
   isVerified        Boolean?             @default(false) @map("is_verified")
   googleId          String?              @unique @map("google_id")
