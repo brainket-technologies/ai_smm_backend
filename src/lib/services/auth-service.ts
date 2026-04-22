@@ -42,13 +42,13 @@ export class AuthService {
           isVerified: false,
           roleId: userRole?.id,
         },
-        include: { role: true },
+        include: { role: true, profileMedia: true },
       });
     } else {
-      // Re-fetch user with role included if it wasn't already included
+      // Re-fetch user with role and profileMedia included
       user = await prisma.user.findUnique({
         where: { id: user.id },
-        include: { role: true },
+        include: { role: true, profileMedia: true },
       }) as any;
     }
 
@@ -68,11 +68,16 @@ export class AuthService {
       await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     }
 
-    // Return full user data, handling BigInt conversion and removing redundant roleId
+    // Return full user data, handling BigInt conversion and formatting response
     const userData = JSON.parse(JSON.stringify(user, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
+    
+    // Format response: add image URL and remove redundant IDs/objects
+    userData.image = user.profileMedia?.fileUrl || null;
     delete userData.roleId;
+    delete userData.mediaId;
+    delete userData.profileMedia;
 
     return { 
       success: true, 
