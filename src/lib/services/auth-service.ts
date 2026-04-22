@@ -75,7 +75,7 @@ export class AuthService {
     
     // Check if user is blocked in UserBlock table
     const blockCount = await prisma.userBlock.count({
-      where: { userId: user.id }
+      where: { userId: user!.id }
     });
     
     // Format response: add image URL, block status and remove redundant IDs/objects
