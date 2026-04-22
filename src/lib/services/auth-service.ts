@@ -9,111 +9,119 @@ export class AuthService {
    * Sends OTP to the specified value (phone or email).
    */
   static async sendOtp(type: 'phone' | 'email', value: string, deviceId?: string, deviceType?: string) {
-    // 1. Fetch Active Provider Configuration
-    const category = type === 'phone' ? 'phone_otp' : 'email_otp';
-    const activeConfig = await prisma.externalServiceConfig.findFirst({
-      where: { category, isActive: true },
-      orderBy: { isDefault: 'desc' },
-    });
+    try {
+      // 1. Fetch Active Provider Configuration
+      const category = type === 'phone' ? 'phone_otp' : 'email_otp';
+      const activeConfig = await prisma.externalServiceConfig.findFirst({
+        where: { category, isActive: true },
+        orderBy: { isDefault: 'desc' },
+      });
 
-    if (!activeConfig) {
-      throw new Error(`No active ${type} OTP provider configured.`);
-    }
+      if (!activeConfig) {
+        throw new Error(`No active ${type} OTP provider configured.`);
+      }
 
-    // 2. Generate OTP based on provider (Static for now as requested)
-    const provider = activeConfig.provider.toLowerCase();
-    const isFirebase = provider === 'firebase';
-    const isSmtp = provider === 'smtp';
-    
-    // Email/Firebase: 6 digits (123456), MSG91: 4 digits (1234)
-    let otp = (isFirebase || isSmtp) ? '123456' : '1234';
-    const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+      // 2. Generate OTP based on provider (Static for now as requested)
+      const provider = activeConfig.provider.toLowerCase();
+      const isFirebase = provider === 'firebase';
+      const isSmtp = provider === 'smtp';
+      
+      // Email/Firebase: 6 digits (123456), MSG91: 4 digits (1234)
+      let otp = (isFirebase || isSmtp) ? '123456' : '1234';
+      const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    // 3. Find or Create User (Upsert)
-    let user = await prisma.user.findUnique({
-      where: type === 'phone' ? { phone: value } : { email: value },
-    });
+      // 3. Find or Create User (Upsert)
+      let user = await prisma.user.findUnique({
+        where: type === 'phone' ? { phone: value } : { email: value },
+      });
 
-    if (!user) {
-      const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
-      user = await prisma.user.create({
+      if (!user) {
+        const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
+        user = await prisma.user.create({
+          data: {
+            [type]: value,
+            isVerified: false,
+            roleId: userRole?.id,
+          },
+          include: { role: true, profileMedia: true, deviceTokens: true },
+        });
+      } else {
+        // Re-fetch user with relations
+        user = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: { role: true, profileMedia: true, deviceTokens: true },
+        }) as any;
+      }
+
+      // 4. Handle Device Linkage if deviceId is provided
+      if (deviceId && user) {
+        await prisma.deviceToken.upsert({
+          where: { userId_deviceId: { userId: user.id, deviceId: deviceId } },
+          update: { 
+            lastLoggedIn: new Date(), 
+            isActive: true,
+            deviceType: deviceType || undefined 
+          },
+          create: {
+            userId: user.id,
+            deviceId: deviceId,
+            deviceType: deviceType || null,
+            isActive: true,
+            lastLoggedIn: new Date(),
+          },
+        });
+        // Refresh user with new device info
+        user = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: { role: true, profileMedia: true, deviceTokens: true },
+        }) as any;
+      }
+
+      // 5. Save OTP to Database
+      await prisma.otpVerification.create({
         data: {
           [type]: value,
-          isVerified: false,
-          roleId: userRole?.id,
-        },
-        include: { role: true, profileMedia: true, deviceTokens: true },
-      });
-    } else {
-      // Re-fetch user with relations
-      user = await prisma.user.findUnique({
-        where: { id: user.id },
-        include: { role: true, profileMedia: true, deviceTokens: true },
-      }) as any;
-    }
-
-    // 4. Handle Device Linkage if deviceId is provided
-    if (deviceId && user) {
-      await prisma.deviceToken.upsert({
-        where: { userId_deviceId: { userId: user.id, deviceId: deviceId } },
-        update: { 
-          lastLoggedIn: new Date(), 
-          isActive: true,
-          deviceType: deviceType || undefined 
-        },
-        create: {
-          userId: user.id,
-          deviceId: deviceId,
-          deviceType: deviceType || null,
-          isActive: true,
-          lastLoggedIn: new Date(),
+          otp,
+          expiry,
         },
       });
-      // Refresh user with new device info
-      user = await prisma.user.findUnique({
-        where: { id: user.id },
-        include: { role: true, profileMedia: true, deviceTokens: true },
-      }) as any;
+
+      // 6. Send OTP via Provider
+      if (type === 'phone') {
+        await SmsProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
+      } else {
+        await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
+      }
+
+      // Return full user data, handling BigInt conversion and formatting response
+      const userData = JSON.parse(JSON.stringify(user, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+      ));
+      
+      // Format response: add image URL, block status, devices and remove redundant IDs/objects
+      const blockCount = await prisma.userBlock.count({ where: { userId: user!.id } });
+      
+      userData.image = (user as any)!.profileMedia?.fileUrl || null;
+      userData.is_blocked = blockCount > 0;
+      userData.devices = userData.deviceTokens || [];
+      
+      delete userData.roleId;
+      delete userData.mediaId;
+      delete userData.profileMedia;
+      delete userData.deviceTokens;
+
+      return { 
+        success: true, 
+        message: `OTP sent successfully to ${value}`,
+        data: userData
+      };
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        if (error.meta?.target?.includes('email')) throw new Error('Email already in use by another account.');
+        if (error.meta?.target?.includes('phone')) throw new Error('Phone number already in use by another account.');
+      }
+      throw error;
     }
-
-    // 5. Save OTP to Database
-    await prisma.otpVerification.create({
-      data: {
-        [type]: value,
-        otp,
-        expiry,
-      },
-    });
-
-    // 6. Send OTP via Provider
-    if (type === 'phone') {
-      await SmsProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
-    } else {
-      await EmailProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
-    }
-
-    // Return full user data, handling BigInt conversion and formatting response
-    const userData = JSON.parse(JSON.stringify(user, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
-    
-    // Format response: add image URL, block status, devices and remove redundant IDs/objects
-    const blockCount = await prisma.userBlock.count({ where: { userId: user!.id } });
-    
-    userData.image = (user as any)!.profileMedia?.fileUrl || null;
-    userData.is_blocked = blockCount > 0;
-    userData.devices = userData.deviceTokens || [];
-    
-    delete userData.roleId;
-    delete userData.mediaId;
-    delete userData.profileMedia;
-    delete userData.deviceTokens;
-
-    return { 
-      success: true, 
-      message: `OTP sent successfully to ${value}`,
-      data: userData
-    };
   }
 
   /**
@@ -294,8 +302,15 @@ export class AuthService {
         user: userData,
       };
     } catch (error: any) {
-      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-        throw new Error('Email already in use by another account.');
+      if (error.code === 'P2002') {
+        const target = error.meta?.target || [];
+        const message = error.message || '';
+        if (target.includes('email') || message.includes('email')) {
+          throw new Error('Email already in use by another account.');
+        }
+        if (target.includes('phone') || message.includes('phone')) {
+          throw new Error('Phone number already in use by another account.');
+        }
       }
       throw error;
     }
@@ -328,11 +343,15 @@ export class AuthService {
         }
       };
     } catch (error: any) {
-      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-        throw new Error('Email already in use by another account.');
-      }
-      if (error.code === 'P2002' && error.meta?.target?.includes('phone')) {
-        throw new Error('Phone number already in use by another account.');
+      if (error.code === 'P2002') {
+        const target = error.meta?.target || [];
+        const message = error.message || '';
+        if (target.includes('email') || message.includes('email')) {
+          throw new Error('Email already in use by another account.');
+        }
+        if (target.includes('phone') || message.includes('phone')) {
+          throw new Error('Phone number already in use by another account.');
+        }
       }
       throw error;
     }
