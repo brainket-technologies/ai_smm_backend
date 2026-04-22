@@ -8,7 +8,7 @@ export class AuthService {
   /**
    * Sends OTP to the specified value (phone or email).
    */
-  static async sendOtp(type: 'phone' | 'email', value: string) {
+  static async sendOtp(type: 'phone' | 'email', value: string, deviceId?: string) {
     // 1. Fetch Active Provider Configuration
     const category = type === 'phone' ? 'phone_otp' : 'email_otp';
     const activeConfig = await prisma.externalServiceConfig.findFirst({
@@ -20,13 +20,13 @@ export class AuthService {
       throw new Error(`No active ${type} OTP provider configured.`);
     }
 
-    // 2. Generate OTP based on provider
-    // Firebase: 6 digits, others: 4 digits
-    const isFirebase = activeConfig.provider.toLowerCase() === 'firebase';
-    const otpLength = isFirebase ? 6 : 4;
-    const min = Math.pow(10, otpLength - 1);
-    const max = Math.pow(10, otpLength) - 1;
-    const otp = Math.floor(min + Math.random() * (max - min + 1)).toString();
+    // 2. Generate OTP based on provider (Static for now as requested)
+    const provider = activeConfig.provider.toLowerCase();
+    const isFirebase = provider === 'firebase';
+    const isSmtp = provider === 'smtp';
+    
+    // Email/Firebase: 6 digits (123456), MSG91: 4 digits (1234)
+    let otp = (isFirebase || isSmtp) ? '123456' : '1234';
     const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     // 3. Find or Create User (Upsert)
@@ -42,17 +42,36 @@ export class AuthService {
           isVerified: false,
           roleId: userRole?.id,
         },
-        include: { role: true, profileMedia: true },
+        include: { role: true, profileMedia: true, deviceTokens: true },
       });
     } else {
-      // Re-fetch user with role and profileMedia included
+      // Re-fetch user with relations
       user = await prisma.user.findUnique({
         where: { id: user.id },
-        include: { role: true, profileMedia: true },
+        include: { role: true, profileMedia: true, deviceTokens: true },
       }) as any;
     }
 
-    // 4. Save OTP to Database
+    // 4. Handle Device Linkage if deviceId is provided
+    if (deviceId && user) {
+      await prisma.deviceToken.upsert({
+        where: { userId_deviceId: { userId: user.id, deviceId: deviceId } },
+        update: { lastLoggedIn: new Date(), isActive: true },
+        create: {
+          userId: user.id,
+          deviceId: deviceId,
+          isActive: true,
+          lastLoggedIn: new Date(),
+        },
+      });
+      // Refresh user with new device info
+      user = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { role: true, profileMedia: true, deviceTokens: true },
+      }) as any;
+    }
+
+    // 5. Save OTP to Database
     await prisma.otpVerification.create({
       data: {
         [type]: value,
@@ -61,7 +80,7 @@ export class AuthService {
       },
     });
 
-    // 5. Send OTP via Provider
+    // 6. Send OTP via Provider
     if (type === 'phone') {
       await SmsProvider.send(activeConfig.provider, value, otp, activeConfig.config as any);
     } else {
@@ -73,17 +92,17 @@ export class AuthService {
       typeof value === 'bigint' ? value.toString() : value
     ));
     
-    // Check if user is blocked in UserBlock table
-    const blockCount = await prisma.userBlock.count({
-      where: { userId: user!.id }
-    });
+    // Format response: add image URL, block status, devices and remove redundant IDs/objects
+    const blockCount = await prisma.userBlock.count({ where: { userId: user!.id } });
     
-    // Format response: add image URL, block status and remove redundant IDs/objects
     userData.image = (user as any)!.profileMedia?.fileUrl || null;
     userData.is_blocked = blockCount > 0;
+    userData.devices = userData.deviceTokens || [];
+    
     delete userData.roleId;
     delete userData.mediaId;
     delete userData.profileMedia;
+    delete userData.deviceTokens;
 
     return { 
       success: true, 

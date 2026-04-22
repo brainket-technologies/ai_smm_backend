@@ -10,6 +10,7 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const { phone, email, type } = body;
+        const deviceId = request.headers.get('device-id') || undefined;
 
         // Determine type if not provided explicitly
         const authType = type || (phone ? 'phone' : (email ? 'email' : null));
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const result = await AuthService.sendOtp(authType as 'phone' | 'email', value);
+        const result = await AuthService.sendOtp(authType as 'phone' | 'email', value, deviceId);
 
         return NextResponse.json(result);
     } catch (error: any) {
