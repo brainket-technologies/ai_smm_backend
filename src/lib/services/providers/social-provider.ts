@@ -20,8 +20,9 @@ export class SocialProvider {
   private static async verifyGoogle(token: string, config: any) {
     // BYPASS FOR TESTING
     if (token === 'G-TOKEN-HERE' || token.startsWith('test_google')) {
-      // Create a somewhat unique ID for testing different users
-      const testId = token.startsWith('test_google_') ? token : `test_google_id_${Date.now()}`;
+      // Use a static ID for G-TOKEN-HERE to allow testing 'existing user' flow
+      // Use a suffix like test_google_1 for testing 'new user' flow
+      const testId = token === 'G-TOKEN-HERE' ? 'test_google_static_id' : token;
       return {
         id: testId,
         email: 'testuser@gmail.com',
