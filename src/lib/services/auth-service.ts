@@ -189,6 +189,8 @@ export class AuthService {
     const userData = await this.getFormattedUserData(user.id);
     const businessExists = await prisma.business.count({ where: { ownerId: user.id } }) > 0;
 
+    console.log(`[AuthService] VerifyOtp result for ${value}: isNewUser=${isNewUser}, hasBusiness=${businessExists}`);
+
     return {
       is_new_user: isNewUser,
       has_business: businessExists,
