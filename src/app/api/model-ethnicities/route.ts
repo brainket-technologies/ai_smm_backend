@@ -9,6 +9,7 @@ export async function GET(request: Request) {
 
         const data = await prisma.modelEthnicity.findMany({
             where: { isActive: true },
+            distinct: ['name'],
             orderBy: { name: 'asc' }
         });
 

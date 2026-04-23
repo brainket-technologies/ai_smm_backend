@@ -9,6 +9,7 @@ export async function GET(request: Request) {
 
         const data = await prisma.targetAgeGroup.findMany({
             where: { isActive: true },
+            distinct: ['name'],
             orderBy: { id: 'asc' }
         });
 
