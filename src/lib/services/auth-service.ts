@@ -30,16 +30,16 @@ export class AuthService {
       let otp = '123456';
       const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-      // 3. Find or Create User (Upsert)
+      const emailValue = type === 'email' ? value.toLowerCase() : value;
       let user = await prisma.user.findUnique({
-        where: type === 'phone' ? { phone: value } : { email: value },
+        where: type === 'phone' ? { phone: value } : { email: emailValue },
       });
 
       if (!user) {
         const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
         user = await prisma.user.create({
           data: {
-            [type]: value,
+            [type]: type === 'email' ? emailValue : value,
             isVerified: false,
             roleId: userRole?.id,
           },
@@ -142,9 +142,9 @@ export class AuthService {
     // 2. Clear used OTP
     await prisma.otpVerification.delete({ where: { id: verification.id } });
 
-    // 3. Get User
+    const emailValue = type === 'email' ? value.toLowerCase() : value;
     const user = await prisma.user.findUnique({
-      where: type === 'phone' ? { phone: value } : { email: value },
+      where: type === 'phone' ? { phone: value } : { email: emailValue },
     });
 
     if (!user) throw new Error('User not found.');
@@ -227,7 +227,7 @@ export class AuthService {
         activeConfig.config as any
       );
 
-      const email = payload.email || socialData.email;
+      const email = (payload.email || socialData.email)?.toLowerCase();
       const socialId = socialData.id;
 
       if (!email) {
