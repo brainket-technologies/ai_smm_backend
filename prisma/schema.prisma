@@ -302,15 +302,18 @@ model Currency {
 }
 
 model DeviceToken {
-  id         BigInt    @id @default(autoincrement())
-  userId     BigInt    @map("user_id")
-  deviceId   String    @unique @map("device_id")
-  deviceType String?   @map("device_type")
-  fcmToken   String    @map("fcm_token")
-  isActive   Boolean?  @default(true) @map("is_active")
-  createdAt  DateTime? @default(now()) @map("created_at")
-  user       User      @relation(fields: [userId], references: [id])
-
+  id           BigInt    @id @default(autoincrement())
+  userId       BigInt    @map("user_id")
+  deviceId     String    @unique @map("device_id")
+  deviceType   String?   @map("device_type")
+  fcmToken     String?   @map("fcm_token")
+  tokenVersion Int       @default(1) @map("token_version")
+  lastLoggedIn DateTime? @default(now()) @map("last_logged_in")
+  isActive     Boolean?  @default(true) @map("is_active")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  user         User      @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, deviceId])
   @@map("device_tokens")
 }
 
@@ -611,6 +614,8 @@ model User {
   deletedAt         DateTime?            @map("deleted_at")
   password          String?
   isVerified        Boolean?             @default(false) @map("is_verified")
+  googleId          String?              @unique @map("google_id")
+  appleId           String?              @unique @map("apple_id")
   mediaId           BigInt?              @map("media_id")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
@@ -642,4 +647,15 @@ model AppTheme {
   media              MediaFile? @relation("ThemeImage", fields: [mediaId], references: [id])
 
   @@map("app_themes")
+}
+
+model OtpVerification {
+  id        BigInt    @id @default(autoincrement())
+  phone     String?
+  email     String?
+  otp       String
+  expiry    DateTime
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("otp_verifications")
 }
