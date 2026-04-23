@@ -26,6 +26,9 @@ export function validateApiKey(request: Request) {
  * Validates the Authorization token and checks for version mismatch.
  */
 export async function validateAuth(request: Request) {
+  const deviceId = request.headers.get('device-id');
+  const deviceType = request.headers.get('device-type');
+
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return {
@@ -44,25 +47,38 @@ export async function validateAuth(request: Request) {
     };
   }
 
-  // If deviceId was included in token, check version in DeviceToken table
-  if (decoded.deviceId) {
-    const device = await prisma.deviceToken.findUnique({
-      where: { 
-        userId_deviceId: { 
-          userId: BigInt(decoded.id), 
-          deviceId: decoded.deviceId 
-        } 
-      },
-      select: { tokenVersion: true }
-    });
+  // Use deviceId from header or fallback to token
+  const currentDeviceId = deviceId || decoded.deviceId;
 
-    if (!device || device.tokenVersion !== decoded.version) {
-      return {
-        isValid: false,
-        response: NextResponse.json({ success: false, message: 'Session expired or logged in from another device' }, { status: 401 })
-      };
-    }
+  if (!currentDeviceId) {
+    return {
+      isValid: false,
+      response: NextResponse.json({ success: false, message: 'device-id header is required' }, { status: 401 })
+    };
   }
 
-  return { isValid: true, userId: BigInt(decoded.id), deviceId: decoded.deviceId };
+  // Check version in DeviceToken table
+  const device = await prisma.deviceToken.findUnique({
+    where: { 
+      userId_deviceId: { 
+        userId: BigInt(decoded.id), 
+        deviceId: currentDeviceId 
+      } 
+    },
+    select: { tokenVersion: true }
+  });
+
+  if (!device || device.tokenVersion !== decoded.version) {
+    return {
+      isValid: false,
+      response: NextResponse.json({ success: false, message: 'Session expired or logged in from another device' }, { status: 401 })
+    };
+  }
+
+  return { 
+    isValid: true, 
+    userId: BigInt(decoded.id), 
+    deviceId: currentDeviceId, 
+    deviceType: deviceType 
+  };
 }

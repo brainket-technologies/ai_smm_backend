@@ -122,11 +122,13 @@
 						"method": "POST",
 						"header": [
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"fcmToken\": \"YOUR_FCM_TOKEN_HERE\",\n    \"deviceId\": \"unique_device_id_123\",\n    \"deviceType\": \"android\"\n}",
+							"raw": "{\n    \"fcmToken\": \"YOUR_FCM_TOKEN_HERE\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -143,11 +145,13 @@
 						"method": "POST",
 						"header": [
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"deviceId\": \"unique_device_id_123\"\n}",
+							"raw": "{}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {

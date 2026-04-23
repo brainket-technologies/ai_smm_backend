@@ -11,20 +11,18 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json().catch(() => ({}));
-    const { fcmToken, deviceId, deviceType } = body;
+    const { fcmToken } = body;
 
     if (!fcmToken) {
       return NextResponse.json({ success: false, message: 'fcmToken is required' }, { status: 400 });
     }
 
-    // Use deviceId from body or from auth token
-    const targetDeviceId = deviceId || auth.deviceId;
-
-    if (!targetDeviceId) {
-      return NextResponse.json({ success: false, message: 'deviceId is required' }, { status: 400 });
-    }
-
-    const result = await AuthService.updateFcmToken(auth.userId!, targetDeviceId, fcmToken, deviceType);
+    const result = await AuthService.updateFcmToken(
+      auth.userId!, 
+      auth.deviceId!, 
+      fcmToken, 
+      auth.deviceType || undefined
+    );
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('FCM Token Update Error:', error);

@@ -10,17 +10,7 @@ export async function POST(request: Request) {
   if (!auth.isValid) return auth.response;
 
   try {
-    const body = await request.json().catch(() => ({}));
-    const { deviceId } = body;
-    
-    // Use deviceId from body or from auth token
-    const targetDeviceId = deviceId || auth.deviceId;
-
-    if (!targetDeviceId) {
-      return NextResponse.json({ success: false, message: 'deviceId is required' }, { status: 400 });
-    }
-
-    const result = await AuthService.logout(auth.userId!, targetDeviceId);
+    const result = await AuthService.logout(auth.userId!, auth.deviceId!);
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Logout Error:', error);
