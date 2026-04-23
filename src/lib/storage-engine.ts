@@ -19,11 +19,14 @@ export class StorageEngine {
    */
   static async saveFile(file: Buffer, fileName: string, category: string = 'general', mimeType?: string) {
     try {
-      // 1. Fetch active storage config
+      // 1. Fetch active storage config (latest updated one)
       const activeConfig = await prisma.externalServiceConfig.findFirst({
         where: { 
           category: 'storage',
           isActive: true 
+        },
+        orderBy: {
+          updatedAt: 'desc'
         }
       });
 
@@ -33,6 +36,8 @@ export class StorageEngine {
 
       const provider = activeConfig.provider;
       const config: any = activeConfig.config || {};
+      
+      console.log(`[StorageEngine] Using provider: ${provider}`);
 
       if (provider === 'local_storage') {
         const localConfig = { 
@@ -47,7 +52,7 @@ export class StorageEngine {
             const testDir = path.join(process.cwd(), localConfig.uploadPath);
             await fs.mkdir(testDir, { recursive: true });
           } catch (e) {
-            throw new Error('Local storage is not supported in this production environment (Read-Only). Please switch to Cloudflare R2, S3, or Firebase in 3rd Party Configuration.');
+            throw new Error(`Local storage is not supported in this production environment (Read-Only). Provider detected: "${provider}". Please ensure Cloudflare R2, S3, or Firebase is set as Default in 3rd Party Configuration.`);
           }
         }
 
