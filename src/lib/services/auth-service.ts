@@ -55,21 +55,30 @@ export class AuthService {
 
       // 4. Handle Device Linkage if deviceId is provided
       if (deviceId && user) {
-        await prisma.deviceToken.upsert({
+        const existingDevice = await prisma.deviceToken.findUnique({
           where: { userId_deviceId: { userId: user.id, deviceId: deviceId } },
-          update: { 
-            lastLoggedIn: new Date(), 
-            isActive: true,
-            deviceType: deviceType || undefined 
-          },
-          create: {
-            userId: user.id,
-            deviceId: deviceId,
-            deviceType: deviceType || null,
-            isActive: true,
-            lastLoggedIn: new Date(),
-          },
         });
+
+        if (existingDevice) {
+          await prisma.deviceToken.update({
+            where: { id: existingDevice.id },
+            data: { 
+              lastLoggedIn: new Date(), 
+              isActive: true,
+              deviceType: deviceType || undefined 
+            },
+          });
+        } else {
+          await prisma.deviceToken.create({
+            data: {
+              userId: user.id,
+              deviceId: deviceId,
+              deviceType: deviceType || null,
+              isActive: true,
+              lastLoggedIn: new Date(),
+            },
+          });
+        }
         // Refresh user with new device info
         user = await prisma.user.findUnique({
           where: { id: user.id },
@@ -154,23 +163,33 @@ export class AuthService {
     // 4. Handle Device Token and Versioning
     let currentVersion = 0;
     if (deviceId) {
-      const deviceToken = await prisma.deviceToken.upsert({
+      const existingDevice = await prisma.deviceToken.findUnique({
         where: { userId_deviceId: { userId: user.id, deviceId } },
-        update: { 
-          tokenVersion: { increment: 1 },
-          deviceType: deviceType || undefined,
-          lastLoggedIn: new Date(),
-          isActive: true
-        },
-        create: {
-          userId: user.id,
-          deviceId,
-          deviceType: deviceType || null,
-          tokenVersion: 1,
-          isActive: true,
-          lastLoggedIn: new Date(),
-        },
       });
+
+      let deviceToken;
+      if (existingDevice) {
+        deviceToken = await prisma.deviceToken.update({
+          where: { id: existingDevice.id },
+          data: { 
+            tokenVersion: { increment: 1 },
+            deviceType: deviceType || undefined,
+            lastLoggedIn: new Date(),
+            isActive: true
+          },
+        });
+      } else {
+        deviceToken = await prisma.deviceToken.create({
+          data: {
+            userId: user.id,
+            deviceId,
+            deviceType: deviceType || null,
+            tokenVersion: 1,
+            isActive: true,
+            lastLoggedIn: new Date(),
+          },
+        });
+      }
       currentVersion = deviceToken.tokenVersion;
     }
 
@@ -272,23 +291,33 @@ export class AuthService {
       // 3. Handle Device Token and Versioning
       let currentVersion = 0;
       if (payload.deviceId) {
-        const deviceToken = await prisma.deviceToken.upsert({
+        const existingDevice = await prisma.deviceToken.findUnique({
           where: { userId_deviceId: { userId: user.id, deviceId: payload.deviceId } },
-          update: { 
-            tokenVersion: { increment: 1 },
-            deviceType: payload.deviceType || undefined,
-            lastLoggedIn: new Date(),
-            isActive: true
-          },
-          create: {
-            userId: user.id,
-            deviceId: payload.deviceId,
-            deviceType: payload.deviceType || null,
-            tokenVersion: 1,
-            isActive: true,
-            lastLoggedIn: new Date(),
-          },
         });
+
+        let deviceToken;
+        if (existingDevice) {
+          deviceToken = await prisma.deviceToken.update({
+            where: { id: existingDevice.id },
+            data: { 
+              tokenVersion: { increment: 1 },
+              deviceType: payload.deviceType || undefined,
+              lastLoggedIn: new Date(),
+              isActive: true
+            },
+          });
+        } else {
+          deviceToken = await prisma.deviceToken.create({
+            data: {
+              userId: user.id,
+              deviceId: payload.deviceId,
+              deviceType: payload.deviceType || null,
+              tokenVersion: 1,
+              isActive: true,
+              lastLoggedIn: new Date(),
+            },
+          });
+        }
         currentVersion = deviceToken.tokenVersion;
       }
 
@@ -375,23 +404,32 @@ export class AuthService {
    * Updates FCM token for a specific device.
    */
   static async updateFcmToken(userId: bigint, deviceId: string, fcmToken: string, deviceType?: string) {
-    await prisma.deviceToken.upsert({
+    const existing = await prisma.deviceToken.findUnique({
       where: { userId_deviceId: { userId, deviceId } },
-      update: { 
-        fcmToken, 
-        deviceType: deviceType || undefined, 
-        isActive: true,
-        lastLoggedIn: new Date()
-      },
-      create: { 
-        userId, 
-        deviceId, 
-        fcmToken, 
-        deviceType: deviceType || null, 
-        isActive: true,
-        lastLoggedIn: new Date()
-      },
     });
+
+    if (existing) {
+      await prisma.deviceToken.update({
+        where: { id: existing.id },
+        data: { 
+          fcmToken, 
+          deviceType: deviceType || undefined, 
+          isActive: true,
+          lastLoggedIn: new Date()
+        },
+      });
+    } else {
+      await prisma.deviceToken.create({
+        data: { 
+          userId, 
+          deviceId, 
+          fcmToken, 
+          deviceType: deviceType || null, 
+          isActive: true,
+          lastLoggedIn: new Date()
+        },
+      });
+    }
 
     return { success: true, message: 'FCM token updated successfully' };
   }
