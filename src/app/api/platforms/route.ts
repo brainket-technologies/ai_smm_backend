@@ -7,6 +7,10 @@ export async function GET(request: Request) {
   const auth = validateApiKey(request);
   if (!auth.isValid) return auth.response;
 
+  // 2. Get Business ID (Optional)
+  const businessIdStr = request.headers.get('x-business-id');
+  const businessId = businessIdStr ? BigInt(businessIdStr) : null;
+
   try {
     const platforms = await prisma.platform.findMany({
       include: {
@@ -14,7 +18,12 @@ export async function GET(request: Request) {
           select: {
             fileUrl: true,
           }
-        }
+        },
+        socialAccounts: businessId ? {
+          where: {
+            businessId: businessId
+          }
+        } : false
       },
       orderBy: {
         name: 'asc'
@@ -28,6 +37,8 @@ export async function GET(request: Request) {
       nameKey: p.nameKey,
       isActive: p.isActive,
       logo: p.media?.fileUrl || null,
+      isConnected: p.socialAccounts ? p.socialAccounts.length > 0 : false,
+      accountName: p.socialAccounts && p.socialAccounts.length > 0 ? p.socialAccounts[0].accountName : null,
     }));
 
     return NextResponse.json({
