@@ -300,7 +300,7 @@ export class AuthService {
       const isActuallyNew = !user.phone;
 
       return {
-        is_new_user: isActuallyNew,
+        is_new_user: false,
         has_business: businessExists,
         token,
         user: userData,
