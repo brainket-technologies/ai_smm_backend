@@ -456,6 +456,23 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Platforms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/platforms",
+							"host": ["{{base_url}}"],
+							"path": ["api", "platforms"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
