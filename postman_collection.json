@@ -87,7 +87,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\",\n    \"number\": \"+919876543210\"\n}",
+							"raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\",\n    \"number\": \"+919876543210\",\n    \"dob\": \"31/12/1990\",\n    \"bio\": \"This is my bio\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
