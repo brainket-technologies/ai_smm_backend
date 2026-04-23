@@ -335,6 +335,7 @@ export class AuthService {
           phone: data.phone,
           dob: data.dob ? parseDate(data.dob) : undefined,
           bio: data.bio,
+          mediaId: data.mediaId ? BigInt(data.mediaId) : undefined,
         },
       });
 

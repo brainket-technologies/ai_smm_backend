@@ -20,7 +20,8 @@ export async function POST(request: Request) {
             email, 
             phone: phone || number,
             dob,
-            bio
+            bio,
+            mediaId: body.mediaId
         });
 
         return NextResponse.json(result);
