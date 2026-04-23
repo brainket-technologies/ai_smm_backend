@@ -46,7 +46,7 @@ export class StorageEngine {
         return await this.saveToCloudinary(file, fileName, config, category);
       }
 
-      if (provider === 's3' || provider === 'aws' || provider === 'r2' || provider === 'cloudflare_r2' || provider === 'aws_s3') {
+      if (provider === 's3' || provider === 'aws' || provider === 'r2' || provider === 'cloudflare_r2' || provider === 'aws_s3' || provider === 'cloudflare') {
         return await this.saveToS3(file, fileName, config, category, mimeType);
       }
 
