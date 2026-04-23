@@ -60,6 +60,8 @@ export class BusinessService {
     return JSON.parse(JSON.stringify(businesses, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
+  }
+
   /**
    * Updates an existing business.
    */
