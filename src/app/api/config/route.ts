@@ -150,13 +150,18 @@ export async function GET(request: Request) {
       });
     }
 
-    // 7. Fetch Static Pages
     const staticPagesRecords = await prisma.staticPage.findMany({ where: { isActive: true } });
-    const dynamicStaticPages = staticPagesRecords.map(page => ({
-      id: page.slug,
-      title: page.title,
-      url: `${appConfig?.apiBaseUrl || "https://api.brandboostai.com/v1"}/pages/${page.slug}`
-    }));
+    const dynamicStaticPages = staticPagesRecords.map(page => {
+      // Extract root URL from apiBaseUrl or use default
+      let rootUrl = appConfig?.apiBaseUrl || "https://ai-smm-backend.vercel.app";
+      rootUrl = rootUrl.replace(/\/api\/v1\/?$/, '').replace(/\/api\/?$/, '');
+      
+      return {
+        id: page.slug,
+        title: page.title,
+        url: `${rootUrl}/pages/${page.slug}`
+      };
+    });
 
     // 8. Feature Config Construction (Using appConfig.featuresJson or DB feature blocks)
     let dynamicFeatures: Record<string, any> = {};
