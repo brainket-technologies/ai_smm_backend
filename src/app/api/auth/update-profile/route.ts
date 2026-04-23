@@ -13,12 +13,14 @@ export async function POST(request: Request) {
         if (!auth.isValid) return auth.response;
 
         const body = await request.json();
-        const { name, email, phone, number } = body;
+        const { name, email, phone, number, dob, bio } = body;
 
         const result = await AuthService.updateProfile(auth.userId!, { 
             name, 
             email, 
-            phone: phone || number 
+            phone: phone || number,
+            dob,
+            bio
         });
 
         return NextResponse.json(result);
