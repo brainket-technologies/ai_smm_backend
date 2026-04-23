@@ -192,7 +192,7 @@ model MediaFile {
 
 model AudienceType {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
@@ -201,7 +201,7 @@ model AudienceType {
 
 model BusinessType {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
@@ -280,7 +280,7 @@ model Category {
 
 model CTAButton {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
@@ -333,7 +333,7 @@ model Feedback {
 
 model ModelEthnicity {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
@@ -552,7 +552,7 @@ model SubscriptionTier {
 
 model TargetAgeGroup {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
@@ -561,7 +561,7 @@ model TargetAgeGroup {
 
 model TargetRegion {
   id         BigInt     @id @default(autoincrement())
-  name       String
+  name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
 
