@@ -207,6 +207,29 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Business",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"8\",\n    \"name\": \"Updated Tech Store\",\n    \"tagline\": \"Better tagline\",\n    \"ctaButton\": \"Shop Now\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/business/update",
+							"host": ["{{base_url}}"],
+							"path": ["api", "business", "update"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -363,6 +386,40 @@
 							"raw": "{{base_url}}/api/model-ethnicities",
 							"host": ["{{base_url}}"],
 							"path": ["api", "model-ethnicities"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Business Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/business-types",
+							"host": ["{{base_url}}"],
+							"path": ["api", "business-types"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get CTA Buttons",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cta-buttons",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cta-buttons"]
 						}
 					},
 					"response": []
