@@ -27,8 +27,12 @@ export class StorageEngine {
         }
       });
 
-      const provider = activeConfig?.provider || 'local_storage';
-      const config: any = activeConfig?.config || {};
+      if (!activeConfig) {
+        throw new Error('No active storage configuration found. Please set one provider (Cloudflare R2, S3, Firebase, or Cloudinary) as Default in 3rd Party Configuration.');
+      }
+
+      const provider = activeConfig.provider;
+      const config: any = activeConfig.config || {};
 
       if (provider === 'local_storage') {
         const localConfig = { 
