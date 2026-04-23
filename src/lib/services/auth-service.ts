@@ -362,6 +362,44 @@ export class AuthService {
   }
 
   /**
+   * Updates FCM token for a specific device.
+   */
+  static async updateFcmToken(userId: bigint, deviceId: string, fcmToken: string, deviceType?: string) {
+    await prisma.deviceToken.upsert({
+      where: { userId_deviceId: { userId, deviceId } },
+      update: { 
+        fcmToken, 
+        deviceType: deviceType || undefined, 
+        isActive: true,
+        lastLoggedIn: new Date()
+      },
+      create: { 
+        userId, 
+        deviceId, 
+        fcmToken, 
+        deviceType: deviceType || null, 
+        isActive: true,
+        lastLoggedIn: new Date()
+      },
+    });
+
+    return { success: true, message: 'FCM token updated successfully' };
+  }
+
+  /**
+   * Logs out from a specific device.
+   */
+  static async logout(userId: bigint, deviceId: string) {
+    await prisma.deviceToken.delete({
+      where: { userId_deviceId: { userId, deviceId } },
+    }).catch(() => {
+      // Ignore error if record doesn't exist
+    });
+
+    return { success: true, message: 'Logged out successfully' };
+  }
+
+  /**
    * Helper to fetch and format user data with relations.
    */
   static async getFormattedUserData(userId: bigint) {

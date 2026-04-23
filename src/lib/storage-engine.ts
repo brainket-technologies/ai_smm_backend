@@ -1,6 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import prisma from './prisma';
+import * as admin from 'firebase-admin';
+
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  // Assuming firebase-admin is initialized elsewhere or using default credentials
+  // For safety, we check if it's initialized.
+}
 
 /**
  * Storage Engine Utility
@@ -9,9 +16,8 @@ import prisma from './prisma';
 export class StorageEngine {
   /**
    * Saves a file to the active storage provider.
-   * Currently implements 'local_storage' as the primary manual method.
    */
-  static async saveFile(file: Buffer, fileName: string, category: string = 'general') {
+  static async saveFile(file: Buffer, fileName: string, category: string = 'general', mimeType?: string) {
     try {
       // 1. Fetch active storage config
       const activeConfig = await prisma.externalServiceConfig.findFirst({
@@ -22,14 +28,27 @@ export class StorageEngine {
       });
 
       const provider = activeConfig?.provider || 'local_storage';
-      const config: any = activeConfig?.config || { uploadPath: 'public/uploads', publicPath: '/uploads' };
+      const config: any = activeConfig?.config || {};
 
       if (provider === 'local_storage') {
-        return await this.saveToLocal(file, fileName, config, category);
+        const localConfig = { 
+          uploadPath: config.uploadPath || 'public/uploads', 
+          publicPath: config.publicPath || '/uploads' 
+        };
+        return await this.saveToLocal(file, fileName, localConfig, category);
       }
 
-      // TODO: Implement S3 / Cloudinary logic here based on activeConfig
-      throw new Error(`Storage provider ${provider} not yet implemented in engine.`);
+      if (provider === 'firebase') {
+        return await this.saveToFirebase(file, fileName, config, category, mimeType);
+      }
+
+      if (provider === 's3' || provider === 'aws' || provider === 'r2') {
+        // TODO: Implement @aws-sdk/client-s3 logic
+        // For now, if S3 is selected but not implemented, fallback or error
+        throw new Error(`S3/R2 Storage provider not yet implemented. Please use Firebase or Local for now.`);
+      }
+
+      throw new Error(`Storage provider ${provider} not supported.`);
     } catch (error) {
       console.error("StorageEngine Error:", error);
       throw error;
@@ -54,5 +73,29 @@ export class StorageEngine {
     
     // Return the public URL
     return `${publicPrefix}/${category}/${fileName}`;
+  }
+
+  /**
+   * Internal helper for Firebase Storage.
+   */
+  private static async saveToFirebase(file: Buffer, fileName: string, config: any, category: string, mimeType?: string) {
+    const bucketName = config.bucketUrl || process.env.FIREBASE_STORAGE_BUCKET;
+    if (!bucketName) throw new Error('Firebase Storage Bucket URL not configured.');
+
+    const bucket = admin.storage().bucket(bucketName);
+    const destination = `${category}/${fileName}`;
+    const firebaseFile = bucket.file(destination);
+
+    await firebaseFile.save(file, {
+      metadata: {
+        contentType: mimeType || 'application/octet-stream',
+      },
+      public: true,
+    });
+
+    // Get the public URL
+    // Firebase public URLs typically follow this pattern:
+    // https://storage.googleapis.com/BUCKET_NAME/FILE_PATH
+    return `https://storage.googleapis.com/${bucket.name}/${destination}`;
   }
 }

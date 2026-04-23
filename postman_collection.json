@@ -115,6 +115,48 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update FCM Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fcmToken\": \"YOUR_FCM_TOKEN_HERE\",\n    \"deviceId\": \"unique_device_id_123\",\n    \"deviceType\": \"android\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/fcm-token",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "fcm-token"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"deviceId\": \"unique_device_id_123\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -254,6 +296,58 @@
 							"raw": "{{base_url}}/api/config",
 							"host": ["{{base_url}}"],
 							"path": ["api", "config"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "file", "type": "file", "src": [] },
+								{ "key": "type", "value": "logo", "type": "text" }
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/file/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "file", "upload"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Media",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/file/all?type=logo",
+							"host": ["{{base_url}}"],
+							"query": [
+								{ "key": "type", "value": "logo", "description": "logo, ai_generated, profile, etc." },
+								{ "key": "file_type", "value": "image", "description": "image, video, etc." }
+							],
+							"path": ["api", "file", "all"]
 						}
 					},
 					"response": []
