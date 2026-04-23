@@ -9,7 +9,6 @@ export async function GET(request: Request) {
 
         const data = await prisma.targetRegion.findMany({
             where: { isActive: true },
-            distinct: ['name'],
             orderBy: { name: 'asc' }
         });
 
