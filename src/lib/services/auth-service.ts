@@ -404,6 +404,7 @@ export class AuthService {
    * Updates FCM token for a specific device.
    */
   static async updateFcmToken(userId: bigint, deviceId: string, fcmToken: string, deviceType?: string) {
+    console.log('DEBUG: updateFcmToken called with findUnique logic');
     const existing = await prisma.deviceToken.findUnique({
       where: { userId_deviceId: { userId, deviceId } },
     });
