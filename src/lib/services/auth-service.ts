@@ -330,7 +330,7 @@ export class AuthService {
       console.log('🔄 Updating Profile for User:', userId.toString());
       console.log('🔄 Update Data:', { ...data, mediaId: data.mediaId?.toString() });
 
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: {
           name: data.name,
@@ -341,6 +341,8 @@ export class AuthService {
           mediaId: data.mediaId ? BigInt(data.mediaId) : undefined,
         },
       });
+
+      console.log('✅ Prisma Update Success. New MediaId:', updatedUser.mediaId?.toString());
 
       const userData = await this.getFormattedUserData(userId);
       const hasBusiness = await prisma.business.count({ where: { ownerId: userId } }) > 0;
