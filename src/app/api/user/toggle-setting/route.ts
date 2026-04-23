@@ -1,20 +1,17 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateApiKey, getAuthUser } from '@/lib/auth-utils';
+import { validateApiKey, validateAuth } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
   // 1. Validate API Key
-  const auth = validateApiKey(request);
-  if (!auth.isValid) return auth.response;
+  const authKey = validateApiKey(request);
+  if (!authKey.isValid) return authKey.response;
 
   // 2. Get Authenticated User
-  const user = await getAuthUser(request);
-  if (!user) {
-    return NextResponse.json(
-      { success: false, message: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
+  const auth = await validateAuth(request);
+  if (!auth.isValid) return auth.response;
+
+  const userId = auth.userId;
 
   try {
     const { type, value } = await request.json();
@@ -45,7 +42,7 @@ export async function POST(request: Request) {
     updateData[fieldMap[type]] = value;
 
     await prisma.user.update({
-      where: { id: BigInt(user.id) },
+      where: { id: userId },
       data: updateData
     });
 
