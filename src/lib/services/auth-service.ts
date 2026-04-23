@@ -333,7 +333,7 @@ export class AuthService {
           name: data.name,
           email: data.email,
           phone: data.phone,
-          dob: data.dob ? new Date(data.dob) : undefined,
+          dob: data.dob ? parseDate(data.dob) : undefined,
           bio: data.bio,
         },
       });
@@ -431,4 +431,23 @@ export class AuthService {
 
     return userData;
   }
+}
+
+function parseDate(dateStr: string): Date | undefined {
+  if (!dateStr) return undefined;
+  
+  // Handle dd/MM/yyyy
+  if (dateStr.includes('/')) {
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // JS months are 0-11
+      const year = parseInt(parts[2], 10);
+      const date = new Date(year, month, day);
+      if (!isNaN(date.getTime())) return date;
+    }
+  }
+  
+  const fallback = new Date(dateStr);
+  return isNaN(fallback.getTime()) ? undefined : fallback;
 }
