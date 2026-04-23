@@ -165,6 +165,34 @@
 			]
 		},
 		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Toggle Notification Setting",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"push\",\n    \"value\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/toggle-setting",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "toggle-setting"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Business",
 			"item": [
 				{
