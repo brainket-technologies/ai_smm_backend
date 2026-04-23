@@ -42,6 +42,10 @@ export class StorageEngine {
         return await this.saveToFirebase(file, fileName, config, category, mimeType);
       }
 
+      if (provider === 'cloudinary') {
+        return await this.saveToCloudinary(file, fileName, config, category);
+      }
+
       if (provider === 's3' || provider === 'aws' || provider === 'r2') {
         // TODO: Implement @aws-sdk/client-s3 logic
         // For now, if S3 is selected but not implemented, fallback or error
@@ -97,5 +101,32 @@ export class StorageEngine {
     // Firebase public URLs typically follow this pattern:
     // https://storage.googleapis.com/BUCKET_NAME/FILE_PATH
     return `https://storage.googleapis.com/${bucket.name}/${destination}`;
+  }
+
+  /**
+   * Internal helper for Cloudinary Storage.
+   */
+  private static async saveToCloudinary(file: Buffer, fileName: string, config: any, category: string) {
+    const { v2: cloudinary } = require('cloudinary');
+
+    cloudinary.config({
+      cloud_name: config.cloudName || process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: config.apiKey || process.env.CLOUDINARY_API_KEY,
+      api_secret: config.apiSecret || process.env.CLOUDINARY_API_SECRET,
+    });
+
+    return new Promise<string>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: category,
+          public_id: path.parse(fileName).name,
+          resource_type: 'auto',
+        },
+        (error: any, result: any) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      ).end(file);
+    });
   }
 }
