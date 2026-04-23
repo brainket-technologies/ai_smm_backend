@@ -46,10 +46,8 @@ export class StorageEngine {
         return await this.saveToCloudinary(file, fileName, config, category);
       }
 
-      if (provider === 's3' || provider === 'aws' || provider === 'r2') {
-        // TODO: Implement @aws-sdk/client-s3 logic
-        // For now, if S3 is selected but not implemented, fallback or error
-        throw new Error(`S3/R2 Storage provider not yet implemented. Please use Firebase or Local for now.`);
+      if (provider === 's3' || provider === 'aws' || provider === 'r2' || provider === 'cloudflare_r2' || provider === 'aws_s3') {
+        return await this.saveToS3(file, fileName, config, category, mimeType);
       }
 
       throw new Error(`Storage provider ${provider} not supported.`);
@@ -128,5 +126,45 @@ export class StorageEngine {
         }
       ).end(file);
     });
+  }
+
+  /**
+   * Internal helper for S3-compatible storage (AWS S3, Cloudflare R2).
+   */
+  private static async saveToS3(file: Buffer, fileName: string, config: any, category: string, mimeType?: string) {
+    const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+    
+    // Cloudflare R2 specific handling
+    const endpoint = config.endpointUrl || 
+                    (config.accountId ? `https://${config.accountId}.r2.cloudflarestorage.com` : undefined);
+    
+    const s3Client = new S3Client({
+      region: config.region || 'auto',
+      endpoint: endpoint,
+      credentials: {
+        accessKeyId: config.accessKeyId || config.accessKey || process.env.STORAGE_ACCESS_KEY,
+        secretAccessKey: config.secretAccessKey || config.secretKey || process.env.STORAGE_SECRET_KEY,
+      },
+    });
+
+    const bucketName = config.bucketName || config.bucket || process.env.STORAGE_BUCKET;
+    const key = `${category}/${fileName}`;
+
+    await s3Client.send(new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      Body: file,
+      ContentType: mimeType || 'application/octet-stream',
+    }));
+
+    // Generate public URL
+    if (config.publicUrl) {
+      return `${config.publicUrl.replace(/\/$/, '')}/${key}`;
+    }
+    
+    // Default S3/R2 pattern
+    return endpoint 
+      ? `${endpoint}/${bucketName}/${key}`
+      : `https://${bucketName}.s3.${config.region || 'us-east-1'}.amazonaws.com/${key}`;
   }
 }
