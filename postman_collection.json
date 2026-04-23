@@ -281,6 +281,91 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Audience Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/audience-types",
+							"host": ["{{base_url}}"],
+							"path": ["api", "audience-types"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Target Regions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/target-regions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "target-regions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Target Genders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/target-genders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "target-genders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Target Age Groups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/target-age-groups",
+							"host": ["{{base_url}}"],
+							"path": ["api", "target-age-groups"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Model Ethnicities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/model-ethnicities",
+							"host": ["{{base_url}}"],
+							"path": ["api", "model-ethnicities"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
