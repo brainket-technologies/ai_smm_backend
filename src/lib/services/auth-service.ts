@@ -325,8 +325,11 @@ export class AuthService {
   /**
    * Updates user profile (name and email).
    */
-  static async updateProfile(userId: bigint, data: { name?: string; email?: string; phone?: string; dob?: string; bio?: string }) {
+  static async updateProfile(userId: bigint, data: { name?: string; email?: string; phone?: string; dob?: string; bio?: string; mediaId?: any }) {
     try {
+      console.log('🔄 Updating Profile for User:', userId.toString());
+      console.log('🔄 Update Data:', { ...data, mediaId: data.mediaId?.toString() });
+
       await prisma.user.update({
         where: { id: userId },
         data: {
