@@ -25,6 +25,18 @@ export async function POST(request: Request) {
             );
         }
 
+        // Vercel Serverless Function limit is 4.5MB
+        const MAX_SIZE = 4.5 * 1024 * 1024; 
+        if (file.size > MAX_SIZE) {
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    message: `File too large (${(file.size / (1024 * 1024)).toFixed(2)}MB). Maximum allowed size on Vercel is 4.5MB. Please compress the image or use a smaller file.` 
+                },
+                { status: 413 }
+            );
+        }
+
         // 4. Prepare File Info
         const buffer = Buffer.from(await file.arrayBuffer());
         const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;

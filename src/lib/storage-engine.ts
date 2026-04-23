@@ -35,6 +35,18 @@ export class StorageEngine {
           uploadPath: config.uploadPath || 'public/uploads', 
           publicPath: config.publicPath || '/uploads' 
         };
+        
+        // Vercel check
+        if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+          // Check if we are in a read-only environment
+          try {
+            const testDir = path.join(process.cwd(), localConfig.uploadPath);
+            await fs.mkdir(testDir, { recursive: true });
+          } catch (e) {
+            throw new Error('Local storage is not supported in this production environment (Read-Only). Please switch to Cloudflare R2, S3, or Firebase in 3rd Party Configuration.');
+          }
+        }
+
         return await this.saveToLocal(file, fileName, localConfig, category);
       }
 
