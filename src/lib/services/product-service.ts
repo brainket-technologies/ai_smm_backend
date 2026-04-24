@@ -239,11 +239,13 @@ export class ProductService {
 
     static async deleteProduct(id: bigint, businessId: bigint) {
         try {
-            // Relations are deleted automatically if ON DELETE CASCADE is set, 
-            // but for safety we can delete manually or let Prisma handle it.
             // Check if product belongs to business
             const product = await prisma.product.findFirst({ where: { id, businessId } });
             if (!product) return { success: false, message: 'Product not found' };
+
+            // Manually delete relations first to avoid foreign key constraints
+            await prisma.productCategory.deleteMany({ where: { productId: id } });
+            await prisma.productSubCategory.deleteMany({ where: { productId: id } });
 
             await prisma.product.delete({ where: { id } });
 
