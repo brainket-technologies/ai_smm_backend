@@ -58,6 +58,16 @@ export class ProductService {
             const categoryIds = data.categories ? await this.resolveCategoryIds(data.categories) : [];
             const subCategoryIds = data.subCategories ? await this.resolveSubCategoryIds(data.subCategories, categoryIds) : [];
 
+            // Validate mediaId if provided
+            if (data.mediaId) {
+                const mediaExists = await prisma.mediaFile.findUnique({
+                    where: { id: data.mediaId }
+                });
+                if (!mediaExists) {
+                    throw new Error(`Media file with ID ${data.mediaId} not found`);
+                }
+            }
+
             const product = await prisma.product.create({
                 data: {
                     businessId: data.businessId,
