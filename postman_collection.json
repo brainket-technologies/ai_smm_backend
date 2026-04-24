@@ -282,7 +282,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Premium AI Social Media Pack\",\n    \"description\": \"Complete social media kit.\",\n    \"price\": 49.99,\n    \"stock\": 100,\n    \"categories\": [\"Design\", \"Social Media\"],\n    \"subCategories\": [\"Templates\", \"Graphics\"],\n    \"tags\": [\"AI\", \"Marketing\"]\n}",
+							"raw": "{\n    \"businessId\": \"1\",\n    \"mediaId\": \"123\",\n    \"name\": \"Premium AI Social Media Pack\",\n    \"description\": \"Complete social media kit.\",\n    \"price\": 49.99,\n    \"stock\": 100,\n    \"categories\": [\"1\", \"2\"],\n    \"subCategories\": [\"10\", \"11\"],\n    \"tags\": [\"AI\", \"Marketing\"],\n    \"visibilityStatus\": \"active\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
