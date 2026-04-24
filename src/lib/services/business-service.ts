@@ -123,4 +123,31 @@ export class BusinessService {
       typeof value === 'bigint' ? value.toString() : value
     ));
   }
+
+  /**
+   * Fetches details of a single business.
+   */
+  static async getById(userId: bigint, businessId: string) {
+    const business = await prisma.business.findFirst({
+      where: { 
+        id: BigInt(businessId), 
+        ownerId: userId 
+      },
+      include: {
+        businessCategories: { include: { category: true } },
+        media: true,
+        audienceType: true,
+        targetRegion: true,
+        targetAgeGroup: true,
+        modelEthnicity: true,
+        ctaButton: true,
+      },
+    });
+
+    if (!business) return null;
+
+    return JSON.parse(JSON.stringify(business, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+  }
 }

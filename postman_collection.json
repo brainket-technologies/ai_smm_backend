@@ -258,6 +258,25 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Business Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "8", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/business/details",
+							"host": ["{{base_url}}"],
+							"path": ["api", "business", "details"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
