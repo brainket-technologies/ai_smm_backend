@@ -56,7 +56,10 @@ export async function PATCH(
         
         const result = await ProductService.updateProduct(BigInt(params.id), {
             businessId: businessCheck.businessId!,
-            ...body
+            ...body,
+            mediaId: body.mediaId ? BigInt(body.mediaId) : undefined,
+            price: body.price !== undefined ? Number(body.price) : undefined,
+            stock: body.stock !== undefined ? Number(body.stock) : undefined,
         });
 
         return NextResponse.json(result);
