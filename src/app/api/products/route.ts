@@ -68,7 +68,11 @@ export async function GET(request: Request) {
         const businessCheck = validateBusinessId(request);
         if (!businessCheck.isValid) return businessCheck.response;
 
-        const products = await ProductService.getBusinessProducts(businessCheck.businessId!);
+        // Get search query
+        const { searchParams } = new URL(request.url);
+        const search = searchParams.get('search') || undefined;
+
+        const products = await ProductService.getBusinessProducts(businessCheck.businessId!, search);
 
         return NextResponse.json({
             success: true,
