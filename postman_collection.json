@@ -392,6 +392,7 @@
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
 							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
 							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
 							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
@@ -435,6 +436,7 @@
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
 							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
 							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
 							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
@@ -454,6 +456,7 @@
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
 							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
 							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
 							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
