@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { Decimal } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export class ProductService {
     static async createProduct(data: {
@@ -20,7 +20,7 @@ export class ProductService {
                     businessId: data.businessId,
                     name: data.name,
                     description: data.description,
-                    price: new Decimal(data.price),
+                    price: new Prisma.Decimal(data.price),
                     stock: data.stock,
                     mediaId: data.mediaId,
                     tags: data.tags ? JSON.stringify(data.tags) : null,
