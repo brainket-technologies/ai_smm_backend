@@ -23,7 +23,7 @@ export class ProductService {
                     price: new Prisma.Decimal(data.price),
                     stock: data.stock,
                     mediaId: data.mediaId,
-                    tags: data.tags ? JSON.stringify(data.tags) : null,
+                    tags: data.tags || Prisma.JsonNull,
                     visibilityStatus: data.visibilityStatus || 'active',
                 }
             });
