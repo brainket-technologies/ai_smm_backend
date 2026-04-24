@@ -2,6 +2,46 @@ import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 
 export class ProductService {
+    private static async resolveCategoryIds(namesOrIds: string[]) {
+        const resolvedIds: bigint[] = [];
+        for (const item of namesOrIds) {
+            if (/^\d+$/.test(item)) {
+                resolvedIds.push(BigInt(item));
+            } else {
+                let category = await prisma.category.findFirst({
+                    where: { name: item, type: 'product' }
+                });
+                if (!category) {
+                    category = await prisma.category.create({
+                        data: { name: item, type: 'product' }
+                    });
+                }
+                resolvedIds.push(category.id);
+            }
+        }
+        return resolvedIds;
+    }
+
+    private static async resolveSubCategoryIds(namesOrIds: string[], resolvedCatIds: bigint[]) {
+        const resolvedIds: bigint[] = [];
+        for (const item of namesOrIds) {
+            if (/^\d+$/.test(item)) {
+                resolvedIds.push(BigInt(item));
+            } else {
+                let subCategory = await prisma.subCategory.findFirst({
+                    where: { name: item, categoryId: resolvedCatIds[0] }
+                });
+                if (!subCategory && resolvedCatIds.length > 0) {
+                    subCategory = await prisma.subCategory.create({
+                        data: { name: item, categoryId: resolvedCatIds[0] }
+                    });
+                }
+                if (subCategory) resolvedIds.push(subCategory.id);
+            }
+        }
+        return resolvedIds;
+    }
+
     static async createProduct(data: {
         businessId: bigint;
         name: string;
@@ -9,12 +49,15 @@ export class ProductService {
         price: number;
         stock?: number;
         mediaId?: bigint;
-        categories?: string[]; // IDs or Names? Assuming IDs for simplicity in relations
+        categories?: string[];
         subCategories?: string[];
         tags?: string[];
         visibilityStatus?: string;
     }) {
         try {
+            const categoryIds = data.categories ? await this.resolveCategoryIds(data.categories) : [];
+            const subCategoryIds = data.subCategories ? await this.resolveSubCategoryIds(data.subCategories, categoryIds) : [];
+
             const product = await prisma.product.create({
                 data: {
                     businessId: data.businessId,
@@ -25,28 +68,18 @@ export class ProductService {
                     mediaId: data.mediaId,
                     tags: data.tags || Prisma.JsonNull,
                     visibilityStatus: data.visibilityStatus || 'active',
+                    productCategories: {
+                        create: categoryIds.map(id => ({
+                            categoryId: id
+                        }))
+                    },
+                    productSubCategories: {
+                        create: subCategoryIds.map(id => ({
+                            subCategoryId: id
+                        }))
+                    }
                 }
             });
-
-            // Handle Categories
-            if (data.categories && data.categories.length > 0) {
-                await prisma.productCategory.createMany({
-                    data: data.categories.map(catId => ({
-                        productId: product.id,
-                        categoryId: BigInt(catId)
-                    }))
-                });
-            }
-
-            // Handle SubCategories
-            if (data.subCategories && data.subCategories.length > 0) {
-                await prisma.productSubCategory.createMany({
-                    data: data.subCategories.map(subId => ({
-                        productId: product.id,
-                        subCategoryId: BigInt(subId)
-                    }))
-                });
-            }
 
             return {
                 success: true,
@@ -77,6 +110,9 @@ export class ProductService {
         visibilityStatus?: string;
     }) {
         try {
+            const categoryIds = data.categories ? await this.resolveCategoryIds(data.categories) : null;
+            const subCategoryIds = data.subCategories ? await this.resolveSubCategoryIds(data.subCategories, categoryIds || []) : null;
+
             const product = await prisma.product.update({
                 where: { id, businessId: data.businessId },
                 data: {
@@ -90,27 +126,27 @@ export class ProductService {
                 }
             });
 
-            // Handle Categories (Clear and Re-create for simplicity or sync)
-            if (data.categories) {
+            // Handle Categories
+            if (categoryIds) {
                 await prisma.productCategory.deleteMany({ where: { productId: id } });
-                if (data.categories.length > 0) {
+                if (categoryIds.length > 0) {
                     await prisma.productCategory.createMany({
-                        data: data.categories.map(catId => ({
+                        data: categoryIds.map(catId => ({
                             productId: id,
-                            categoryId: BigInt(catId)
+                            categoryId: catId
                         }))
                     });
                 }
             }
 
             // Handle SubCategories
-            if (data.subCategories) {
+            if (subCategoryIds) {
                 await prisma.productSubCategory.deleteMany({ where: { productId: id } });
-                if (data.subCategories.length > 0) {
+                if (subCategoryIds.length > 0) {
                     await prisma.productSubCategory.createMany({
-                        data: data.subCategories.map(subId => ({
+                        data: subCategoryIds.map(subId => ({
                             productId: id,
-                            subCategoryId: BigInt(subId)
+                            subCategoryId: subId
                         }))
                     });
                 }
