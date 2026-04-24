@@ -4,9 +4,10 @@ import { validateApiKey, validateAuth, validateBusinessId } from '@/lib/auth-uti
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const apiCheck = validateApiKey(request);
         if (!apiCheck.isValid) return apiCheck.response;
 
@@ -14,7 +15,7 @@ export async function GET(
         if (!businessCheck.isValid) return businessCheck.response;
 
         const product = await ProductService.getProductDetails(
-            BigInt(params.id),
+            BigInt(id),
             businessCheck.businessId!
         );
 
@@ -40,9 +41,10 @@ export async function GET(
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const apiCheck = validateApiKey(request);
         if (!apiCheck.isValid) return apiCheck.response;
 
@@ -54,7 +56,7 @@ export async function PATCH(
 
         const body = await request.json();
         
-        const result = await ProductService.updateProduct(BigInt(params.id), {
+        const result = await ProductService.updateProduct(BigInt(id), {
             businessId: businessCheck.businessId!,
             ...body,
             mediaId: body.mediaId ? BigInt(body.mediaId) : undefined,
@@ -74,9 +76,10 @@ export async function PATCH(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const apiCheck = validateApiKey(request);
         if (!apiCheck.isValid) return apiCheck.response;
 
@@ -87,7 +90,7 @@ export async function DELETE(
         if (!businessCheck.isValid) return businessCheck.response;
 
         const result = await ProductService.deleteProduct(
-            BigInt(params.id),
+            BigInt(id),
             businessCheck.businessId!
         );
 
