@@ -254,6 +254,48 @@
 			]
 		},
 		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get Categories (Product)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories?type=product",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories"],
+							"query": [{ "key": "type", "value": "product" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Premium AI Social Media Pack\",\n    \"description\": \"Complete social media kit.\",\n    \"price\": 49.99,\n    \"stock\": 100,\n    \"categories\": [\"Design\", \"Social Media\"],\n    \"subCategories\": [\"Templates\", \"Graphics\"],\n    \"tags\": [\"AI\", \"Marketing\"]\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Business",
 			"item": [
 				{
