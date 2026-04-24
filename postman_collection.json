@@ -294,6 +294,78 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products?search=AI",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"],
+							"query": [{ "key": "search", "value": "AI" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Product Name\",\n    \"price\": 59.99,\n    \"visibilityStatus\": \"active\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "1"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
