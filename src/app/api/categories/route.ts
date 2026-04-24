@@ -16,6 +16,12 @@ export async function GET(request: Request) {
                 type: type,
                 isActive: true 
             },
+            include: {
+                subCategories: {
+                    where: { isActive: true },
+                    orderBy: { name: 'asc' }
+                }
+            },
             orderBy: { name: 'asc' }
         });
 
@@ -23,7 +29,12 @@ export async function GET(request: Request) {
         const formattedCategories = categories.map(cat => ({
             id: cat.id.toString(),
             name: cat.name,
-            type: cat.type
+            type: cat.type,
+            subCategories: cat.subCategories.map(sub => ({
+                id: sub.id.toString(),
+                name: sub.name,
+                categoryId: sub.categoryId.toString()
+            }))
         }));
 
         return NextResponse.json({
