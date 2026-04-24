@@ -212,6 +212,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Submit Feedback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"Great app! Really loving the UI.\",\n    \"type\": \"Love\",\n    \"rating\": 5,\n    \"subject\": \"App Experience\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/feedback",
+							"host": ["{{base_url}}"],
+							"path": ["api", "feedback"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Feedback",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/feedback",
+							"host": ["{{base_url}}"],
+							"path": ["api", "feedback"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
