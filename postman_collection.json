@@ -382,6 +382,134 @@
 			]
 		},
 		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "Get Categories (Service)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories?type=service",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories"],
+							"query": [{ "key": "type", "value": "service" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mediaId\": \"123\",\n    \"name\": \"Professional Website Design\",\n    \"description\": \"Complete website design service.\",\n    \"price\": 499.99,\n    \"slots\": 5,\n    \"categoryIds\": [\"1\", \"2\"],\n    \"subCategoryIds\": [\"10\", \"11\"],\n    \"tags\": [\"Web\", \"Design\"],\n    \"visibilityStatus\": \"active\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services?search=Web",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services"],
+							"query": [{ "key": "search", "value": "Web" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Service",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Service Name\",\n    \"price\": 599.99,\n    \"visibilityStatus\": \"active\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Service",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Business",
 			"item": [
 				{
