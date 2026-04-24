@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateApiKey } from '@/lib/auth-utils';
+import { validateApiKey, validateBusinessId } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
   // 1. Validate API Key
   const auth = validateApiKey(request);
   if (!auth.isValid) return auth.response;
 
-  // 2. Get Business ID (Optional)
-  const businessIdStr = request.headers.get('x-business-id');
-  const businessId = businessIdStr ? BigInt(businessIdStr) : null;
+  // 2. Get Business ID from Header (Optional for this API, but use the utility if present)
+  const businessIdHeader = request.headers.get('x-business-id');
+  let businessId: bigint | null = null;
+  if (businessIdHeader) {
+      const businessCheck = validateBusinessId(request);
+      if (businessCheck.isValid) {
+          businessId = businessCheck.businessId!;
+      }
+  }
 
   try {
     const platforms = await prisma.platform.findMany({

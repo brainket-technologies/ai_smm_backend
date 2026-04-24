@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BusinessService } from '@/lib/services/business-service';
-import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { validateApiKey, validateAuth, validateBusinessId } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
     try {
@@ -13,17 +13,11 @@ export async function GET(request: Request) {
         if (!auth.isValid) return auth.response;
 
         // 3. Get Business ID from header
-        const businessId = request.headers.get('x-business-id');
-
-        if (!businessId) {
-            return NextResponse.json(
-                { success: false, message: 'x-business-id header is required' },
-                { status: 400 }
-            );
-        }
+        const businessCheck = validateBusinessId(request);
+        if (!businessCheck.isValid) return businessCheck.response;
 
         // 4. Fetch business details
-        const result = await BusinessService.getById(auth.userId!, businessId);
+        const result = await BusinessService.getById(auth.userId!, businessCheck.businessId!.toString());
 
         if (!result) {
             return NextResponse.json(

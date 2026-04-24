@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ProductService } from '@/lib/services/product-service';
-import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { validateApiKey, validateAuth, validateBusinessId } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
     try {
@@ -12,9 +12,12 @@ export async function POST(request: Request) {
         const authCheck = await validateAuth(request);
         if (!authCheck.isValid) return authCheck.response;
 
+        // Validate Business Id from Header
+        const businessCheck = validateBusinessId(request);
+        if (!businessCheck.isValid) return businessCheck.response;
+
         const body = await request.json();
         const { 
-            businessId, 
             name, 
             price, 
             stock, 
@@ -26,15 +29,15 @@ export async function POST(request: Request) {
             visibilityStatus 
         } = body;
 
-        if (!businessId || !name || price === undefined) {
+        if (!name || price === undefined) {
             return NextResponse.json(
-                { success: false, message: 'Missing required fields: businessId, name, price' },
+                { success: false, message: 'Missing required fields: name, price' },
                 { status: 400 }
             );
         }
 
         const result = await ProductService.createProduct({
-            businessId: BigInt(businessId),
+            businessId: businessCheck.businessId!,
             name,
             price: Number(price),
             stock: stock ? Number(stock) : 0,
@@ -61,17 +64,11 @@ export async function GET(request: Request) {
         const apiCheck = validateApiKey(request);
         if (!apiCheck.isValid) return apiCheck.response;
 
-        const { searchParams } = new URL(request.url);
-        const businessId = searchParams.get('businessId');
+        // Validate Business Id from Header
+        const businessCheck = validateBusinessId(request);
+        if (!businessCheck.isValid) return businessCheck.response;
 
-        if (!businessId) {
-            return NextResponse.json(
-                { success: false, message: 'businessId is required' },
-                { status: 400 }
-            );
-        }
-
-        const products = await ProductService.getBusinessProducts(BigInt(businessId));
+        const products = await ProductService.getBusinessProducts(businessCheck.businessId!);
 
         return NextResponse.json({
             success: true,

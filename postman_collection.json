@@ -261,7 +261,8 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/categories?type=product",
@@ -278,11 +279,12 @@
 						"method": "POST",
 						"header": [
 							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"businessId\": \"1\",\n    \"mediaId\": \"123\",\n    \"name\": \"Premium AI Social Media Pack\",\n    \"description\": \"Complete social media kit.\",\n    \"price\": 49.99,\n    \"stock\": 100,\n    \"categories\": [\"1\", \"2\"],\n    \"subCategories\": [\"10\", \"11\"],\n    \"tags\": [\"AI\", \"Marketing\"],\n    \"visibilityStatus\": \"active\"\n}",
+							"raw": "{\n    \"mediaId\": \"123\",\n    \"name\": \"Premium AI Social Media Pack\",\n    \"description\": \"Complete social media kit.\",\n    \"price\": 49.99,\n    \"stock\": 100,\n    \"categories\": [\"1\", \"2\"],\n    \"subCategories\": [\"10\", \"11\"],\n    \"tags\": [\"AI\", \"Marketing\"],\n    \"visibilityStatus\": \"active\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -654,6 +656,7 @@
 	"variable": [
 		{ "key": "base_url", "value": "https://ai-smm-backend.vercel.app" },
 		{ "key": "apikey", "value": "brandboost_ai_key_789" },
-		{ "key": "token", "value": "YOUR_JWT_TOKEN_HERE" }
+		{ "key": "token", "value": "YOUR_JWT_TOKEN_HERE" },
+		{ "key": "business_id", "value": "1" }
 	]
 }

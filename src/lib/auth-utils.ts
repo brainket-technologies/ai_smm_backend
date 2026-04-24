@@ -82,3 +82,35 @@ export async function validateAuth(request: Request) {
     deviceType: deviceType 
   };
 }
+
+/**
+ * Validates and extracts 'x-business-id' from headers.
+ */
+export function validateBusinessId(request: Request) {
+  const businessId = request.headers.get('x-business-id');
+  
+  if (!businessId) {
+    return {
+      isValid: false,
+      response: NextResponse.json(
+        { success: false, message: 'x-business-id header is required' },
+        { status: 400 }
+      ),
+    };
+  }
+
+  try {
+    return {
+      isValid: true,
+      businessId: BigInt(businessId)
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      response: NextResponse.json(
+        { success: false, message: 'Invalid x-business-id format' },
+        { status: 400 }
+      ),
+    };
+  }
+}
