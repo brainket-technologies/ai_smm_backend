@@ -35,6 +35,10 @@ export class AuthService {
         where: type === 'phone' ? { phone: value } : { email: emailValue },
       });
 
+      if (user && user.isDeleted) {
+        throw new Error('Your account deleted');
+      }
+
       if (!user) {
         const userRole = await prisma.role.findUnique({ where: { name: 'User' } });
         user = await prisma.user.create({
@@ -262,6 +266,10 @@ export class AuthService {
           ]
         }
       });
+      
+      if (user && user.isDeleted) {
+        throw new Error('Your account deleted');
+      }
 
       let isNewUser = false;
       if (!user) {
@@ -475,6 +483,21 @@ export class AuthService {
     delete userData.deviceTokens;
 
     return userData;
+  }
+
+  /**
+   * Marks a user account as deleted.
+   */
+  static async deleteAccount(userId: bigint) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
+    });
+
+    return { success: true, message: 'Account deleted successfully' };
   }
 }
 
