@@ -53,6 +53,11 @@ export class BusinessService {
           },
         },
         media: true,
+        audienceType: true,
+        targetRegion: true,
+        targetAgeGroup: true,
+        modelEthnicity: true,
+        ctaButton: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -66,7 +71,6 @@ export class BusinessService {
    * Updates an existing business.
    */
   static async update(userId: bigint, businessId: string, data: any) {
-    // 1. Resolve related IDs from names if provided
     const updateData: any = {};
     
     if (data.name !== undefined) updateData.name = data.name;
@@ -74,35 +78,35 @@ export class BusinessService {
     if (data.phone !== undefined) updateData.phone = data.phone;
     if (data.email !== undefined) updateData.email = data.email;
     if (data.website !== undefined) updateData.website = data.website;
-    if (data.streetAddress !== undefined) updateData.address = data.streetAddress;
+    if (data.address !== undefined) updateData.address = data.address;
     if (data.country !== undefined) updateData.country = data.country;
     if (data.state !== undefined) updateData.state = data.state;
     if (data.city !== undefined) updateData.city = data.city;
     if (data.pinCode !== undefined) updateData.postalCode = data.pinCode;
-    if (data.brandColor !== undefined) updateData.brandColor = data.brandColor.toString();
+    if (data.brandColor !== undefined) updateData.brandColor = data.brandColor;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.gender !== undefined) updateData.targetGender = data.gender;
+    
+    // Direct ID updates
+    if (data.mediaId !== undefined) updateData.mediaId = BigInt(data.mediaId);
+    if (data.audienceTypeId !== undefined) updateData.audienceTypeId = BigInt(data.audienceTypeId);
+    if (data.targetRegionId !== undefined) updateData.targetRegionId = BigInt(data.targetRegionId);
+    if (data.targetAgeGroupId !== undefined) updateData.targetAgeGroupId = BigInt(data.targetAgeGroupId);
+    if (data.modelEthnicityId !== undefined) updateData.modelEthnicityId = BigInt(data.modelEthnicityId);
+    if (data.ctaButtonId !== undefined) updateData.ctaButtonId = BigInt(data.ctaButtonId);
 
-    // Handle relations by name lookups
-    if (data.audienceType) {
-      const item = await prisma.audienceType.findFirst({ where: { name: data.audienceType } });
-      if (item) updateData.audienceTypeId = item.id;
-    }
-    if (data.region) {
-      const item = await prisma.targetRegion.findFirst({ where: { name: data.region } });
-      if (item) updateData.targetRegionId = item.id;
-    }
-    if (data.ageGroup) {
-      const item = await prisma.targetAgeGroup.findFirst({ where: { name: data.ageGroup } });
-      if (item) updateData.targetAgeGroupId = item.id;
-    }
-    if (data.ethnicity) {
-      const item = await prisma.modelEthnicity.findFirst({ where: { name: data.ethnicity } });
-      if (item) updateData.modelEthnicityId = item.id;
-    }
-    if (data.ctaButton) {
-      const item = await prisma.cTAButton.findFirst({ where: { name: data.ctaButton } });
-      if (item) updateData.ctaButtonId = item.id;
+    // Handle business category update
+    if (data.categoryId !== undefined) {
+      // For now, we clear existing categories and set the new one
+      await prisma.businessCategory.deleteMany({
+        where: { businessId: BigInt(businessId) }
+      });
+      await prisma.businessCategory.create({
+        data: {
+          businessId: BigInt(businessId),
+          categoryId: BigInt(data.categoryId)
+        }
+      });
     }
 
     const business = await prisma.business.update({

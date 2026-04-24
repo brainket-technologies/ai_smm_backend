@@ -248,7 +248,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"8\",\n    \"name\": \"Updated Tech Store\",\n    \"tagline\": \"Better tagline\",\n    \"ctaButton\": \"Shop Now\"\n}",
+							"raw": "{\n    \"id\": \"8\",\n    \"name\": \"Updated Tech Store\",\n    \"tagline\": \"Better tagline\",\n    \"description\": \"Full business description here\",\n    \"email\": \"contact@techstore.com\",\n    \"phone\": \"+919876543210\",\n    \"website\": \"https://techstore.com\",\n    \"address\": \"123 Tech Street\",\n    \"country\": \"India\",\n    \"state\": \"Maharashtra\",\n    \"city\": \"Mumbai\",\n    \"pinCode\": \"400001\",\n    \"brandColor\": \"#2ECC71\",\n    \"mediaId\": \"1\",\n    \"categoryId\": \"1\",\n    \"audienceTypeId\": \"1\",\n    \"targetRegionId\": \"1\",\n    \"gender\": \"all\",\n    \"targetAgeGroupId\": \"1\",\n    \"modelEthnicityId\": \"1\",\n    \"ctaButtonId\": \"1\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
