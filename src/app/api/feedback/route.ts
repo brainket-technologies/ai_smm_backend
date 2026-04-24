@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { FeedbackService } from '@/lib/services/feedback-service';
 import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
     try {
@@ -29,6 +30,9 @@ export async function POST(request: Request) {
             rating,
             subject
         });
+
+        // Revalidate admin feedback page
+        revalidatePath('/admin/feedback');
 
         return NextResponse.json(result);
     } catch (error: any) {
