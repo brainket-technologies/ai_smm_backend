@@ -24,15 +24,15 @@ export class SocialMediaService {
   static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('facebook');
     
-    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' }));
-    const scope = [
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
+    const scope = encodeURIComponent([
       'pages_show_list',
       'pages_read_engagement',
       'pages_manage_posts',
       'instagram_basic',
       'instagram_content_publish',
       'business_management'
-    ].join(',');
+    ].join(','));
 
     return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
