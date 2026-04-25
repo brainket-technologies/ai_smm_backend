@@ -95,7 +95,7 @@ export default async function SocialAccountsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-medium text-slate-500">
-                        {new Date(account.createdAt).toLocaleDateString()}
+                        {account.createdAt ? new Date(account.createdAt).toLocaleDateString() : 'N/A'}
                       </span>
                     </td>
                     <td className="px-6 py-4">

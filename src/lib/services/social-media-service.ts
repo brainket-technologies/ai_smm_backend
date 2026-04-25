@@ -121,7 +121,7 @@ export class SocialMediaService {
 
     // 3. Find Platform ID
     const platformRecord = await prisma.platform.findUnique({
-      where: { name_key: platform }
+      where: { nameKey: platform }
     });
 
     if (!platformRecord) {
