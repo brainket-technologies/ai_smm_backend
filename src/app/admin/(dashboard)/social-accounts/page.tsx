@@ -1,12 +1,13 @@
 import prisma from "@/lib/prisma";
 import { 
   Globe, 
-  Trash2, 
-  ExternalLink, 
+  Settings, 
+  FileText, 
   Briefcase, 
   CheckCircle2, 
-  XCircle,
-  LayoutDashboard
+  AlertTriangle,
+  LayoutDashboard,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -105,7 +106,7 @@ export default async function SocialAccountsPage() {
                         </div>
                       ) : (
                         <div className="inline-flex items-center space-x-1 px-2 py-1 bg-rose-100 dark:bg-rose-500/10 text-rose-600 rounded-full text-[10px] font-bold">
-                          <XCircle className="h-3 w-3" />
+                          <AlertTriangle className="h-3 w-3" />
                           <span>Disconnected</span>
                         </div>
                       )}
@@ -113,7 +114,7 @@ export default async function SocialAccountsPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500">
-                          <Trash2 className="h-4 w-4" />
+                          <Settings className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
