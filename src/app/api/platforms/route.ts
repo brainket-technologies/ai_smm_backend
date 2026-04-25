@@ -59,8 +59,8 @@ export async function GET(request: Request) {
 
     // Sort by requested sequence
     formattedPlatforms.sort((a, b) => {
-      const indexA = sequence.indexOf(a.nameKey);
-      const indexB = sequence.indexOf(b.nameKey);
+      const indexA = sequence.indexOf(a.nameKey || '');
+      const indexB = sequence.indexOf(b.nameKey || '');
       
       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
       if (indexA !== -1) return -1;
