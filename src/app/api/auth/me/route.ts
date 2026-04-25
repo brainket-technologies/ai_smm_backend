@@ -8,11 +8,7 @@ import bcrypt from 'bcryptjs';
 
 export async function GET(request: Request) {
   try {
-    // 1. Validate API Key
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
-
-    // 2. Authenticate User
+    // Authenticate User
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 

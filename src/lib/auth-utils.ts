@@ -50,10 +50,20 @@ export async function validateAuth(request: Request) {
   // Use deviceId from header or fallback to token
   const currentDeviceId = deviceId || decoded.deviceId;
 
+  // For web sessions or devices not yet registered/tracked (version 0), allow access without device-id
+  if (!currentDeviceId && decoded.version === 0) {
+    return { 
+      isValid: true, 
+      userId: BigInt(decoded.id), 
+      deviceId: null, 
+      deviceType: deviceType 
+    };
+  }
+
   if (!currentDeviceId) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'device-id header is required' }, { status: 401 })
+      response: NextResponse.json({ success: false, message: 'device-id header is required for this session' }, { status: 401 })
     };
   }
 
