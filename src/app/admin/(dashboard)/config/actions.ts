@@ -12,7 +12,12 @@ export async function getConfig() {
     
     const platforms = await prisma.appPlatformConfig.findMany();
     
-    return { config, platforms };
+    // Serialize BigInt for client components
+    const serializedConfig = config ? JSON.parse(JSON.stringify(config, (key, value) => 
+      typeof value === 'bigint' ? value.toString() : value
+    )) : null;
+
+    return { config: serializedConfig, platforms };
   } catch (error) {
     console.error("Failed to fetch config:", error);
     return { config: null, platforms: [] };
@@ -122,17 +127,24 @@ export async function autoSetConfig() {
 }
 
 export async function initConfig() {
-  await prisma.appConfig.upsert({
-    where: { id: BigInt(1) },
-    update: {},
-    create: {
-      id: BigInt(1),
-      appName: "BrandBoost AI",
-      maintenanceMode: false,
-      globalAiEnabled: true,
-      freeTrialDays: 7
-    }
-  });
+  try {
+    const config = await prisma.appConfig.create({
+      data: {
+        appName: "BrandBoost AI",
+        maintenanceMode: false,
+        developerMode: true,
+        globalAiEnabled: true
+      }
+    });
 
-  revalidatePath("/admin/config");
+    return { 
+      success: true, 
+      data: JSON.parse(JSON.stringify(config, (key, value) => 
+        typeof value === 'bigint' ? value.toString() : value
+      ))
+    };
+  } catch (error: any) {
+    console.error("Initialization error:", error);
+    return { success: false, message: error.message };
+  }
 }
