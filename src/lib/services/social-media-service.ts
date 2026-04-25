@@ -19,21 +19,15 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Facebook / Instagram.
+   * Generates OAuth URL for Facebook.
    */
-  static async getFacebookAuthUrl(businessId: string, redirectUri: string, platformType: string = 'facebook') {
+  static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('facebook');
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: platformType })));
     
-    if (platformType === 'instagram') {
-      // Instagram Business OAuth via instagram.com with Configuration ID
-      const configId = '949385448077001';
-      
-      return `https://www.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&config_id=${configId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&state=${state}`;
-    }
-
-    // Facebook OAuth with specific business scopes
-    const scopes = [
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
+    
+    // Scopes as requested for Facebook
+    const scopeList = [
       'pages_manage_metadata',
       'business_management',
       'pages_show_list',
@@ -44,9 +38,31 @@ export class SocialMediaService {
       'read_insights',
       'pages_manage_engagement',
       'pages_messaging'
+    ];
+    const scope = encodeURIComponent(scopeList.join(','));
+
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
+  }
+
+  /**
+   * Generates OAuth URL for Instagram (Business).
+   */
+  static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('facebook'); // Instagram Business uses Facebook App
+    
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
+    
+    const scopes = [
+      'instagram_business_basic',
+      'instagram_business_manage_comments',
+      'instagram_business_content_publish',
+      'instagram_business_manage_messages',
+      'instagram_business_manage_insights'
     ].join(',');
 
-    return `https://www.facebook.com/v19.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scopes)}`;
+    const nextUrl = `https://www.instagram.com/oauth/authorize/third_party/?redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&enable_fb_login=1&client_id=${platformConfig.appId}&force_reauth=0`;
+
+    return `https://www.instagram.com/accounts/login/?force_authentication&platform_app_id=${platformConfig.appId}&enable_fb_login&next=${encodeURIComponent(nextUrl)}`;
   }
 
   /**
@@ -54,13 +70,13 @@ export class SocialMediaService {
    */
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('gmb');
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     
-    const scopes = [
+    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
+    const scope = [
       'https://www.googleapis.com/auth/business.manage'
     ].join(' ');
 
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&access_type=offline&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
   }
 
   /**
@@ -68,9 +84,9 @@ export class SocialMediaService {
    */
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('threads');
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
     
-    const scopes = [
+    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
+    const scope = [
       'threads_basic',
       'threads_content_publish',
       'threads_read_replies',
@@ -78,7 +94,7 @@ export class SocialMediaService {
       'threads_manage_insights'
     ].join(',');
 
-    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&response_type=code&state=${state}`;
+    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
   }
 
   /**
@@ -97,7 +113,7 @@ export class SocialMediaService {
     if (platform === 'facebook' || platform === 'instagram') {
       const platformConfig = await this.getPlatformConfig('facebook');
 
-      const tokenRes = await axios.get('https://graph.facebook.com/v18.0/oauth/access_token', {
+      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
           client_secret: platformConfig.appSecret,
@@ -110,7 +126,7 @@ export class SocialMediaService {
       
       if (platform === 'instagram') {
         // Fetch pages and their linked Instagram business accounts
-        const pagesRes = await axios.get('https://graph.facebook.com/v18.0/me/accounts', {
+        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
           params: { access_token: accessToken, fields: 'instagram_business_account{id,username},name' }
         });
         
@@ -127,12 +143,12 @@ export class SocialMediaService {
         }
         
         if (!foundIg) {
-          // Fallback if no IG account found, maybe use the user ID as placeholder
-          const meRes = await axios.get('https://graph.facebook.com/me', {
+          // Fallback if no IG account found
+          const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
             params: { access_token: accessToken, fields: 'id,name' }
           });
           accountId = `ig_${meRes.data.id}`;
-          accountName = meRes.data.name;
+          accountName = `${meRes.data.name} (Instagram)`;
         }
       } else {
         // Facebook fallback: just get user ID/name

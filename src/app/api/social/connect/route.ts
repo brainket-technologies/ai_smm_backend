@@ -17,8 +17,10 @@ export async function GET(request: Request) {
     const redirectUri = `${protocol}://${host}/api/social/callback`;
 
     let authUrl = '';
-    if (platform === 'facebook' || platform === 'instagram') {
-      authUrl = await SocialMediaService.getFacebookAuthUrl(businessId, redirectUri, platform);
+    if (platform === 'facebook') {
+      authUrl = await SocialMediaService.getFacebookAuthUrl(businessId, redirectUri);
+    } else if (platform === 'instagram') {
+      authUrl = await SocialMediaService.getInstagramAuthUrl(businessId, redirectUri);
     } else if (platform === 'google' || platform === 'gmb') {
       authUrl = await SocialMediaService.getGoogleAuthUrl(businessId, redirectUri);
     } else if (platform === 'threads') {
