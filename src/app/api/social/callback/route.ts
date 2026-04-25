@@ -33,25 +33,65 @@ export async function GET(request: Request) {
       `<html>
         <head>
           <title>Connection Successful</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
           <style>
-            body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; }
-            .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); text-align: center; }
-            h1 { color: #10b981; margin-bottom: 0.5rem; }
-            p { color: #64748b; }
+            body { 
+              font-family: 'Inter', -apple-system, sans-serif; 
+              display: flex; 
+              align-items: center; 
+              justify-content: center; 
+              height: 100vh; 
+              margin: 0;
+              background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+            }
+            .card { 
+              background: white; 
+              padding: 3rem; 
+              border-radius: 2rem; 
+              box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
+              text-align: center; 
+              max-width: 400px;
+              width: 90%;
+            }
+            .icon {
+              font-size: 4rem;
+              margin-bottom: 1rem;
+            }
+            h1 { 
+              color: #1e293b; 
+              margin-bottom: 0.5rem; 
+              font-weight: 800;
+              letter-spacing: -0.025em;
+            }
+            p { 
+              color: #64748b; 
+              line-height: 1.6;
+              font-size: 1.1rem;
+            }
+            .button {
+              display: inline-block;
+              margin-top: 2rem;
+              background: #6366f1;
+              color: white;
+              padding: 0.75rem 2rem;
+              border-radius: 1rem;
+              text-decoration: none;
+              font-weight: 600;
+              transition: all 0.2s;
+            }
+            .button:hover {
+              background: #4f46e5;
+              transform: translateY(-2px);
+            }
           </style>
         </head>
         <body>
           <div class="card">
-            <h1>Connected!</h1>
-            <p>Your ${platform} account has been successfully linked.</p>
-            <p>You can close this window now.</p>
+            <div class="icon">🎉</div>
+            <h1>Successfully Linked!</h1>
+            <p>Your <b>${platform}</b> account is now connected to Ai Social.</p>
+            <p>You can safely close this window to continue.</p>
           </div>
-          <script>
-             // Signal to Flutter if using a custom scheme (Optional but recommended)
-             // window.location.href = "ai-social://connection?status=success&platform=${platform}";
-             
-             // Or just let the user close the WebView
-          </script>
         </body>
       </html>`,
       { headers: { 'Content-Type': 'text/html' } }

@@ -49,7 +49,7 @@ export class SocialMediaService {
    * Generates OAuth URL for Instagram (Business).
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('facebook'); // Instagram Business uses Facebook App
+    const platformConfig = await this.getPlatformConfig('instagram'); // Use instagram specific config
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
@@ -106,7 +106,19 @@ export class SocialMediaService {
    */
   static async handleCallback(platform: string, code: string, state: string, redirectUri: string) {
     // 1. Decrypt state to get businessId
-    const decodedState = JSON.parse(CryptoService.decrypt(state));
+    let decodedState;
+    try {
+      decodedState = JSON.parse(CryptoService.decrypt(state));
+    } catch (e) {
+      // Fallback for manual testing/web state
+      if (state === 'web') {
+        // In production, we should probably throw an error if businessId is missing
+        // But for testing, we might need a default or a way to pass it
+        throw new Error('Business ID missing in state. Please use the mobile app to connect.');
+      }
+      throw new Error('Invalid state format');
+    }
+    
     const businessId = BigInt(decodedState.businessId);
 
     let accessToken = '';
@@ -115,8 +127,9 @@ export class SocialMediaService {
     let accountName = '';
 
     if (platform === 'facebook' || platform === 'instagram') {
-      const platformConfig = await this.getPlatformConfig('facebook');
+      const platformConfig = await this.getPlatformConfig(platform);
 
+      // Exchange code for short-lived access token
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
@@ -126,12 +139,24 @@ export class SocialMediaService {
         }
       });
 
-      accessToken = tokenRes.data.access_token;
+      let shortLivedToken = tokenRes.data.access_token;
+
+      // Exchange short-lived token for a long-lived token (60 days)
+      const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+        params: {
+          grant_type: 'fb_exchange_token',
+          client_id: platformConfig.appId,
+          client_secret: platformConfig.appSecret,
+          fb_exchange_token: shortLivedToken
+        }
+      });
+
+      accessToken = longLivedRes.data.access_token;
       
       if (platform === 'instagram') {
         // Fetch pages and their linked Instagram business accounts
         const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-          params: { access_token: accessToken, fields: 'instagram_business_account{id,username},name' }
+          params: { access_token: accessToken, fields: 'instagram_business_account{id,username,name},name' }
         });
         
         const pages = pagesRes.data.data || [];
@@ -140,23 +165,18 @@ export class SocialMediaService {
         for (const page of pages) {
           if (page.instagram_business_account) {
             accountId = page.instagram_business_account.id;
-            accountName = page.instagram_business_account.username;
+            accountName = page.instagram_business_account.username || page.instagram_business_account.name;
             foundIg = true;
             break; // Use the first found linked Instagram account
           }
         }
         
         if (!foundIg) {
-          // Fallback if no IG account found
-          const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
-            params: { access_token: accessToken, fields: 'id,name' }
-          });
-          accountId = `ig_${meRes.data.id}`;
-          accountName = `${meRes.data.name} (Instagram)`;
+          throw new Error('No Instagram Business Account linked to your Facebook Pages was found. Please ensure your Instagram account is a Business account and linked to a Facebook Page.');
         }
       } else {
-        // Facebook fallback: just get user ID/name
-        const meRes = await axios.get('https://graph.facebook.com/me', {
+        // Facebook: Get user ID/name or Page ID/name
+        const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
           params: { access_token: accessToken, fields: 'id,name' }
         });
         
