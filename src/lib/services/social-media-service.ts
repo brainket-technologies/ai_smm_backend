@@ -26,12 +26,8 @@ export class SocialMediaService {
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
     const scope = encodeURIComponent([
-      'pages_show_list',
-      'pages_read_engagement',
-      'pages_manage_posts',
-      'instagram_basic',
-      'instagram_content_publish',
-      'business_management'
+      'public_profile',
+      'pages_show_list'
     ].join(','));
 
     return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
