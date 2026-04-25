@@ -16,7 +16,10 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
     nameKey: '',
     logo: '',
     url: '',
-    isActive: true
+    isActive: true,
+    appId: '',
+    appSecret: '',
+    clientToken: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,7 +30,10 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
         nameKey: platform.nameKey || '',
         logo: platform.logo || '',
         url: platform.url || '',
-        isActive: platform.isActive ?? true
+        isActive: platform.isActive ?? true,
+        appId: platform.appId || '',
+        appSecret: platform.appSecret || '',
+        clientToken: platform.clientToken || ''
       });
     } else {
       setFormData({
@@ -35,7 +41,10 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
         nameKey: '',
         logo: '',
         url: '',
-        isActive: true
+        isActive: true,
+        appId: '',
+        appSecret: '',
+        clientToken: ''
       });
     }
   }, [platform, isOpen]);
@@ -71,7 +80,7 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           
           <div className="space-y-4">
             <div className="space-y-1">
@@ -117,6 +126,40 @@ export default function PlatformFormModal({ isOpen, onClose, platform }: Platfor
                   placeholder="https://facebook.com"
                   className="w-full px-3 py-2 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-sm"
                 />
+            </div>
+
+            <hr className="border-slate-100 dark:border-slate-800" />
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">API Credentials</p>
+
+            <div className="space-y-3">
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">App ID / Client ID</label>
+                    <input 
+                    value={formData.appId}
+                    onChange={(e) => setFormData({...formData, appId: e.target.value})}
+                    placeholder="Enter App ID"
+                    className="w-full px-3 py-2 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-sm"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">App Secret / Client Secret</label>
+                    <input 
+                    type="password"
+                    value={formData.appSecret}
+                    onChange={(e) => setFormData({...formData, appSecret: e.target.value})}
+                    placeholder="••••••••••••••••"
+                    className="w-full px-3 py-2 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-sm"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">Client Token (Optional)</label>
+                    <input 
+                    value={formData.clientToken}
+                    onChange={(e) => setFormData({...formData, clientToken: e.target.value})}
+                    placeholder="Enter Client Token"
+                    className="w-full px-3 py-2 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-sm"
+                    />
+                </div>
             </div>
           </div>
 

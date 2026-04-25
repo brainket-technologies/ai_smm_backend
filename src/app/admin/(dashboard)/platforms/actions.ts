@@ -58,9 +58,12 @@ export async function upsertPlatform(id: string | null, data: {
   url?: string;
   nameKey?: string;
   isActive: boolean;
+  appId?: string;
+  appSecret?: string;
+  clientToken?: string;
 }) {
   try {
-    const { name, logo, url, nameKey, isActive } = data;
+    const { name, logo, url, nameKey, isActive, appId, appSecret, clientToken } = data;
     let mediaId: bigint | null = null;
 
     // Handle logo registration if it's a string URL
@@ -78,6 +81,9 @@ export async function upsertPlatform(id: string | null, data: {
       url,
       nameKey,
       isActive,
+      appId,
+      appSecret,
+      clientToken,
     };
     
     if (mediaId) {
