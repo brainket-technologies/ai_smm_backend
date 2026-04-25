@@ -50,14 +50,14 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="relative z-10">
-          <div className="h-16 w-16 bg-white flex items-center justify-center rounded-2xl mb-12 shadow-2xl">
-             <ShieldCheck className="h-10 w-10 text-[#1B2E28]" />
+          <div className="h-16 px-6 bg-white/10 backdrop-blur-md flex items-center justify-center rounded-2xl mb-12 border border-white/20 shadow-2xl">
+             <span className="text-2xl font-black text-white tracking-tighter">SocialSuite</span>
           </div>
           
           <div className="space-y-6 max-w-lg">
             <h1 className="text-6xl font-black text-white leading-tight tracking-tight">
               Hello <br />
-              BrandBoost! 👋
+              SocialSuite! 👋
             </h1>
             <p className="text-xl text-gray-300 font-medium leading-relaxed opacity-90">
               Control your AI social automation engine. Optimize performance, manage master data, and save tons of time!
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="relative z-10 text-gray-500 text-sm font-medium tracking-wide">
-          © {new Date().getFullYear()} BrandBoost AI. All rights reserved.
+          © {new Date().getFullYear()} SocialSuite AI. All rights reserved.
         </div>
       </div>
 
