@@ -73,7 +73,7 @@ export default async function SocialAccountsPage() {
                           {account.platform.nameKey === 'facebook' && <Globe className="h-4 w-4 text-blue-600" />}
                           {account.platform.nameKey === 'instagram' && <LayoutDashboard className="h-4 w-4 text-pink-600" />}
                           {account.platform.nameKey === 'gmb' && <Globe className="h-4 w-4 text-red-500" />}
-                          {!['facebook', 'instagram', 'gmb'].includes(account.platform.nameKey) && <Globe className="h-4 w-4 text-slate-400" />}
+                          {!['facebook', 'instagram', 'gmb'].includes(account.platform.nameKey || '') && <Globe className="h-4 w-4 text-slate-400" />}
                         </div>
                         <span className="text-sm font-bold">{account.platform.name}</span>
                       </div>
