@@ -52,6 +52,21 @@ export class SocialMediaService {
   }
 
   /**
+   * Generates OAuth URL for Threads.
+   */
+  static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('threads');
+    
+    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
+    const scope = [
+      'threads_basic',
+      'threads_content_publish'
+    ].join(',');
+
+    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
+  }
+
+  /**
    * Exchanges authorization code for tokens and saves them.
    */
   static async handleCallback(platform: string, code: string, state: string, redirectUri: string) {
@@ -108,6 +123,30 @@ export class SocialMediaService {
       
       accountId = userRes.data.sub;
       accountName = userRes.data.email || userRes.data.name;
+    }
+    else if (platform === 'threads') {
+      const platformConfig = await this.getPlatformConfig('threads');
+
+      const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', {
+        client_id: platformConfig.appId,
+        client_secret: platformConfig.appSecret,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri,
+        code: code
+      });
+
+      accessToken = tokenRes.data.access_token;
+      accountId = tokenRes.data.user_id.toString();
+
+      // Get Threads user profile
+      const userRes = await axios.get(`https://graph.threads.net/me`, {
+        params: { 
+          fields: 'id,username',
+          access_token: accessToken 
+        }
+      });
+      
+      accountName = userRes.data.username;
     }
 
     // 2. Encrypt tokens

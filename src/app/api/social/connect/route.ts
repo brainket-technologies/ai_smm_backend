@@ -21,6 +21,8 @@ export async function GET(request: Request) {
       authUrl = await SocialMediaService.getFacebookAuthUrl(businessId, redirectUri);
     } else if (platform === 'google' || platform === 'gmb') {
       authUrl = await SocialMediaService.getGoogleAuthUrl(businessId, redirectUri);
+    } else if (platform === 'threads') {
+      authUrl = await SocialMediaService.getThreadsAuthUrl(businessId, redirectUri);
     } else {
       return NextResponse.json({ success: false, message: `Platform ${platform} not supported for OAuth` }, { status: 400 });
     }

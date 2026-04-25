@@ -102,7 +102,6 @@ model AppConfig {
   heroTitle          String?   @map("hero_title")
   pricingTitle       String?   @map("pricing_title")
   primaryColor       String?   @default("#2ECC71") @map("primary_color")
-  primaryColor       String?   @default("#2ECC71") @map("primary_color")
 
   @@map("app_configs")
 }
