@@ -378,6 +378,7 @@ model Platform {
   appId          String?         @map("app_id")
   appSecret      String?         @map("app_secret")
   clientToken    String?         @map("client_token")
+  scopes         String?
   isActive       Boolean?        @default(true) @map("is_active")
   mediaId        BigInt?         @map("media_id")
   media          MediaFile?      @relation("PlatformLogo", fields: [mediaId], references: [id])

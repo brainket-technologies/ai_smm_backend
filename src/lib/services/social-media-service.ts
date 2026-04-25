@@ -26,8 +26,9 @@ export class SocialMediaService {
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
     
-    // Scopes as requested for Facebook
-    const scopeList = [
+    // Scopes from DB or defaults
+    const scopesFromDb = (platformConfig as any).scopes;
+    const scopeList = scopesFromDb ? scopesFromDb.split(',') : [
       'pages_manage_metadata',
       'business_management',
       'pages_show_list',
@@ -52,7 +53,8 @@ export class SocialMediaService {
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    const scopes = [
+    const scopesFromDb = (platformConfig as any).scopes;
+    const scopes = scopesFromDb || [
       'instagram_business_basic',
       'instagram_business_manage_comments',
       'instagram_business_content_publish',
@@ -72,7 +74,8 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('gmb');
     
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
-    const scope = [
+    const scopesFromDb = (platformConfig as any).scopes;
+    const scope = scopesFromDb || [
       'https://www.googleapis.com/auth/business.manage'
     ].join(' ');
 
@@ -86,7 +89,8 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('threads');
     
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
-    const scope = [
+    const scopesFromDb = (platformConfig as any).scopes;
+    const scope = scopesFromDb || [
       'threads_basic',
       'threads_content_publish',
       'threads_read_replies',
