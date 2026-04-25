@@ -128,7 +128,7 @@ export async function autoSetConfig() {
 
 export async function initConfig() {
   try {
-    const config = await prisma.appConfig.create({
+    await prisma.appConfig.create({
       data: {
         appName: "BrandBoost AI",
         maintenanceMode: false,
@@ -137,14 +137,8 @@ export async function initConfig() {
       }
     });
 
-    return { 
-      success: true, 
-      data: JSON.parse(JSON.stringify(config, (key, value) => 
-        typeof value === 'bigint' ? value.toString() : value
-      ))
-    };
+    revalidatePath("/admin/config");
   } catch (error: any) {
     console.error("Initialization error:", error);
-    return { success: false, message: error.message };
   }
 }
