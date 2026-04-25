@@ -102,8 +102,6 @@ model AppConfig {
   heroTitle          String?   @map("hero_title")
   pricingTitle       String?   @map("pricing_title")
   primaryColor       String?   @default("#2ECC71") @map("primary_color")
-  
-  // Social Media API Config
   fbAppId            String?   @map("fb_app_id")
   fbAppSecret        String?   @map("fb_app_secret")
   fbClientToken      String?   @map("fb_client_token")
@@ -314,12 +312,12 @@ model DeviceToken {
   deviceId     String    @map("device_id")
   deviceType   String?   @map("device_type")
   fcmToken     String?   @map("fcm_token")
-  tokenVersion Int       @default(1) @map("token_version")
-  lastLoggedIn DateTime? @default(now()) @map("last_logged_in")
   isActive     Boolean?  @default(true) @map("is_active")
   createdAt    DateTime? @default(now()) @map("created_at")
+  lastLoggedIn DateTime? @default(now()) @map("last_logged_in")
+  tokenVersion Int       @default(1) @map("token_version")
   user         User      @relation(fields: [userId], references: [id])
-  
+
   @@unique([userId, deviceId])
   @@map("device_tokens")
 }
@@ -621,9 +619,9 @@ model User {
   deletedAt         DateTime?            @map("deleted_at")
   password          String?
   isVerified        Boolean?             @default(false) @map("is_verified")
-  googleId          String?              @unique @map("google_id")
-  appleId           String?              @unique @map("apple_id")
   mediaId           BigInt?              @map("media_id")
+  appleId           String?              @unique @map("apple_id")
+  googleId          String?              @unique @map("google_id")
   generatedContents AIGeneratedContent[]
   usageLogs         AIUsageLog[]
   businesses        Business[]
@@ -657,12 +655,12 @@ model AppTheme {
 }
 
 model OtpVerification {
-  id        BigInt    @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement())
   phone     String?
   email     String?
   otp       String
   expiry    DateTime
-  createdAt DateTime  @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_verifications")
 }

@@ -6,8 +6,7 @@ import {
   Briefcase, 
   CheckCircle2, 
   XCircle,
-  Instagram,
-  Facebook
+  LayoutDashboard
 } from "lucide-react";
 import Link from "next/link";
 
@@ -70,8 +69,8 @@ export default async function SocialAccountsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
                         <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                          {account.platform.nameKey === 'facebook' && <Facebook className="h-4 w-4 text-blue-600" />}
-                          {account.platform.nameKey === 'instagram' && <Instagram className="h-4 w-4 text-pink-600" />}
+                          {account.platform.nameKey === 'facebook' && <Globe className="h-4 w-4 text-blue-600" />}
+                          {account.platform.nameKey === 'instagram' && <LayoutDashboard className="h-4 w-4 text-pink-600" />}
                           {account.platform.nameKey === 'gmb' && <Globe className="h-4 w-4 text-red-500" />}
                           {!['facebook', 'instagram', 'gmb'].includes(account.platform.nameKey) && <Globe className="h-4 w-4 text-slate-400" />}
                         </div>
