@@ -50,6 +50,17 @@ export async function validateAuth(request: Request) {
   // Use deviceId from header or fallback to token
   const currentDeviceId = deviceId || decoded.deviceId;
 
+  // For Admin/Web users, we might not have a deviceId or it might be a fixed string
+  // If version is 0 (default), we skip the DeviceToken table check
+  if (decoded.version === 0) {
+    return { 
+      isValid: true, 
+      userId: BigInt(decoded.id), 
+      deviceId: currentDeviceId || 'admin-web', 
+      deviceType: deviceType || 'web'
+    };
+  }
+
   if (!currentDeviceId) {
     return {
       isValid: false,

@@ -20,7 +20,12 @@ export default function AdminLoginPage() {
       const resp = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email, 
+          password,
+          deviceId: 'admin-web',
+          deviceType: 'web'
+        }),
       });
       const data = await resp.json();
       if (data.success) {
