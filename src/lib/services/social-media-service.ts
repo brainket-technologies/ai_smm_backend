@@ -23,17 +23,36 @@ export class SocialMediaService {
    */
   static async getFacebookAuthUrl(businessId: string, redirectUri: string, platformType: string = 'facebook') {
     const platformConfig = await this.getPlatformConfig('facebook');
-    
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: platformType })));
     
-    let scopeList = ['public_profile', 'pages_show_list'];
     if (platformType === 'instagram') {
-      // Basic instagram scope is required to find the linked IG account
-      scopeList.push('instagram_basic', 'pages_read_engagement');
+      // Instagram Business OAuth via instagram.com
+      const scopes = [
+        'instagram_business_basic',
+        'instagram_business_manage_comments',
+        'instagram_business_content_publish',
+        'instagram_business_manage_messages',
+        'instagram_business_manage_insights'
+      ].join(',');
+      
+      return `https://www.instagram.com/oauth/authorize?enable_fb_login=1&force_authentication=1&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}`;
     }
-    const scope = encodeURIComponent(scopeList.join(','));
 
-    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+    // Facebook OAuth with specific business scopes
+    const scopes = [
+      'pages_manage_metadata',
+      'business_management',
+      'pages_show_list',
+      'pages_manage_posts',
+      'pages_read_engagement',
+      'pages_read_user_content',
+      'email',
+      'read_insights',
+      'pages_manage_engagement',
+      'pages_messaging'
+    ].join(',');
+
+    return `https://www.facebook.com/v19.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scopes)}`;
   }
 
   /**
@@ -41,13 +60,13 @@ export class SocialMediaService {
    */
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('gmb');
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     
-    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
-    const scope = [
+    const scopes = [
       'https://www.googleapis.com/auth/business.manage'
     ].join(' ');
 
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&access_type=offline&prompt=consent`;
   }
 
   /**
@@ -55,14 +74,17 @@ export class SocialMediaService {
    */
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('threads');
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
     
-    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
-    const scope = [
+    const scopes = [
       'threads_basic',
-      'threads_content_publish'
+      'threads_content_publish',
+      'threads_read_replies',
+      'threads_manage_replies',
+      'threads_manage_insights'
     ].join(',');
 
-    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
+    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&response_type=code&state=${state}`;
   }
 
   /**
