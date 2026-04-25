@@ -166,6 +166,85 @@ export default function ConfigForm({ config, platforms }: ConfigFormProps) {
               </div>
             </div>
           </section>
+          
+          {/* Social Media API Config */}
+          <section className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="flex items-center space-x-2 text-slate-900 dark:text-white">
+                <Globe className="h-5 w-5 text-blue-500" />
+                <h2 className="text-lg font-bold">Social Media API Credentials</h2>
+            </div>
+
+            <div className="space-y-6 pt-2">
+              {/* Facebook & Instagram */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                  <span className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded text-blue-600">FB</span>
+                  <span>Facebook & Instagram Config</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Facebook App ID</label>
+                    <input 
+                      name="fbAppId"
+                      defaultValue={config.fbAppId || ""}
+                      placeholder="Enter App ID"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all font-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">App Secret</label>
+                    <input 
+                      type="password"
+                      name="fbAppSecret"
+                      defaultValue={config.fbAppSecret || ""}
+                      placeholder="••••••••••••••••"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all font-medium"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Client Token</label>
+                    <input 
+                      name="fbClientToken"
+                      defaultValue={config.fbClientToken || ""}
+                      placeholder="Optional: For Client-side SDKs"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <hr className="border-slate-100 dark:border-slate-800" />
+
+              {/* Google Business */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                  <span className="p-1 bg-red-100 dark:bg-red-900/30 rounded text-red-600">G</span>
+                  <span>Google Business Profile Config</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Google Client ID</label>
+                    <input 
+                      name="googleClientId"
+                      defaultValue={config.googleClientId || ""}
+                      placeholder="xxx-xxx.apps.googleusercontent.com"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-red-500 outline-none transition-all font-medium text-xs"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase ml-1">Client Secret</label>
+                    <input 
+                      type="password"
+                      name="googleClientSecret"
+                      defaultValue={config.googleClientSecret || ""}
+                      placeholder="••••••••••••••••"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:border-red-500 outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Android Section */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">

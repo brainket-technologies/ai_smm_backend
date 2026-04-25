@@ -35,6 +35,13 @@ export async function updateConfig(formData: FormData) {
   const pricingTitle = formData.get("pricingTitle") as string;
   const freeTrialDays = parseInt(formData.get("freeTrialDays") as string) || 7;
   const primaryColor = formData.get("primaryColor") as string;
+  
+  // Social Media API Config
+  const fbAppId = formData.get("fbAppId") as string;
+  const fbAppSecret = formData.get("fbAppSecret") as string;
+  const fbClientToken = formData.get("fbClientToken") as string;
+  const googleClientId = formData.get("googleClientId") as string;
+  const googleClientSecret = formData.get("googleClientSecret") as string;
 
   await prisma.appConfig.update({
     where: { id: BigInt(1) },
@@ -52,7 +59,12 @@ export async function updateConfig(formData: FormData) {
       heroSubtitle,
       pricingTitle,
       freeTrialDays,
-      primaryColor
+      primaryColor,
+      fbAppId,
+      fbAppSecret,
+      fbClientToken,
+      googleClientId,
+      googleClientSecret
     }
   });
 

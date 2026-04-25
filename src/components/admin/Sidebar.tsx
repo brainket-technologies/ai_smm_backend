@@ -39,6 +39,7 @@ const menuGroups = [
       { name: "Global Config",  href: "/admin/config",      icon: Settings   },
       { name: "App Themes",     href: "/admin/themes",      icon: Palette    },
       { name: "Static Page",    href: "/admin/pages",       icon: FileText   },
+      { name: "Social Connections", href: "/admin/social-accounts", icon: Globe },
       { name: "Platforms",      href: "/admin/platforms",   icon: Layers     },
       { name: "Categories",     href: "/admin/categories",  icon: FolderTree },
     ]

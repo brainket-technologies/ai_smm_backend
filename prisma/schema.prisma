@@ -102,6 +102,13 @@ model AppConfig {
   heroTitle          String?   @map("hero_title")
   pricingTitle       String?   @map("pricing_title")
   primaryColor       String?   @default("#2ECC71") @map("primary_color")
+  
+  // Social Media API Config
+  fbAppId            String?   @map("fb_app_id")
+  fbAppSecret        String?   @map("fb_app_secret")
+  fbClientToken      String?   @map("fb_client_token")
+  googleClientId     String?   @map("google_client_id")
+  googleClientSecret String?   @map("google_client_secret")
 
   @@map("app_configs")
 }
