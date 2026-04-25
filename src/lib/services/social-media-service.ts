@@ -4,30 +4,26 @@ import axios from 'axios';
 
 export class SocialMediaService {
   /**
-   * Fetches global social configurations from AppConfig.
+   * Fetches configuration for a specific platform.
    */
-  static async getAppConfig() {
-    const config = await prisma.appConfig.findFirst({
-      where: { id: BigInt(1) }
+  static async getPlatformConfig(platformKey: string) {
+    const platform = await prisma.platform.findUnique({
+      where: { nameKey: platformKey }
     });
 
-    if (!config) {
-      throw new Error("System configuration not found. Please contact admin.");
+    if (!platform || !platform.appId) {
+      throw new Error(`${platformKey} App ID not configured in Platforms.`);
     }
 
-    return config;
+    return platform;
   }
 
   /**
    * Generates OAuth URL for Facebook / Instagram.
    */
   static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
-    const config = await this.getAppConfig();
+    const platformConfig = await this.getPlatformConfig('facebook');
     
-    if (!config.fbAppId) {
-      throw new Error("Facebook App ID not configured in System Settings.");
-    }
-
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' }));
     const scope = [
       'pages_show_list',
@@ -38,25 +34,21 @@ export class SocialMediaService {
       'business_management'
     ].join(',');
 
-    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${config.fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
 
   /**
    * Generates OAuth URL for Google Business Profile.
    */
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
-    const config = await this.getAppConfig();
+    const platformConfig = await this.getPlatformConfig('gmb');
     
-    if (!config.googleClientId) {
-      throw new Error("Google Client ID not configured in System Settings.");
-    }
-
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
     const scope = [
       'https://www.googleapis.com/auth/business.manage'
     ].join(' ');
 
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${config.googleClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
   }
 
   /**
@@ -67,17 +59,18 @@ export class SocialMediaService {
     const decodedState = JSON.parse(CryptoService.decrypt(state));
     const businessId = BigInt(decodedState.businessId);
 
-    const config = await this.getAppConfig();
     let accessToken = '';
     let refreshToken = '';
     let accountId = '';
     let accountName = '';
 
     if (platform === 'facebook' || platform === 'instagram') {
+      const platformConfig = await this.getPlatformConfig('facebook');
+
       const tokenRes = await axios.get('https://graph.facebook.com/v18.0/oauth/access_token', {
         params: {
-          client_id: config.fbAppId,
-          client_secret: config.fbAppSecret,
+          client_id: platformConfig.appId,
+          client_secret: platformConfig.appSecret,
           redirect_uri: redirectUri,
           code: code
         }
@@ -94,9 +87,11 @@ export class SocialMediaService {
       accountName = meRes.data.name;
     } 
     else if (platform === 'gmb') {
+      const platformConfig = await this.getPlatformConfig('gmb');
+
       const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
-        client_id: config.googleClientId,
-        client_secret: config.googleClientSecret,
+        client_id: platformConfig.appId,
+        client_secret: platformConfig.appSecret,
         redirect_uri: redirectUri,
         grant_type: 'authorization_code',
         code: code

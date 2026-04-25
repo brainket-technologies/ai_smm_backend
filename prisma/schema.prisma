@@ -102,11 +102,7 @@ model AppConfig {
   heroTitle          String?   @map("hero_title")
   pricingTitle       String?   @map("pricing_title")
   primaryColor       String?   @default("#2ECC71") @map("primary_color")
-  fbAppId            String?   @map("fb_app_id")
-  fbAppSecret        String?   @map("fb_app_secret")
-  fbClientToken      String?   @map("fb_client_token")
-  googleClientId     String?   @map("google_client_id")
-  googleClientSecret String?   @map("google_client_secret")
+  primaryColor       String?   @default("#2ECC71") @map("primary_color")
 
   @@map("app_configs")
 }
@@ -380,6 +376,9 @@ model Platform {
   name           String          @unique
   url            String?
   nameKey        String?         @unique @map("name_key")
+  appId          String?         @map("app_id")
+  appSecret      String?         @map("app_secret")
+  clientToken    String?         @map("client_token")
   isActive       Boolean?        @default(true) @map("is_active")
   mediaId        BigInt?         @map("media_id")
   media          MediaFile?      @relation("PlatformLogo", fields: [mediaId], references: [id])

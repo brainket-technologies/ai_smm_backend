@@ -539,8 +539,9 @@ async function main() {
 
   // 3.4 Create Platforms
   const platformList = [
-    { name: 'Facebook', nameKey: 'facebook', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg', url: 'https://facebook.com', isActive: true },
-    { name: 'Instagram', nameKey: 'instagram', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', url: 'https://instagram.com', isActive: true },
+    { name: 'Facebook', nameKey: 'facebook', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg', url: 'https://facebook.com', isActive: true, appId: '2697511273965745', appSecret: 'ed31267591a8833b4ac51a58eef94afb' },
+    { name: 'Instagram', nameKey: 'instagram', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', url: 'https://instagram.com', isActive: true, appId: '2697511273965745', appSecret: 'ed31267591a8833b4ac51a58eef94afb' },
+    { name: 'Threads', nameKey: 'threads', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Threads_(app)_logo.svg', url: 'https://threads.net', isActive: true, appId: '2142058796632041', appSecret: '79a2260b9cf3f980f48f02e12927e4ab' },
     { name: 'LinkedIn', nameKey: 'linkedin', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png', url: 'https://linkedin.com', isActive: true },
     { name: 'Google Business', nameKey: 'gmb', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Google_Images_2015_logo.svg', url: 'https://business.google.com', isActive: true },
     { name: 'X (Twitter)', nameKey: 'twitter', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg', url: 'https://twitter.com', isActive: true },
@@ -557,14 +558,18 @@ async function main() {
         nameKey: plat.nameKey,
         url: plat.url,
         isActive: plat.isActive,
-        mediaId: mediaId
+        mediaId: mediaId,
+        appId: plat.appId,
+        appSecret: plat.appSecret,
       },
       create: {
         name: plat.name,
         nameKey: plat.nameKey,
         url: plat.url,
         isActive: plat.isActive,
-        mediaId: mediaId
+        mediaId: mediaId,
+        appId: plat.appId,
+        appSecret: plat.appSecret,
       }
     });
   }
@@ -648,6 +653,48 @@ async function main() {
       slug: 'refund-policy',
       title: 'Refund Policy',
       content: '<h1>Refund Policy</h1><p>We strive for customer satisfaction. If you are not happy with your purchase, you can request a refund within 7 days of subscription.</p>',
+      isActive: true
+    },
+    {
+      slug: 'privacy-policy',
+      title: 'Privacy Policy',
+      content: `<div class="privacy-policy">
+    <p class="last-updated"><em>Last Updated on April 25, 2026</em></p>
+    <p>This privacy notice for <strong>Brainket Technologies</strong> (doing business as <strong>Social Suite</strong>) ("we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services...</p>
+    <h2>SUMMARY OF KEY POINTS</h2>
+    <ul>
+        <li><strong>What personal information do we process?</strong> When you visit, use, or navigate our Services...</li>
+        <li><strong>Do we process any sensitive personal information?</strong> We do not process sensitive personal information.</li>
+    </ul>
+    <h3>1. WHAT INFORMATION DO WE COLLECT?</h3>
+    <p>We collect personal information that you voluntarily provide to us when you register on the Services...</p>
+    <h3>10. USER DATA DELETION</h3>
+    <p>We provide you with the ability to delete your data. For more information on how to request data deletion, please visit our <a href="/pages/data-deletion">Data Deletion Policy</a>.</p>
+    <div class="child-safety" style="margin-top: 2rem; padding: 1rem; border: 1px solid #ff4444; border-radius: 8px; background-color: rgba(255, 68, 68, 0.05);">
+        <h3 style="color: #ff4444; margin-top: 0;">Child Safety & Protection</h3>
+        <p>Social Suite maintains a strict zero-tolerance policy for Child Sexual Abuse Material (CSAM)...</p>
+    </div>
+</div>`,
+      isActive: true
+    },
+    {
+      slug: 'data-deletion',
+      title: 'Data Deletion Policy',
+      content: `<div class="data-deletion-policy">
+    <p class="last-updated"><em>Last Updated on April 25, 2026</em></p>
+    <h1>User Data Deletion Policy</h1>
+    <p>At <strong>Social Suite</strong>, we value your privacy and provide you with full control over your personal data.</p>
+    <h2>How to Request Data Deletion</h2>
+    <ul>
+        <li><strong>In-App Deletion:</strong> Go to <strong>Settings > Account > Delete Account</strong>.</li>
+        <li><strong>Email Request:</strong> Send an email to <a href="mailto:info@brainket.com">info@brainket.com</a>.</li>
+    </ul>
+    <h2>What Data is Deleted?</h2>
+    <ul>
+        <li>Personal profile information (Name, Email, Phone).</li>
+        <li>Social media account connections and access tokens.</li>
+    </ul>
+</div>`,
       isActive: true
     }
   ];
