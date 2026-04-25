@@ -82,15 +82,14 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
 
       if (data.success) {
-        const userProfile = data.data.user;
         // Strict Role Check: Frontend enforcement
-        if (userProfile.role?.name !== 'Super Admin') {
+        if (data.data.role?.name !== 'Super Admin') {
           setError('Unauthorized: Access restricted to Super Admins.');
           localStorage.removeItem('admin_token');
           window.location.href = '/admin/login';
           return;
         }
-        setAdmin(userProfile);
+        setAdmin(data.data);
       } else {
         setError(data.message);
         if (response.status === 401) {
