@@ -26,17 +26,10 @@ export class SocialMediaService {
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: platformType })));
     
     if (platformType === 'instagram') {
-      // Instagram Business OAuth via facebook.com with Configuration ID
+      // Instagram Business OAuth via instagram.com with Configuration ID
       const configId = '949385448077001';
-      const scopes = [
-        'instagram_business_basic',
-        'instagram_business_manage_comments',
-        'instagram_business_content_publish',
-        'instagram_business_manage_messages',
-        'instagram_business_manage_insights'
-      ].join(',');
       
-      return `https://www.facebook.com/v19.0/dialog/oauth?client_id=${platformConfig.appId}&config_id=${configId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}`;
+      return `https://www.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&config_id=${configId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&state=${state}`;
     }
 
     // Facebook OAuth with specific business scopes
