@@ -21,14 +21,16 @@ export class SocialMediaService {
   /**
    * Generates OAuth URL for Facebook / Instagram.
    */
-  static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
+  static async getFacebookAuthUrl(businessId: string, redirectUri: string, platformType: string = 'facebook') {
     const platformConfig = await this.getPlatformConfig('facebook');
     
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
-    const scope = encodeURIComponent([
-      'public_profile',
-      'pages_show_list'
-    ].join(','));
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: platformType })));
+    
+    let scopeList = ['public_profile', 'pages_show_list', 'pages_read_engagement'];
+    if (platformType === 'instagram') {
+      scopeList.push('instagram_basic', 'instagram_content_publish');
+    }
+    const scope = encodeURIComponent(scopeList.join(','));
 
     return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
@@ -89,13 +91,41 @@ export class SocialMediaService {
 
       accessToken = tokenRes.data.access_token;
       
-      // Get user profile to get account ID/Name
-      const meRes = await axios.get('https://graph.facebook.com/me', {
-        params: { access_token: accessToken, fields: 'id,name' }
-      });
-      
-      accountId = meRes.data.id;
-      accountName = meRes.data.name;
+      if (platform === 'instagram') {
+        // Fetch pages and their linked Instagram business accounts
+        const pagesRes = await axios.get('https://graph.facebook.com/v18.0/me/accounts', {
+          params: { access_token: accessToken, fields: 'instagram_business_account{id,username},name' }
+        });
+        
+        const pages = pagesRes.data.data || [];
+        let foundIg = false;
+        
+        for (const page of pages) {
+          if (page.instagram_business_account) {
+            accountId = page.instagram_business_account.id;
+            accountName = page.instagram_business_account.username;
+            foundIg = true;
+            break; // Use the first found linked Instagram account
+          }
+        }
+        
+        if (!foundIg) {
+          // Fallback if no IG account found, maybe use the user ID as placeholder
+          const meRes = await axios.get('https://graph.facebook.com/me', {
+            params: { access_token: accessToken, fields: 'id,name' }
+          });
+          accountId = `ig_${meRes.data.id}`;
+          accountName = meRes.data.name;
+        }
+      } else {
+        // Facebook fallback: just get user ID/name
+        const meRes = await axios.get('https://graph.facebook.com/me', {
+          params: { access_token: accessToken, fields: 'id,name' }
+        });
+        
+        accountId = meRes.data.id;
+        accountName = meRes.data.name;
+      }
     } 
     else if (platform === 'gmb') {
       const platformConfig = await this.getPlatformConfig('gmb');

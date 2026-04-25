@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
     let authUrl = '';
     if (platform === 'facebook' || platform === 'instagram') {
-      authUrl = await SocialMediaService.getFacebookAuthUrl(businessId, redirectUri);
+      authUrl = await SocialMediaService.getFacebookAuthUrl(businessId, redirectUri, platform);
     } else if (platform === 'google' || platform === 'gmb') {
       authUrl = await SocialMediaService.getGoogleAuthUrl(businessId, redirectUri);
     } else if (platform === 'threads') {
