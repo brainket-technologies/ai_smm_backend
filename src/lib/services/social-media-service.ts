@@ -62,9 +62,8 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
 
-    const nextUrl = `https://www.instagram.com/oauth/authorize/third_party/?redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&enable_fb_login=1&client_id=${platformConfig.appId}&force_reauth=0`;
-
-    return `https://www.instagram.com/accounts/login/?force_authentication&platform_app_id=${platformConfig.appId}&enable_fb_login&next=${encodeURIComponent(nextUrl)}`;
+    // Direct Facebook OAuth Dialog for Instagram Business
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scopes)}&response_type=code`;
   }
 
   /**
