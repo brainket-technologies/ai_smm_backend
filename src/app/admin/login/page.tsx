@@ -71,8 +71,8 @@ export default function AdminLoginPage() {
       </div>
 
       {/* Right Column: Login Form */}
-      <div className="w-full md:w-[45%] flex items-center justify-center p-8 md:p-24 bg-white min-h-screen">
-        <div className="w-full max-w-sm space-y-12 animate-in fade-in slide-in-from-right-8 duration-700">
+      <div className="w-full md:w-[45%] flex items-center justify-center p-8 md:p-24 bg-white min-h-screen relative z-10">
+        <div className="w-full max-w-sm space-y-12">
           
           <div className="space-y-4">
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Welcome Back!</h2>
