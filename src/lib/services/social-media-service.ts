@@ -26,14 +26,11 @@ export class SocialMediaService {
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: platformType })));
     
-    // Minimal scopes to avoid "Something went wrong" errors if app is not reviewed
-    let scopeList = ['public_profile', 'pages_show_list'];
-    if (platformType === 'instagram') {
-      scopeList.push('instagram_basic', 'pages_read_engagement');
-    }
+    // Using exact same scopes as before to rule out permission issues
+    const scopeList = ['public_profile', 'pages_show_list'];
     const scope = encodeURIComponent(scopeList.join(','));
 
-    return `https://www.facebook.com/v19.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
 
   /**
