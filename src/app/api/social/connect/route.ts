@@ -59,13 +59,7 @@ export async function GET(request: Request) {
               <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="logo">
               <h3>Instagram Professional</h3>
               <p>Connect your business account to start managing your content.</p>
-              <form id="bypass-form" action="https://www.instagram.com/accounts/login/" method="GET">
-                <input type="hidden" name="force_authentication" value="">
-                <input type="hidden" name="platform_app_id" value="${authUrl.match(/platform_app_id=([^&]+)/)?.[1] || ''}">
-                <input type="hidden" name="enable_fb_login" value="">
-                <input type="hidden" name="next" value="${decodeURIComponent(authUrl.match(/next=([^&]+)/)?.[1] || '')}">
-                <a href="javascript:void(0)" onclick="document.getElementById('bypass-form').submit()" class="btn">Continue to Instagram</a>
-              </form>
+              <a href="${authUrl}" class="btn">Continue to Instagram</a>
             </div>
           </body>
         </html>`,
