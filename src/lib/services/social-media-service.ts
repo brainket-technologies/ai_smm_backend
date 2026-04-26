@@ -103,7 +103,7 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('gmb') as any;
     const state = this.generateState({ businessId, platform: 'gmb' });
     const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.profile');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&include_granted_scopes=true&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&include_granted_scopes=true`;
   }
 
   /**
@@ -193,17 +193,30 @@ export class SocialMediaService {
       params.append('redirect_uri', redirectUri);
       params.append('grant_type', 'authorization_code');
       params.append('code', code);
-      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString());
+      
+      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString(), { timeout: 10000 });
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
       
-      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { headers: { Authorization: `Bearer ${accessToken}` } });
+      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { 
+        headers: { Authorization: `Bearer ${accessToken}` },
+        timeout: 10000
+      });
+      
       const profiles = [];
       
       for (const account of (accountsRes.data.accounts || [])) {
-        const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { headers: { Authorization: `Bearer ${accessToken}` }, params: { readMask: 'name,title' } });
-        for (const loc of (locationsRes.data.locations || [])) {
-          profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });
+        try {
+          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { 
+            headers: { Authorization: `Bearer ${accessToken}` }, 
+            params: { readMask: 'name,title' },
+            timeout: 5000 
+          });
+          for (const loc of (locationsRes.data.locations || [])) {
+            profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });
+          }
+        } catch (locError) {
+          console.warn(`[SocialMediaService] Could not fetch locations for account ${account.name}:`, locError);
         }
       }
       return profiles;
