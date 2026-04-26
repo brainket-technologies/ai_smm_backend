@@ -158,6 +158,7 @@ export class SocialMediaService {
     }
 
     if (platform === 'gmb') {
+      console.log('[SocialMediaService] Starting GMB token exchange');
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
       params.append('client_secret', platformConfig.appSecret.trim());
@@ -167,9 +168,14 @@ export class SocialMediaService {
       const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString());
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
+      
+      console.log('[SocialMediaService] Fetching GMB accounts');
       const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { headers: { Authorization: `Bearer ${accessToken}` } });
       const profiles = [];
+      console.log(`[SocialMediaService] Found ${accountsRes.data.accounts?.length || 0} accounts`);
+      
       for (const account of (accountsRes.data.accounts || [])) {
+        console.log(`[SocialMediaService] Fetching locations for account: ${account.name}`);
         const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { headers: { Authorization: `Bearer ${accessToken}` }, params: { readMask: 'name,title' } });
         for (const loc of (locationsRes.data.locations || [])) {
           profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });

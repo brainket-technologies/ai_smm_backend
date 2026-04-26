@@ -30,7 +30,9 @@ export async function GET(request: Request) {
     const redirectUri = `${protocol}://${host}/api/social/callback`;
 
     // 2. Fetch standardized profile list (Pages, Locations, etc.)
+    console.log(`[SocialCallback] Fetching profiles for platform: ${platform}`);
     const profiles = await SocialMediaService.getProfilesFromCallback(platform, code, redirectUri);
+    console.log(`[SocialCallback] Found ${profiles.length} profiles`);
 
     if (profiles.length === 0) {
       const deepLink = `brandboost://oauth?status=no_pages&platform=${platform}`;
@@ -62,6 +64,9 @@ export async function GET(request: Request) {
 
   } catch (error: any) {
     console.error('Social Callback Error:', error.response?.data || error.message);
+    if (error.response?.data) {
+      console.error('Full Error Data:', JSON.stringify(error.response.data));
+    }
     const errorMessage = error.response?.data?.error_description || error.message;
     const deepLink = `brandboost://oauth?status=error&message=${encodeURIComponent(errorMessage)}`;
     return new NextResponse(
