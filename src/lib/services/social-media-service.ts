@@ -156,16 +156,14 @@ export class SocialMediaService {
     else if (platform === 'instagram') {
       const platformConfig = await this.getPlatformConfig(platform) as any;
 
-      // For Standalone Instagram App, exchange code at api.instagram.com using form data
-      const params = new URLSearchParams();
-      params.append('client_id', platformConfig.appId);
-      params.append('client_secret', platformConfig.appSecret);
-      params.append('grant_type', 'authorization_code');
-      params.append('redirect_uri', redirectUri);
-      params.append('code', code);
-
-      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      // Even with instagram.com login, professional tokens must be exchanged at graph.facebook.com
+      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+        params: {
+          client_id: platformConfig.appId,
+          client_secret: platformConfig.appSecret,
+          redirect_uri: redirectUri,
+          code: code
+        }
       });
 
       accessToken = tokenRes.data.access_token;
