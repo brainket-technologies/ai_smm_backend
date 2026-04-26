@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 2. Fetch profiles
     const protocol = 'https';
     const host = req.headers.host;
-    const redirectUri = `${protocol}://${host}/api/social/callback`;
+    const redirectUri = `${protocol}://${host}/api/v2/social/callback`;
 
     console.log(`[PagesSocialCallback] Fetching profiles for ${platform}`);
     const profiles = await SocialMediaService.getProfilesFromCallback(platform, code as string, redirectUri);
