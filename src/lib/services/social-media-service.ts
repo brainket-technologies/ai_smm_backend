@@ -203,22 +203,37 @@ export class SocialMediaService {
         timeout: 10000
       });
       
-      const profiles = [];
+      const profiles: any[] = [];
+      const accounts = accountsRes.data.accounts || [];
       
-      for (const account of (accountsRes.data.accounts || [])) {
+      // Fetch locations for all accounts in parallel for speed
+      await Promise.all(accounts.map(async (account: any) => {
         try {
           const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { 
             headers: { Authorization: `Bearer ${accessToken}` }, 
             params: { readMask: 'name,title' },
             timeout: 5000 
           });
-          for (const loc of (locationsRes.data.locations || [])) {
-            profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });
+          
+          if (locationsRes.data.locations) {
+            locationsRes.data.locations.forEach((loc: any) => {
+              profiles.push({ 
+                id: loc.name, 
+                name: loc.title, 
+                username: loc.title, 
+                platform: 'gmb', 
+                access_token: accessToken, 
+                refresh_token: refreshToken, 
+                account_type: 'Profile', 
+                page_id: loc.name 
+              });
+            });
           }
         } catch (locError) {
-          console.warn(`[SocialMediaService] Could not fetch locations for account ${account.name}:`, locError);
+          console.warn(`[SocialMediaService] Parallel fetch failed for account ${account.name}:`, locError);
         }
-      }
+      }));
+      
       return profiles;
     }
 
