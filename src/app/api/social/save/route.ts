@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { SocialMediaService } from '@/lib/services/social-media-service';
-import { verifyToken } from '@/lib/auth-utils';
+import { validateAuth } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
   // 1. Verify Authentication
-  const authHeader = request.headers.get('Authorization');
-  const user = await verifyToken(authHeader);
-  if (!user) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  const auth = await validateAuth(request);
+  if (!auth.isValid) {
+    return auth.response;
   }
 
   // 2. Check Business context
