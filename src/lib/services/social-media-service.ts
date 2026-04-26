@@ -144,6 +144,14 @@ export class SocialMediaService {
       });
 
       accessToken = longLivedRes.data.access_token;
+
+      // Facebook: Get user ID/name
+      const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
+        params: { access_token: accessToken, fields: 'id,name' }
+      });
+      
+      accountId = meRes.data.id;
+      accountName = meRes.data.name;
     } 
     else if (platform === 'instagram') {
       const platformConfig = await this.getPlatformConfig(platform) as any;
@@ -182,14 +190,6 @@ export class SocialMediaService {
         if (!foundIg) {
           throw new Error('No Instagram Business Account linked to your Facebook Pages was found. Please ensure your Instagram account is a Business account and linked to a Facebook Page.');
         }
-      } else {
-        // Facebook: Get user ID/name or Page ID/name
-        const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
-          params: { access_token: accessToken, fields: 'id,name' }
-        });
-        
-        accountId = meRes.data.id;
-        accountName = meRes.data.name;
       }
     } 
     else if (platform === 'gmb') {
