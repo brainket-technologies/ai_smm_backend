@@ -49,9 +49,10 @@ export class SocialMediaService {
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Use the native Instagram Business Login endpoint
+    // IMPORTANT: For Business/Professional features (Messaging, Publishing), 
+    // we MUST use the Facebook Login flow as recommended by Meta.
     const scopes = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights';
-    return `https://www.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}`;
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}`;
   }
 
   /**
