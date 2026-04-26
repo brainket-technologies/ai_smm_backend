@@ -30,13 +30,36 @@ export async function GET(request: Request) {
     }
 
     if (platform === 'instagram') {
-      // Use a JS redirect for Instagram to break the App Link intent chain
+      // Use a Middle Page with a button to bypass Android's aggressive App Link redirection
       return new NextResponse(
         `<html>
-          <body style="background: #fafafa; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
-            <div style="text-align: center;">
-              <p>Redirecting to Instagram...</p>
-              <script>window.location.replace("${authUrl}");</script>
+          <head>
+            <title>Professional Login</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              body { font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fafafa; }
+              .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+              .logo { width: 60px; height: 60px; margin-bottom: 1rem; }
+              .btn { 
+                display: block; 
+                background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); 
+                color: white; 
+                padding: 12px; 
+                border-radius: 8px; 
+                text-decoration: none; 
+                font-weight: bold; 
+                margin-top: 1.5rem;
+                box-shadow: 0 4px 15px rgba(204, 35, 102, 0.3);
+              }
+              p { color: #666; font-size: 14px; line-height: 1.4; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="logo">
+              <h3>Instagram Professional</h3>
+              <p>Connect your business account to start managing your content.</p>
+              <a href="${authUrl}" class="btn">Continue to Instagram</a>
             </div>
           </body>
         </html>`,
