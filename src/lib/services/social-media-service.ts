@@ -38,24 +38,21 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram Professional.
+   * Generates OAuth URL for Instagram Professional (Instagram-Only Flow).
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
+    // Instagram Professional Scopes
     const scope = [
-      'instagram_basic',
-      'instagram_content_publish',
-      'instagram_manage_comments',
-      'instagram_manage_insights',
-      'pages_show_list',
-      'pages_read_engagement',
-      'public_profile',
-      'email'
+      'instagram_business_basic',
+      'instagram_business_content_publish',
+      'instagram_business_manage_comments',
+      'instagram_business_manage_insights'
     ].join(',');
 
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
+    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
   }
 
   /**
@@ -114,53 +111,44 @@ export class SocialMediaService {
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    if (platform === 'instagram' || platform === 'facebook' || platform === 'threads') {
+    if (platform === 'instagram') {
+      const params = new URLSearchParams();
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+      params.append('grant_type', 'authorization_code');
+      params.append('redirect_uri', redirectUri);
+      params.append('code', code);
+
+      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
+      const accessToken = tokenRes.data.access_token;
+      const userId = tokenRes.data.user_id;
+
+      const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
+        params: { fields: 'id,username,name,profile_picture_url', access_token: accessToken }
+      });
+
+      return [{
+        id: userRes.data.id,
+        name: userRes.data.name || userRes.data.username,
+        username: userRes.data.username,
+        profile_picture: userRes.data.profile_picture_url || null,
+        platform: 'instagram',
+        access_token: accessToken,
+        account_type: 'Professional'
+      }];
+    }
+
+    if (platform === 'facebook' || platform === 'threads') {
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          redirect_uri: redirectUri,
-          code: code,
-        }
+        params: { client_id: platformConfig.appId, client_secret: platformConfig.appSecret, redirect_uri: redirectUri, code: code }
       });
       const accessToken = tokenRes.data.access_token;
-
-      if (platform === 'instagram') {
-        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-          params: {
-            access_token: accessToken,
-            fields: 'id,name,instagram_business_account{id,username,name,profile_picture_url}',
-          }
-        });
-
-        const pages = pagesRes.data.data || [];
-        return pages
-          .filter((page: any) => page.instagram_business_account)
-          .map((page: any) => ({
-            id: page.instagram_business_account.id,
-            name: page.instagram_business_account.name || page.instagram_business_account.username,
-            username: page.instagram_business_account.username,
-            profile_picture: page.instagram_business_account.profile_picture_url || null,
-            platform: 'instagram',
-            access_token: accessToken,
-            page_id: page.id,
-            account_type: 'Professional'
-          }));
-      }
 
       if (platform === 'threads') {
          const userRes = await axios.get('https://graph.threads.net/me', {
            params: { fields: 'id,username,name,threads_profile_picture_url', access_token: accessToken }
          });
-         return [{
-           id: userRes.data.id,
-           name: userRes.data.name || userRes.data.username,
-           username: userRes.data.username,
-           profile_picture: userRes.data.threads_profile_picture_url || null,
-           platform: 'threads',
-           access_token: accessToken,
-           account_type: 'Profile'
-         }];
+         return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.threads_profile_picture_url || null, platform: 'threads', access_token: accessToken, account_type: 'Profile' }];
       }
 
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
