@@ -58,8 +58,8 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
 
-    // Use Configuration ID for Instagram onboarding (Facebook Login for Business)
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=949385448077001&response_type=code`;
+    // Use Direct Instagram OAuth
+    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish&response_type=code`;
   }
 
   /**
@@ -124,29 +124,41 @@ export class SocialMediaService {
     if (platform === 'facebook' || platform === 'instagram') {
       const platformConfig = await this.getPlatformConfig(platform) as any;
 
-      // Exchange code for short-lived access token
-      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          redirect_uri: redirectUri,
-          code: code
-        }
-      });
+      // Exchange code for access token
+      if (platform === 'instagram') {
+        const formData = new URLSearchParams();
+        formData.append('client_id', platformConfig.appId);
+        formData.append('client_secret', platformConfig.appSecret);
+        formData.append('grant_type', 'authorization_code');
+        formData.append('redirect_uri', redirectUri);
+        formData.append('code', code);
 
-      let shortLivedToken = tokenRes.data.access_token;
+        const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', formData);
+        accessToken = tokenRes.data.access_token;
+      } else {
+        const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+          params: {
+            client_id: platformConfig.appId,
+            client_secret: platformConfig.appSecret,
+            redirect_uri: redirectUri,
+            code: code
+          }
+        });
 
-      // Exchange short-lived token for a long-lived token (60 days)
-      const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          grant_type: 'fb_exchange_token',
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          fb_exchange_token: shortLivedToken
-        }
-      });
+        let shortLivedToken = tokenRes.data.access_token;
 
-      accessToken = longLivedRes.data.access_token;
+        // Exchange short-lived token for a long-lived token (60 days)
+        const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+          params: {
+            grant_type: 'fb_exchange_token',
+            client_id: platformConfig.appId,
+            client_secret: platformConfig.appSecret,
+            fb_exchange_token: shortLivedToken
+          }
+        });
+
+        accessToken = longLivedRes.data.access_token;
+      }
       
       if (platform === 'instagram') {
         // Fetch pages and their linked Instagram business accounts
