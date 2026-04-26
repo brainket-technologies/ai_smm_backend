@@ -29,6 +29,21 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, message: `Platform ${platform} not supported for OAuth` }, { status: 400 });
     }
 
+    if (platform === 'instagram') {
+      // Use a JS redirect for Instagram to break the App Link intent chain
+      return new NextResponse(
+        `<html>
+          <body style="background: #fafafa; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
+            <div style="text-align: center;">
+              <p>Redirecting to Instagram...</p>
+              <script>window.location.replace("${authUrl}");</script>
+            </div>
+          </body>
+        </html>`,
+        { headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+
     return NextResponse.redirect(authUrl);
   } catch (error: any) {
     console.error('Social Connect Error:', error.message);
