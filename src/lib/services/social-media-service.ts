@@ -58,8 +58,9 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
 
-    // Use Facebook OAuth dialog for Instagram Graph API (required for professional permissions)
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish&response_type=code`;
+    // Use the New Instagram Business Login flow as provided by the user
+    const scopes = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights';
+    return `https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}`;
   }
 
   /**
