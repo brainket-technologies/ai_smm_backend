@@ -178,7 +178,7 @@ export class SocialMediaService {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
       params.append('client_secret', platformConfig.appSecret.trim());
-      params.append('redirect_uri', redirectUri);
+      params.append('redirect_uri', 'https://ai-smm-backend.vercel.app/api/social/callback');
       params.append('grant_type', 'authorization_code');
       params.append('code', code);
 
