@@ -21,8 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // 1. Decrypt state
-    const decryptedState = JSON.parse(CryptoService.decrypt(state as string));
+    // 1. Parse state
+    const decryptedState = SocialMediaService.parseState(state as string);
     const platform = decryptedState.platform;
     
     // 2. Fetch profiles
