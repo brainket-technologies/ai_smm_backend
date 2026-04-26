@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { SocialMediaService } from '@/lib/services/social-media-service';
-import { validateApiKey } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -25,12 +24,17 @@ export async function GET(request: Request) {
       authUrl = await SocialMediaService.getGoogleAuthUrl(businessId, redirectUri);
     } else if (platform === 'threads') {
       authUrl = await SocialMediaService.getThreadsAuthUrl(businessId, redirectUri);
+    } else if (platform === 'youtube') {
+      authUrl = await SocialMediaService.getYouTubeAuthUrl(businessId, redirectUri);
+    } else if (platform === 'pinterest') {
+      authUrl = await SocialMediaService.getPinterestAuthUrl(businessId, redirectUri);
+    } else if (platform === 'linkedin') {
+      authUrl = await SocialMediaService.getLinkedInAuthUrl(businessId, redirectUri);
     } else {
       return NextResponse.json({ success: false, message: `Platform ${platform} not supported for OAuth` }, { status: 400 });
     }
 
     if (platform === 'instagram') {
-      // Use a Middle Page with a button to bypass Android's aggressive App Link redirection
       return new NextResponse(
         `<html>
           <head>

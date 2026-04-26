@@ -66,12 +66,11 @@ export class SocialMediaService {
 
   /**
    * After Instagram OAuth: exchange code, get long-lived token, fetch FB Pages + linked IG accounts.
-   * Returns page list for user to select which account to connect.
+   * Returns standardized profile list for user to select.
    */
   static async getInstagramPages(code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
 
-    // Step 1: Exchange code → short-lived user token
     const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
       params: {
         client_id: platformConfig.appId,
@@ -82,7 +81,6 @@ export class SocialMediaService {
     });
     const shortLivedToken = tokenRes.data.access_token;
 
-    // Step 2: Exchange short-lived → long-lived token (60 days)
     const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
       params: {
         grant_type: 'fb_exchange_token',
@@ -93,7 +91,6 @@ export class SocialMediaService {
     });
     const longLivedToken = longLivedRes.data.access_token;
 
-    // Step 3: Fetch Facebook Pages + linked Instagram Business accounts
     const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
       params: {
         access_token: longLivedToken,
@@ -103,16 +100,16 @@ export class SocialMediaService {
 
     const pages = pagesRes.data.data || [];
 
-    // Step 4: Filter pages with a linked Instagram Business account
     return pages
       .filter((page: any) => page.instagram_business_account)
       .map((page: any) => ({
-        pageId: page.id,
-        pageName: page.name,
-        longLivedToken: longLivedToken,
-        instagramId: page.instagram_business_account.id,
-        username: page.instagram_business_account.username || page.instagram_business_account.name,
-        profilePicture: page.instagram_business_account.profile_picture_url || null,
+        id: page.instagram_business_account.id,
+        name: page.instagram_business_account.name || page.instagram_business_account.username,
+        username: page.instagram_business_account.username,
+        profile_picture: page.instagram_business_account.profile_picture_url || null,
+        platform: 'instagram',
+        access_token: longLivedToken,
+        page_id: page.id,
       }));
   }
 
@@ -175,6 +172,46 @@ export class SocialMediaService {
   }
 
   /**
+   * Generates OAuth URL for LinkedIn.
+   */
+  static async getLinkedInAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('linkedin') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'linkedin' })));
+    
+    const scope = encodeURIComponent('r_liteprofile r_emailaddress w_member_social');
+    
+    return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+  }
+
+  /**
+   * Generates OAuth URL for YouTube.
+   */
+  static async getYouTubeAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('youtube') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'youtube' })));
+    
+    const scope = encodeURIComponent([
+      'https://www.googleapis.com/auth/youtube.readonly',
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/userinfo.profile'
+    ].join(' '));
+    
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+  }
+
+  /**
+   * Generates OAuth URL for Pinterest.
+   */
+  static async getPinterestAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('pinterest') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'pinterest' })));
+    
+    const scope = 'user_accounts:read,boards:read,pins:read,pins:write';
+    
+    return `https://www.pinterest.com/oauth/?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
+  }
+
+  /**
    * Generates OAuth URL for Threads.
    */
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
@@ -194,184 +231,217 @@ export class SocialMediaService {
   }
 
   /**
-   * Exchanges authorization code for tokens and saves them.
+   * Standardized callback handler that returns a list of profiles/pages for any platform.
    */
-  static async handleCallback(platform: string, code: string, state: string, redirectUri: string) {
-    // 1. Decrypt state to get businessId
-    let decodedState;
-    try {
-      decodedState = JSON.parse(CryptoService.decrypt(state));
-    } catch (e) {
-      // Fallback for manual testing/web state
-      if (state === 'web') {
-        // In production, we should probably throw an error if businessId is missing
-        // But for testing, we might need a default or a way to pass it
-        throw new Error('Business ID missing in state. Please use the mobile app to connect.');
-      }
-      throw new Error('Invalid state format');
-    }
+  static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    const businessId = BigInt(decodedState.businessId);
-
-    let accessToken = '';
-    let refreshToken = '';
-    let accountId = '';
-    let accountName = '';
-
-    if (platform === 'facebook') {
-      const platformConfig = await this.getPlatformConfig(platform) as any;
-
-      // Exchange code for access token
+    if (platform === 'facebook' || platform === 'instagram') {
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
           client_secret: platformConfig.appSecret,
           redirect_uri: redirectUri,
-          code: code
+          code: code,
         }
       });
+      const accessToken = tokenRes.data.access_token;
 
-      let shortLivedToken = tokenRes.data.access_token;
-
-      // Exchange short-lived token for a long-lived token (60 days)
-      const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          grant_type: 'fb_exchange_token',
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          fb_exchange_token: shortLivedToken
-        }
-      });
-
-      accessToken = longLivedRes.data.access_token;
-
-      // Facebook: Get user ID/name
-      const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
-        params: { access_token: accessToken, fields: 'id,name' }
-      });
-      
-      accountId = meRes.data.id;
-      accountName = meRes.data.name;
-    } 
-    else if (platform === 'instagram') {
-      const platformConfig = await this.getPlatformConfig(platform) as any;
-
-      // Professional Instagram tokens must be exchanged at graph.facebook.com
-      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          redirect_uri: redirectUri,
-          code: code
-        }
-      });
-
-      accessToken = tokenRes.data.access_token;
-
-      // Fetch Facebook pages and their linked Instagram business accounts
-      const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-        params: { 
-          access_token: accessToken, 
-          fields: 'instagram_business_account{id,username,name},name' 
-        }
-      });
-      
-      const pages = pagesRes.data.data || [];
-      let foundIg = false;
-      
-      for (const page of pages) {
-        if (page.instagram_business_account) {
-          accountId = page.instagram_business_account.id;
-          accountName = page.instagram_business_account.username || page.instagram_business_account.name;
-          foundIg = true;
-          break; 
-        }
+      if (platform === 'facebook') {
+        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+          params: { access_token: accessToken, fields: 'id,name,picture' }
+        });
+        return (pagesRes.data.data || []).map((page: any) => ({
+          id: page.id,
+          name: page.name,
+          username: page.name,
+          profile_picture: page.picture?.data?.url || null,
+          platform: 'facebook',
+          access_token: accessToken,
+          page_id: page.id
+        }));
+      } else {
+        return this.getInstagramPages(code, redirectUri);
       }
-      
-      if (!foundIg) {
-        throw new Error('No Instagram Business Account found linked to your Facebook Pages. Please ensure your Instagram is a Business account and linked to a Facebook Page.');
-      }
-    } 
-    else if (platform === 'gmb') {
-      const platformConfig = await this.getPlatformConfig('gmb') as any;
+    }
 
+    if (platform === 'gmb') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
       params.append('client_secret', platformConfig.appSecret.trim());
-      params.append('redirect_uri', 'https://ai-smm-backend.vercel.app/api/social/callback');
+      params.append('redirect_uri', redirectUri);
       params.append('grant_type', 'authorization_code');
       params.append('code', code);
 
-      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      });
+      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString());
+      const accessToken = tokenRes.data.access_token;
+      const refreshToken = tokenRes.data.refresh_token;
 
-      accessToken = tokenRes.data.access_token;
-      refreshToken = tokenRes.data.refresh_token; 
-
-      const userRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
-      
-      accountId = userRes.data.sub;
-      accountName = userRes.data.email || userRes.data.name;
-    }
-    else if (platform === 'threads') {
-      const platformConfig = await this.getPlatformConfig('threads') as any;
 
-      const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', {
-        client_id: platformConfig.appId,
-        client_secret: platformConfig.appSecret,
-        grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
-        code: code
-      });
-
-      accessToken = tokenRes.data.access_token;
-      accountId = tokenRes.data.user_id.toString();
-
-      // Get Threads user profile
-      const userRes = await axios.get(`https://graph.threads.net/me`, {
-        params: { 
-          fields: 'id,username',
-          access_token: accessToken 
+      const profiles = [];
+      for (const account of (accountsRes.data.accounts || [])) {
+        const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { readMask: 'name,title' }
+        });
+        
+        for (const loc of (locationsRes.data.locations || [])) {
+          profiles.push({
+            id: loc.name,
+            name: loc.title,
+            username: loc.title,
+            profile_picture: null,
+            platform: 'gmb',
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
         }
+      }
+      return profiles;
+    }
+
+    if (platform === 'linkedin') {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
+      params.append('redirect_uri', redirectUri);
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+
+      const tokenRes = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', params.toString());
+      const accessToken = tokenRes.data.access_token;
+
+      // 1. Fetch Personal Profile
+      const meRes = await axios.get('https://api.linkedin.com/v2/me', {
+        headers: { Authorization: `Bearer ${accessToken}` }
       });
-      
-      accountName = userRes.data.username;
+
+      const profiles = [{
+        id: meRes.data.id,
+        name: `${meRes.data.localizedFirstName} ${meRes.data.localizedLastName}`,
+        username: meRes.data.id,
+        profile_picture: null,
+        platform: 'linkedin',
+        access_token: accessToken,
+        account_type: 'Profile'
+      }];
+
+      // 2. Fetch Organizations (Pages)
+      const orgsRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls?q=roleAssignee&role=ADMINISTRATOR&projection=(elements*(organizationalTarget~()))', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      for (const element of (orgsRes.data.elements || [])) {
+        const org = element['organizationalTarget~'];
+        if (org) {
+          profiles.push({
+            id: element.organizationalTarget,
+            name: org.localizedName,
+            username: org.vanityName || org.localizedName,
+            profile_picture: null,
+            platform: 'linkedin',
+            access_token: accessToken,
+            account_type: 'Page'
+          });
+        }
+      }
+      return profiles;
     }
 
-    // 2. Encrypt tokens
-    const encryptedAccessToken = CryptoService.encrypt(accessToken);
-    const encryptedRefreshToken = refreshToken ? CryptoService.encrypt(refreshToken) : null;
+    if (platform === 'youtube') {
+      const params = new URLSearchParams();
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+      params.append('redirect_uri', redirectUri);
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
 
-    // 3. Find Platform ID
-    const platformRecord = await prisma.platform.findUnique({
-      where: { nameKey: platform }
-    });
+      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString());
+      const accessToken = tokenRes.data.access_token;
+      const refreshToken = tokenRes.data.refresh_token;
 
-    if (!platformRecord) {
-      throw new Error(`Platform ${platform} not found in database.`);
+      const channelsRes = await axios.get('https://www.googleapis.com/youtube/v3/channels', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { part: 'snippet', mine: true }
+      });
+
+      return (channelsRes.data.items || []).map((item: any) => ({
+        id: item.id,
+        name: item.snippet.title,
+        username: item.snippet.customUrl || item.snippet.title,
+        profile_picture: item.snippet.thumbnails?.default?.url || null,
+        platform: 'youtube',
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        account_type: 'Channel'
+      }));
     }
 
-    // 4. Save to SocialAccount
+    if (platform === 'pinterest') {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
+      params.append('redirect_uri', redirectUri);
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+
+      const tokenRes = await axios.post('https://api.pinterest.com/v5/oauth/token', params.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      const accessToken = tokenRes.data.access_token;
+
+      const userRes = await axios.get('https://api.pinterest.com/v5/user_account', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      return [{
+        id: userRes.data.username,
+        name: userRes.data.username,
+        username: userRes.data.username,
+        profile_picture: userRes.data.profile_image || null,
+        platform: 'pinterest',
+        access_token: accessToken,
+        account_type: 'Profile'
+      }];
+    }
+
+    throw new Error(`Platform ${platform} not supported for unified profile flow.`);
+  }
+
+  /**
+   * Final step: Save the user-selected account to the database.
+   */
+  static async saveSelectedAccount(businessId: string, profile: any) {
+    const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
+    if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
+
+    const encryptedToken = CryptoService.encrypt(profile.access_token);
+    const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
+
     return await prisma.socialAccount.upsert({
-      where: { accountId: accountId },
+      where: { accountId: profile.id },
       update: {
-        accessToken: encryptedAccessToken,
+        accountName: profile.name,
+        accessToken: encryptedToken,
         refreshToken: encryptedRefreshToken,
-        accountName: accountName,
-        isActive: true
+        profilePicture: profile.profile_picture,
+        pageId: profile.page_id,
+        isActive: true,
       },
       create: {
-        businessId: businessId,
+        businessId: BigInt(businessId),
         platformId: platformRecord.id,
-        accountId: accountId,
-        accountName: accountName,
-        accessToken: encryptedAccessToken,
+        accountId: profile.id,
+        accountName: profile.name,
+        accessToken: encryptedToken,
         refreshToken: encryptedRefreshToken,
-        isActive: true
-      }
+        profilePicture: profile.profile_picture,
+        pageId: profile.page_id,
+        isActive: true,
+      },
     });
   }
 }
