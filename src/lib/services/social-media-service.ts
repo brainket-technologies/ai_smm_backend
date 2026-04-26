@@ -198,7 +198,8 @@ export class SocialMediaService {
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
       
-      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { 
+      // Call Account Management API to list accounts
+      const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', { 
         headers: { Authorization: `Bearer ${accessToken}` },
         timeout: 10000
       });
