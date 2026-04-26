@@ -6,10 +6,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { platform, businessId } = req.query;
+  const platform = req.query.platform;
+  const businessId = req.query.businessId || req.query.business_id;
+
+  console.log(`[PagesSocialConnect] Params received - Platform: ${platform}, BusinessId: ${businessId}`);
 
   if (!platform || !businessId) {
-    return res.status(400).json({ error: 'Platform and businessId are required' });
+    return res.status(400).json({ 
+      error: 'Platform and businessId are required',
+      received: { platform: platform || null, businessId: businessId || null },
+      url: req.url,
+      hint: 'Ensure you are passing ?platform=...&businessId=... (or business_id=...)'
+    });
   }
 
   try {
