@@ -90,7 +90,8 @@ export async function GET(request: Request) {
             <div class="icon">🎉</div>
             <h1>Successfully Linked!</h1>
             <p>Your <b>${platform}</b> account is now connected to Ai Social.</p>
-            <p>You can safely close this window to continue.</p>
+            <p>You can safely close this window or click the button below to return to the app.</p>
+            <a href="brandboost://oauth" class="button">Back to App</a>
           </div>
         </body>
       </html>`,
