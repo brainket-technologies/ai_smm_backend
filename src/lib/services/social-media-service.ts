@@ -118,7 +118,7 @@ export class SocialMediaService {
     let accountId = '';
     let accountName = '';
 
-    if (platform === 'facebook' || platform === 'instagram') {
+    if (platform === 'facebook') {
       const platformConfig = await this.getPlatformConfig(platform) as any;
 
       // Exchange code for access token
@@ -144,10 +144,26 @@ export class SocialMediaService {
       });
 
       accessToken = longLivedRes.data.access_token;
-      
-      if (platform === 'instagram') {
-        // Fetch pages and their linked Instagram business accounts
-        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+    } 
+    else if (platform === 'instagram') {
+      const platformConfig = await this.getPlatformConfig(platform) as any;
+
+      // For Standalone Instagram App, exchange code at api.instagram.com using form data
+      const params = new URLSearchParams();
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+      params.append('grant_type', 'authorization_code');
+      params.append('redirect_uri', redirectUri);
+      params.append('code', code);
+
+      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+
+      accessToken = tokenRes.data.access_token;
+
+      // Fetch pages and their linked Instagram business accounts
+      const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
           params: { access_token: accessToken, fields: 'instagram_business_account{id,username,name},name' }
         });
         
