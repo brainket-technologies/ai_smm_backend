@@ -11,7 +11,7 @@ export class SocialMediaService {
       where: { nameKey: platformKey }
     });
 
-    if (!platform || !platform.appId) {
+    if (!platform || !(platform as any).appId) {
       throw new Error(`${platformKey} App ID not configured in Platforms.`);
     }
 
