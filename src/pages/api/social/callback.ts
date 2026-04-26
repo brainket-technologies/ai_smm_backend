@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { SocialMediaService } from '../../lib/services/social-media-service';
-import { CryptoService } from '../../lib/services/crypto-service';
+import { SocialMediaService } from '@/lib/services/social-media-service';
+import { CryptoService } from '@/lib/services/crypto-service';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
