@@ -39,13 +39,11 @@ export class SocialMediaService {
 
   /**
    * Generates OAuth URL for Instagram Professional.
-   * Uses the Meta dialog for maximum compatibility with Facebook App IDs.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Scopes for Instagram Professional (requires FB Page link in background)
     const scope = [
       'instagram_basic',
       'instagram_content_publish',
@@ -61,13 +59,62 @@ export class SocialMediaService {
   }
 
   /**
+   * Generates OAuth URL for Threads.
+   */
+  static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('threads') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
+    const scope = 'threads_basic,threads_content_publish';
+    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
+  }
+
+  /**
+   * Generates OAuth URL for Google/GMB.
+   */
+  static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('gmb') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
+    const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.profile');
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&prompt=consent`;
+  }
+
+  /**
+   * Generates OAuth URL for YouTube.
+   */
+  static async getYouTubeAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('youtube') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'youtube' })));
+    const scope = encodeURIComponent('https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube.upload');
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&prompt=consent`;
+  }
+
+  /**
+   * Generates OAuth URL for LinkedIn.
+   */
+  static async getLinkedInAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('linkedin') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'linkedin' })));
+    const scope = encodeURIComponent('r_liteprofile r_emailaddress w_member_social rw_organization_admin w_organization_social');
+    return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+  }
+
+  /**
+   * Generates OAuth URL for Pinterest.
+   */
+  static async getPinterestAuthUrl(businessId: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('pinterest') as any;
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'pinterest' })));
+    const scope = 'read_public,write_public';
+    return `https://www.pinterest.com/oauth/?consumer_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
+  }
+
+  /**
    * Standardized callback handler.
    */
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    if (platform === 'instagram' || platform === 'facebook') {
-      // 1. Exchange code for access token
+    if (platform === 'instagram' || platform === 'facebook' || platform === 'threads') {
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
@@ -79,7 +126,6 @@ export class SocialMediaService {
       const accessToken = tokenRes.data.access_token;
 
       if (platform === 'instagram') {
-        // Fetch linked Instagram accounts via FB Pages
         const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
           params: {
             access_token: accessToken,
@@ -88,7 +134,7 @@ export class SocialMediaService {
         });
 
         const pages = pagesRes.data.data || [];
-        const igAccounts = pages
+        return pages
           .filter((page: any) => page.instagram_business_account)
           .map((page: any) => ({
             id: page.instagram_business_account.id,
@@ -100,14 +146,23 @@ export class SocialMediaService {
             page_id: page.id,
             account_type: 'Professional'
           }));
-
-        if (igAccounts.length === 0) {
-          throw new Error('No Instagram Professional accounts found linked to your Facebook Pages.');
-        }
-        return igAccounts;
       }
 
-      // Facebook Flow
+      if (platform === 'threads') {
+         const userRes = await axios.get('https://graph.threads.net/me', {
+           params: { fields: 'id,username,name,threads_profile_picture_url', access_token: accessToken }
+         });
+         return [{
+           id: userRes.data.id,
+           name: userRes.data.name || userRes.data.username,
+           username: userRes.data.username,
+           profile_picture: userRes.data.threads_profile_picture_url || null,
+           platform: 'threads',
+           access_token: accessToken,
+           account_type: 'Profile'
+         }];
+      }
+
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
         params: { access_token: accessToken, fields: 'id,name,picture' }
       });
@@ -123,7 +178,6 @@ export class SocialMediaService {
       }));
     }
 
-    // GMB, LinkedIn, YouTube, Pinterest logic remains same...
     if (platform === 'gmb') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
