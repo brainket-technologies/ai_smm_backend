@@ -23,9 +23,9 @@ export class SocialMediaService {
    */
   static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('facebook') as any;
-    
+
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
-    
+
     // Scopes from DB or defaults
     const scopesFromDb = (platformConfig as any).scopes;
     const scopeList = scopesFromDb ? scopesFromDb.split(',') : [
@@ -48,7 +48,7 @@ export class SocialMediaService {
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
-    
+
     // Modern Instagram Professional Scopes (Direct)
     const scope = platformConfig.scopes || [
       'instagram_business_basic',
@@ -153,10 +153,10 @@ export class SocialMediaService {
    */
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('gmb') as any;
-    
+
     // Force the same redirect URI that is configured in Google Console
     const fixedRedirectUri = 'https://ai-smm-backend.vercel.app/api/social/callback';
-    
+
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     const scopesFromDb = (platformConfig as any).scopes;
     const scope = scopesFromDb || [
@@ -174,9 +174,9 @@ export class SocialMediaService {
   static async getLinkedInAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('linkedin') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'linkedin' })));
-    
+
     const scope = encodeURIComponent('r_liteprofile r_emailaddress w_member_social');
-    
+
     return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
 
@@ -186,13 +186,13 @@ export class SocialMediaService {
   static async getYouTubeAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('youtube') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'youtube' })));
-    
+
     const scope = encodeURIComponent([
       'https://www.googleapis.com/auth/youtube.readonly',
       'https://www.googleapis.com/auth/youtube.upload',
       'https://www.googleapis.com/auth/userinfo.profile'
     ].join(' '));
-    
+
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
   }
 
@@ -202,9 +202,9 @@ export class SocialMediaService {
   static async getPinterestAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('pinterest') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'pinterest' })));
-    
+
     const scope = 'user_accounts:read,boards:read,pins:read,pins:write';
-    
+
     return `https://www.pinterest.com/oauth/?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
   }
 
@@ -213,7 +213,7 @@ export class SocialMediaService {
    */
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('threads') as any;
-    
+
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
     const scopesFromDb = (platformConfig as any).scopes;
     const scope = scopesFromDb || [
@@ -232,7 +232,7 @@ export class SocialMediaService {
    */
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
-    
+
     if (platform === 'instagram') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId);
@@ -311,7 +311,7 @@ export class SocialMediaService {
           headers: { Authorization: `Bearer ${accessToken}` },
           params: { readMask: 'name,title' }
         });
-        
+
         for (const loc of (locationsRes.data.locations || [])) {
           profiles.push({
             id: loc.name,

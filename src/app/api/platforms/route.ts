@@ -11,10 +11,10 @@ export async function GET(request: Request) {
   const businessIdHeader = request.headers.get('x-business-id');
   let businessId: bigint | null = null;
   if (businessIdHeader) {
-      const businessCheck = validateBusinessId(request);
-      if (businessCheck.isValid) {
-          businessId = businessCheck.businessId!;
-      }
+    const businessCheck = validateBusinessId(request);
+    if (businessCheck.isValid) {
+      businessId = businessCheck.businessId!;
+    }
   }
 
   try {
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
     formattedPlatforms.sort((a, b) => {
       const indexA = sequence.indexOf(a.nameKey || '');
       const indexB = sequence.indexOf(b.nameKey || '');
-      
+
       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
       if (indexA !== -1) return -1;
       if (indexB !== -1) return 1;
