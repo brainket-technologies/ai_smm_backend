@@ -61,7 +61,7 @@ export class SocialMediaService {
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('gmb') as any;
     
-    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     const scopesFromDb = (platformConfig as any).scopes;
     const scope = scopesFromDb || [
       'https://www.googleapis.com/auth/business.manage'
@@ -76,7 +76,7 @@ export class SocialMediaService {
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('threads') as any;
     
-    const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
+    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
     const scopesFromDb = (platformConfig as any).scopes;
     const scope = scopesFromDb || [
       'threads_basic',
