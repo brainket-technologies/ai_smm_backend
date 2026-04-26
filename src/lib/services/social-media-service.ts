@@ -38,18 +38,20 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram Professional (Direct Flow using Instagram App ID).
+   * Generates OAuth URL for Instagram Professional (Direct Flow).
+   * Includes all requested permissions: Basic, Comments, Messages, Content, Insights.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Scopes for Instagram Professional
+    // Requested Instagram Professional Scopes
     const scope = [
       'instagram_business_basic',
       'instagram_business_content_publish',
       'instagram_business_manage_comments',
-      'instagram_business_manage_insights'
+      'instagram_business_manage_insights',
+      'instagram_business_manage_messages' // Added for Messaging support
     ].join(',');
 
     return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
@@ -69,12 +71,10 @@ export class SocialMediaService {
       params.append('redirect_uri', redirectUri);
       params.append('code', code);
 
-      // 1. Exchange for access token
       const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
       const accessToken = tokenRes.data.access_token;
       const userId = tokenRes.data.user_id;
 
-      // 2. Fetch Professional Profile details
       const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
         params: {
           fields: 'id,username,name,profile_picture_url',
@@ -119,7 +119,7 @@ export class SocialMediaService {
       }));
     }
 
-    // (Restore GMB, LinkedIn, YouTube...)
+    // Restore GMB, LinkedIn, YouTube...
     if (platform === 'gmb') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
