@@ -375,12 +375,12 @@ model Platform {
   name           String          @unique
   url            String?
   nameKey        String?         @unique @map("name_key")
+  isActive       Boolean?        @default(true) @map("is_active")
+  mediaId        BigInt?         @map("media_id")
   appId          String?         @map("app_id")
   appSecret      String?         @map("app_secret")
   clientToken    String?         @map("client_token")
   scopes         String?
-  isActive       Boolean?        @default(true) @map("is_active")
-  mediaId        BigInt?         @map("media_id")
   media          MediaFile?      @relation("PlatformLogo", fields: [mediaId], references: [id])
   socialAccounts SocialAccount[]
 
@@ -488,10 +488,10 @@ model SocialAccount {
   accountId      String?   @unique @map("account_id")
   accessToken    String?   @map("access_token")
   refreshToken   String?   @map("refresh_token")
-  profilePicture String?   @map("profile_picture")
-  pageId         String?   @map("page_id")
   createdAt      DateTime? @default(now()) @map("created_at")
   isActive       Boolean?  @default(true) @map("is_active")
+  pageId         String?   @map("page_id")
+  profilePicture String?   @map("profile_picture")
   business       Business  @relation(fields: [businessId], references: [id])
   platform       Platform  @relation(fields: [platformId], references: [id])
 

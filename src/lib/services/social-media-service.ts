@@ -7,12 +7,25 @@ export class SocialMediaService {
    * Fetches configuration for a specific platform.
    */
   static async getPlatformConfig(platformKey: string) {
-    const platform = await prisma.platform.findUnique({
-      where: { nameKey: platformKey }
+    console.log(`[SocialMediaService] getPlatformConfig called for: ${platformKey}`);
+    
+    if (!platformKey) {
+      throw new Error(`getPlatformConfig called without a platformKey.`);
+    }
+
+    // Use findFirst instead of findUnique for more robust searching if multiple entries exist
+    const platform = await prisma.platform.findFirst({
+      where: { 
+        OR: [
+          { nameKey: platformKey },
+          { nameKey: platformKey.toLowerCase() }
+        ]
+      }
     });
 
     if (!platform || !(platform as any).appId) {
-      throw new Error(`${platformKey} App ID not configured in Platforms.`);
+      console.error(`[SocialMediaService] Platform not found or not configured: ${platformKey}`);
+      throw new Error(`${platformKey} configuration not found in Database. Please check Platforms table.`);
     }
 
     return platform;
@@ -234,11 +247,9 @@ export class SocialMediaService {
 
   static async saveSelectedAccount(businessId: string | bigint, profile: any) {
     try {
-      const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
+      const platformRecord = await prisma.platform.findFirst({ where: { nameKey: profile.platform } });
       if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
       
-      // Using Base64 for internal tokens for now to avoid encryption errors during debugging
-      // We will re-enable proper encryption once the core flow is stable
       const encryptedToken = Buffer.from(profile.access_token).toString('base64');
       const encryptedRefreshToken = profile.refresh_token ? Buffer.from(profile.refresh_token).toString('base64') : null;
       
