@@ -44,7 +44,6 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Instagram Professional Scopes
     const scope = [
       'instagram_business_basic',
       'instagram_business_content_publish',
@@ -236,15 +235,52 @@ export class SocialMediaService {
     throw new Error(`Platform ${platform} not supported for unified profile flow.`);
   }
 
-  static async saveSelectedAccount(businessId: string, profile: any) {
+  /**
+   * Final step: Save the user-selected account to the database.
+   */
+  static async saveSelectedAccount(businessId: string | bigint, profile: any) {
     const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
     if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
+
     const encryptedToken = CryptoService.encrypt(profile.access_token);
     const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
+
     return await prisma.socialAccount.upsert({
       where: { accountId: profile.id },
-      update: { accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
-      create: { businessId: BigInt(businessId), platformId: platformRecord.id, accountId: profile.id, accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
+      update: {
+        accountName: profile.name,
+        accessToken: encryptedToken,
+        refreshToken: encryptedRefreshToken,
+        profilePicture: profile.profile_picture,
+        pageId: profile.page_id,
+        isActive: true,
+      },
+      create: {
+        businessId: BigInt(businessId),
+        platformId: platformRecord.id,
+        accountId: profile.id,
+        accountName: profile.name,
+        accessToken: encryptedToken,
+        refreshToken: encryptedRefreshToken,
+        profilePicture: profile.profile_picture,
+        pageId: profile.page_id,
+        isActive: true,
+      },
+    });
+  }
+
+  /**
+   * Legacy method for backward compatibility.
+   */
+  static async saveInstagramAccount(businessId: string | bigint, data: any) {
+    return this.saveSelectedAccount(businessId, {
+      id: data.instagramId,
+      name: data.username,
+      username: data.username,
+      profile_picture: data.profilePicture,
+      platform: 'instagram',
+      access_token: data.longLivedToken,
+      page_id: data.pageId
     });
   }
 }
