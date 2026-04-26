@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const protocol = 'https';
     const host = req.headers.host;
-    const redirectUri = `${protocol}://${host}/api/v2/social/callback`;
+    const redirectUri = `${protocol}://${host}/api/social/callback`;
 
     let authUrl = '';
 
