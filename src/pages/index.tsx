@@ -8,6 +8,7 @@ export default function Home() {
         <title>SocialSuite - AI-Powered Social Media Management</title>
         <meta name="description" content="Manage your social media presence with SocialSuite AI." />
         <meta name="google-site-verification" content="frcj0zvfpIfP0axTUz7HXLFgBRXk_i3h-UH41MwJCk8" />
+        <meta name="google-site-verification" content="6SUSLBkCh-VQFqkcmA3bsreeSzJnkGm15_eAYY9Pr-8" />
       </Head>
 
       {/* Header */}
