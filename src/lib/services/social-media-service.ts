@@ -32,13 +32,8 @@ export class SocialMediaService {
       'pages_manage_metadata',
       'business_management',
       'pages_show_list',
-      'pages_manage_posts',
       'pages_read_engagement',
-      'pages_read_user_content',
-      'email',
-      'read_insights',
-      'pages_manage_engagement',
-      'pages_messaging'
+      'email'
     ];
     const scope = encodeURIComponent(scopeList.join(','));
 
