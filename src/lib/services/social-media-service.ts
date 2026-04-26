@@ -190,7 +190,6 @@ export class SocialMediaService {
         if (!foundIg) {
           throw new Error('No Instagram Business Account linked to your Facebook Pages was found. Please ensure your Instagram account is a Business account and linked to a Facebook Page.');
         }
-      }
     } 
     else if (platform === 'gmb') {
       const platformConfig = await this.getPlatformConfig('gmb') as any;
@@ -207,10 +206,8 @@ export class SocialMediaService {
       });
 
       accessToken = tokenRes.data.access_token;
-      refreshToken = tokenRes.data.refresh_token; // Offline access gives refresh token
+      refreshToken = tokenRes.data.refresh_token; 
 
-      // Google doesn't have a single "account" for Business Profile in OAuth, 
-      // but we can store the primary user email as accountName
       const userRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
