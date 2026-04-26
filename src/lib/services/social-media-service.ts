@@ -61,13 +61,18 @@ export class SocialMediaService {
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('gmb') as any;
     
+    // Force the same redirect URI that is configured in Google Console
+    const fixedRedirectUri = 'https://ai-smm-backend.vercel.app/api/social/callback';
+    
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     const scopesFromDb = (platformConfig as any).scopes;
     const scope = scopesFromDb || [
-      'https://www.googleapis.com/auth/business.manage'
+      'https://www.googleapis.com/auth/business.manage',
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
     ].join(' ');
 
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(fixedRedirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
   }
 
   /**
