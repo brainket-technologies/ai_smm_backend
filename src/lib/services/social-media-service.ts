@@ -50,21 +50,9 @@ export class SocialMediaService {
     const appId = platformConfig.appId;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    const scopes = [
-      'instagram_business_basic',
-      'instagram_business_manage_messages',
-      'instagram_business_manage_comments',
-      'instagram_business_content_publish',
-      'instagram_business_manage_insights',
-      'pages_show_list',
-      'pages_read_engagement'
-    ].join(',');
-
-    // Construct the 'next' URL which is the actual OAuth dialog
-    const nextUrl = `https://www.instagram.com/oauth/authorize/third_party/?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&enable_fb_login=1&force_reauth=0`;
-
-    // Wrap it in the Instagram Login page with force_authentication
-    return `https://www.instagram.com/accounts/login/?force_authentication&platform_app_id=${appId}&enable_fb_login&next=${encodeURIComponent(nextUrl)}`;
+    // For Professional Instagram, routing through Facebook Login for Business 
+    // is the best way to ensure it stays in the browser and doesn't launch the IG app.
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&config_id=1506175574548062`;
   }
 
   /**
