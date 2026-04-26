@@ -25,27 +25,39 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('facebook') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
     
-    // Facebook login for Pages
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=1506175574548062&response_type=code`;
+    const scope = [
+      'pages_manage_metadata',
+      'business_management',
+      'pages_show_list',
+      'pages_read_engagement',
+      'public_profile',
+      'email'
+    ].join(',');
+
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
   }
 
   /**
-   * Generates OAuth URL for Instagram Professional (Direct).
-   * This uses the Instagram Login for Professional flow.
+   * Generates OAuth URL for Instagram Professional.
+   * Uses the Meta dialog for maximum compatibility with Facebook App IDs.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Modern Instagram Professional Scopes
+    // Scopes for Instagram Professional (requires FB Page link in background)
     const scope = [
-      'instagram_business_basic',
-      'instagram_business_content_publish',
-      'instagram_business_manage_comments',
-      'instagram_business_manage_insights'
+      'instagram_basic',
+      'instagram_content_publish',
+      'instagram_manage_comments',
+      'instagram_manage_insights',
+      'pages_show_list',
+      'pages_read_engagement',
+      'public_profile',
+      'email'
     ].join(',');
 
-    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
   }
 
   /**
@@ -54,39 +66,8 @@ export class SocialMediaService {
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    if (platform === 'instagram') {
-      const params = new URLSearchParams();
-      params.append('client_id', platformConfig.appId);
-      params.append('client_secret', platformConfig.appSecret);
-      params.append('grant_type', 'authorization_code');
-      params.append('redirect_uri', redirectUri);
-      params.append('code', code);
-
-      // Exchange for token
-      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
-      const accessToken = tokenRes.data.access_token;
-      const userId = tokenRes.data.user_id;
-
-      // Fetch Professional Profile details
-      const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
-        params: {
-          fields: 'id,username,name,profile_picture_url',
-          access_token: accessToken
-        }
-      });
-
-      return [{
-        id: userRes.data.id,
-        name: userRes.data.name || userRes.data.username,
-        username: userRes.data.username,
-        profile_picture: userRes.data.profile_picture_url || null,
-        platform: 'instagram',
-        access_token: accessToken,
-        account_type: 'Professional'
-      }];
-    }
-
-    if (platform === 'facebook') {
+    if (platform === 'instagram' || platform === 'facebook') {
+      // 1. Exchange code for access token
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
@@ -97,6 +78,36 @@ export class SocialMediaService {
       });
       const accessToken = tokenRes.data.access_token;
 
+      if (platform === 'instagram') {
+        // Fetch linked Instagram accounts via FB Pages
+        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+          params: {
+            access_token: accessToken,
+            fields: 'id,name,instagram_business_account{id,username,name,profile_picture_url}',
+          }
+        });
+
+        const pages = pagesRes.data.data || [];
+        const igAccounts = pages
+          .filter((page: any) => page.instagram_business_account)
+          .map((page: any) => ({
+            id: page.instagram_business_account.id,
+            name: page.instagram_business_account.name || page.instagram_business_account.username,
+            username: page.instagram_business_account.username,
+            profile_picture: page.instagram_business_account.profile_picture_url || null,
+            platform: 'instagram',
+            access_token: accessToken,
+            page_id: page.id,
+            account_type: 'Professional'
+          }));
+
+        if (igAccounts.length === 0) {
+          throw new Error('No Instagram Professional accounts found linked to your Facebook Pages.');
+        }
+        return igAccounts;
+      }
+
+      // Facebook Flow
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
         params: { access_token: accessToken, fields: 'id,name,picture' }
       });
@@ -112,7 +123,7 @@ export class SocialMediaService {
       }));
     }
 
-    // (Remaining platforms: Google, YouTube, LinkedIn, Pinterest same as before...)
+    // GMB, LinkedIn, YouTube, Pinterest logic remains same...
     if (platform === 'gmb') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
@@ -123,15 +134,10 @@ export class SocialMediaService {
       const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString());
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
-      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      });
+      const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { headers: { Authorization: `Bearer ${accessToken}` } });
       const profiles = [];
       for (const account of (accountsRes.data.accounts || [])) {
-        const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          params: { readMask: 'name,title' }
-        });
+        const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { headers: { Authorization: `Bearer ${accessToken}` }, params: { readMask: 'name,title' } });
         for (const loc of (locationsRes.data.locations || [])) {
           profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile' });
         }
