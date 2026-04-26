@@ -43,15 +43,26 @@ export class SocialMediaService {
 
   /**
    * Generates OAuth URL for Instagram (Business).
+   * Using the professional Meta Business Login flow.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('instagram') as any; // Use instagram specific config
+    const platformConfig = await this.getPlatformConfig('instagram') as any;
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Reverting to native Instagram login URL as requested
-    const scopes = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights';
-    return `https://www.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}`;
+    // Standard professional scopes for Instagram Business Management
+    const scopes = [
+      'instagram_business_basic',
+      'instagram_business_manage_messages',
+      'instagram_business_manage_comments',
+      'instagram_business_content_publish',
+      'instagram_business_manage_insights',
+      'pages_show_list',
+      'pages_read_engagement'
+    ].join(',');
+
+    // Using the Facebook Dialog with the configured App ID (Should be the Facebook App ID with IG Graph API enabled)
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}`;
   }
 
   /**
@@ -156,7 +167,7 @@ export class SocialMediaService {
     else if (platform === 'instagram') {
       const platformConfig = await this.getPlatformConfig(platform) as any;
 
-      // Even with instagram.com login, professional tokens must be exchanged at graph.facebook.com
+      // Professional Instagram tokens must be exchanged at graph.facebook.com
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
@@ -168,26 +179,29 @@ export class SocialMediaService {
 
       accessToken = tokenRes.data.access_token;
 
-      // Fetch pages and their linked Instagram business accounts
+      // Fetch Facebook pages and their linked Instagram business accounts
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-          params: { access_token: accessToken, fields: 'instagram_business_account{id,username,name},name' }
-        });
-        
-        const pages = pagesRes.data.data || [];
-        let foundIg = false;
-        
-        for (const page of pages) {
-          if (page.instagram_business_account) {
-            accountId = page.instagram_business_account.id;
-            accountName = page.instagram_business_account.username || page.instagram_business_account.name;
-            foundIg = true;
-            break; // Use the first found linked Instagram account
-          }
+        params: { 
+          access_token: accessToken, 
+          fields: 'instagram_business_account{id,username,name},name' 
         }
-        
-        if (!foundIg) {
-          throw new Error('No Instagram Business Account linked to your Facebook Pages was found. Please ensure your Instagram account is a Business account and linked to a Facebook Page.');
+      });
+      
+      const pages = pagesRes.data.data || [];
+      let foundIg = false;
+      
+      for (const page of pages) {
+        if (page.instagram_business_account) {
+          accountId = page.instagram_business_account.id;
+          accountName = page.instagram_business_account.username || page.instagram_business_account.name;
+          foundIg = true;
+          break; 
         }
+      }
+      
+      if (!foundIg) {
+        throw new Error('No Instagram Business Account found linked to your Facebook Pages. Please ensure your Instagram is a Business account and linked to a Facebook Page.');
+      }
     } 
     else if (platform === 'gmb') {
       const platformConfig = await this.getPlatformConfig('gmb') as any;
