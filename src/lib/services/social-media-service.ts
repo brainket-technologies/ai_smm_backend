@@ -51,13 +51,10 @@ export class SocialMediaService {
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
     const scopes = [
-      'instagram_business_basic',
       'instagram_business_manage_messages',
       'instagram_business_manage_comments',
       'instagram_business_content_publish',
-      'instagram_business_manage_insights',
-      'pages_show_list',
-      'pages_read_engagement'
+      'instagram_business_manage_insights'
     ].join(',');
     
     // Construct the 'next' URL which is the actual OAuth dialog
