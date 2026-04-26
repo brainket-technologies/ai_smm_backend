@@ -62,8 +62,8 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
 
-    // Direct Facebook OAuth Dialog for Instagram Business
-    return `https://www.facebook.com/v25.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scopes)}&response_type=code`;
+    // Use Configuration ID for Instagram onboarding (Facebook Login for Business)
+    return `https://www.facebook.com/v25.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=949385448077001&response_type=code`;
   }
 
   /**
