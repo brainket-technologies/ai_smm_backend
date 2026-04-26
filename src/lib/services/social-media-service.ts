@@ -176,13 +176,13 @@ export class SocialMediaService {
       const platformConfig = await this.getPlatformConfig('gmb') as any;
 
       const params = new URLSearchParams();
-      params.append('client_id', platformConfig.appId);
-      params.append('client_secret', platformConfig.appSecret);
+      params.append('client_id', platformConfig.appId.trim());
+      params.append('client_secret', platformConfig.appSecret.trim());
       params.append('redirect_uri', redirectUri);
       params.append('grant_type', 'authorization_code');
       params.append('code', code);
 
-      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params, {
+      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', params.toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
 
