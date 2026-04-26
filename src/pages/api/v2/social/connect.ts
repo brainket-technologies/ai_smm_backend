@@ -46,8 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 `scope=${scope}&` +
                 `state=${state}&` +
                 `access_type=offline&` +
-                `include_granted_scopes=true&` +
-                `prompt=consent`;
+                `include_granted_scopes=true`;
     } else if (platform === 'youtube') {
       authUrl = await SocialMediaService.getYouTubeAuthUrl(businessId as string, redirectUri);
     } else if (platform === 'linkedin') {
