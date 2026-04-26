@@ -42,7 +42,7 @@ export class SocialMediaService {
     ];
     const scope = encodeURIComponent(scopeList.join(','));
 
-    return `https://www.facebook.com/v25.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}&response_type=code`;
   }
 
   /**
@@ -63,7 +63,7 @@ export class SocialMediaService {
     ].join(',');
 
     // Use Configuration ID for Instagram onboarding (Facebook Login for Business)
-    return `https://www.facebook.com/v25.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=949385448077001&response_type=code`;
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=949385448077001&response_type=code`;
   }
 
   /**
@@ -129,7 +129,7 @@ export class SocialMediaService {
       const platformConfig = await this.getPlatformConfig(platform) as any;
 
       // Exchange code for short-lived access token
-      const tokenRes = await axios.get('https://graph.facebook.com/v25.0/oauth/access_token', {
+      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
           client_secret: platformConfig.appSecret,
@@ -141,7 +141,7 @@ export class SocialMediaService {
       let shortLivedToken = tokenRes.data.access_token;
 
       // Exchange short-lived token for a long-lived token (60 days)
-      const longLivedRes = await axios.get('https://graph.facebook.com/v25.0/oauth/access_token', {
+      const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           grant_type: 'fb_exchange_token',
           client_id: platformConfig.appId,
@@ -154,7 +154,7 @@ export class SocialMediaService {
       
       if (platform === 'instagram') {
         // Fetch pages and their linked Instagram business accounts
-        const pagesRes = await axios.get('https://graph.facebook.com/v25.0/me/accounts', {
+        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
           params: { access_token: accessToken, fields: 'instagram_business_account{id,username,name},name' }
         });
         
@@ -175,7 +175,7 @@ export class SocialMediaService {
         }
       } else {
         // Facebook: Get user ID/name or Page ID/name
-        const meRes = await axios.get('https://graph.facebook.com/v25.0/me', {
+        const meRes = await axios.get('https://graph.facebook.com/v22.0/me', {
           params: { access_token: accessToken, fields: 'id,name' }
         });
         
