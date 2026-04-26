@@ -97,7 +97,12 @@ export async function GET(request: Request) {
       { headers: { 'Content-Type': 'text/html' } }
     );
   } catch (error: any) {
-    console.error('Social Callback Error:', error.message);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    console.error('Social Callback Error:', error.response?.data || error.message);
+    const errorMessage = error.response?.data?.error_description || error.response?.data?.message || error.message;
+    return NextResponse.json({ 
+      success: false, 
+      message: errorMessage,
+      details: error.response?.data
+    }, { status: error.response?.status || 500 });
   }
 }
