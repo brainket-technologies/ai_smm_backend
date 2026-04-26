@@ -125,7 +125,8 @@ export class SocialMediaService {
       const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
         params: { fields: 'id,username,name,profile_picture_url', access_token: accessToken }
       });
-      return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.profile_picture_url || null, platform: 'instagram', access_token: accessToken, account_type: 'Professional' }];
+      // Mapping Instagram ID as Page ID for compatibility
+      return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.profile_picture_url || null, platform: 'instagram', access_token: accessToken, account_type: 'Professional', page_id: userRes.data.id }];
     }
 
     if (platform === 'facebook' || platform === 'threads') {
@@ -138,7 +139,7 @@ export class SocialMediaService {
          const userRes = await axios.get('https://graph.threads.net/me', {
            params: { fields: 'id,username,name,threads_profile_picture_url', access_token: accessToken }
          });
-         return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.threads_profile_picture_url || null, platform: 'threads', access_token: accessToken, account_type: 'Profile' }];
+         return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.threads_profile_picture_url || null, platform: 'threads', access_token: accessToken, account_type: 'Profile', page_id: userRes.data.id }];
       }
 
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
@@ -171,7 +172,7 @@ export class SocialMediaService {
       for (const account of (accountsRes.data.accounts || [])) {
         const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { headers: { Authorization: `Bearer ${accessToken}` }, params: { readMask: 'name,title' } });
         for (const loc of (locationsRes.data.locations || [])) {
-          profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile' });
+          profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });
         }
       }
       return profiles;
@@ -187,11 +188,11 @@ export class SocialMediaService {
       const tokenRes = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', params.toString());
       const accessToken = tokenRes.data.access_token;
       const meRes = await axios.get('https://api.linkedin.com/v2/me', { headers: { Authorization: `Bearer ${accessToken}` } });
-      const profiles = [{ id: meRes.data.id, name: `${meRes.data.localizedFirstName} ${meRes.data.localizedLastName}`, username: meRes.data.id, platform: 'linkedin', access_token: accessToken, account_type: 'Profile' }];
+      const profiles = [{ id: meRes.data.id, name: `${meRes.data.localizedFirstName} ${meRes.data.localizedLastName}`, username: meRes.data.id, platform: 'linkedin', access_token: accessToken, account_type: 'Profile', page_id: meRes.data.id }];
       const orgsRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls?q=roleAssignee&role=ADMINISTRATOR&projection=(elements*(organizationalTarget~()))', { headers: { Authorization: `Bearer ${accessToken}` } });
       for (const element of (orgsRes.data.elements || [])) {
         const org = element['organizationalTarget~'];
-        if (org) profiles.push({ id: element.organizationalTarget, name: org.localizedName, username: org.vanityName || org.localizedName, platform: 'linkedin', access_token: accessToken, account_type: 'Page' });
+        if (org) profiles.push({ id: element.organizationalTarget, name: org.localizedName, username: org.vanityName || org.localizedName, platform: 'linkedin', access_token: accessToken, account_type: 'Page', page_id: element.organizationalTarget });
       }
       return profiles;
     }
@@ -207,7 +208,7 @@ export class SocialMediaService {
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
       const channelsRes = await axios.get('https://www.googleapis.com/youtube/v3/channels', { headers: { Authorization: `Bearer ${accessToken}` }, params: { part: 'snippet', mine: true } });
-      return (channelsRes.data.items || []).map((item: any) => ({ id: item.id, name: item.snippet.title, username: item.snippet.customUrl || item.snippet.title, profile_picture: item.snippet.thumbnails?.default?.url || null, platform: 'youtube', access_token: accessToken, refresh_token: refreshToken, account_type: 'Channel' }));
+      return (channelsRes.data.items || []).map((item: any) => ({ id: item.id, name: item.snippet.title, username: item.snippet.customUrl || item.snippet.title, profile_picture: item.snippet.thumbnails?.default?.url || null, platform: 'youtube', access_token: accessToken, refresh_token: refreshToken, account_type: 'Channel', page_id: item.id }));
     }
 
     throw new Error(`Platform ${platform} not supported for unified profile flow.`);
