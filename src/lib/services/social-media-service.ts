@@ -49,19 +49,17 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const appId = platformConfig.appId;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
-    
+
     const scopes = [
+      'instagram_business_basic',
       'instagram_business_manage_messages',
       'instagram_business_manage_comments',
       'instagram_business_content_publish',
-      'instagram_business_manage_insights'
+      'instagram_business_manage_insights',
     ].join(',');
-    
-    // Construct the 'next' URL which is the actual OAuth dialog
-    const nextUrl = `https://www.instagram.com/oauth/authorize/third_party/?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&enable_fb_login=1&force_reauth=0`;
 
-    // Wrap it in the Instagram Login page with force_authentication for that branded look
-    return `https://www.instagram.com/accounts/login/?force_authentication&platform_app_id=${appId}&enable_fb_login&next=${encodeURIComponent(nextUrl)}`;
+    // Official Instagram OAuth URL — browser interception now handled natively in MainActivity.kt
+    return `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}`;
   }
 
   /**
