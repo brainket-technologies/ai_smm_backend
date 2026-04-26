@@ -70,7 +70,8 @@ export async function GET(req: NextRequest) {
     `, { headers: { 'Content-Type': 'text/html' } });
 
   } catch (error: any) {
-    console.error(`[${timestamp}] AppRouter Callback Error:`, error.message);
+    const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+    console.error(`[${timestamp}] AppRouter Callback Error Details:`, errorDetails);
     const deepLink = `brandboost://oauth?status=error&message=${encodeURIComponent(error.message)}`;
     return new NextResponse(`<html><head><meta http-equiv="refresh" content="0;url=${deepLink}"></head><body><script>window.location='${deepLink}'</script></body></html>`, { headers: { 'Content-Type': 'text/html' } });
   }
