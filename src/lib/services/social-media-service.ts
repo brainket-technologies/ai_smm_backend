@@ -44,7 +44,6 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
-    // Requested Instagram Professional Scopes
     const scope = [
       'instagram_business_basic',
       'instagram_business_content_publish',
@@ -125,7 +124,6 @@ export class SocialMediaService {
       const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
         params: { fields: 'id,username,name,profile_picture_url', access_token: accessToken }
       });
-      // Mapping Instagram ID as Page ID for compatibility
       return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.profile_picture_url || null, platform: 'instagram', access_token: accessToken, account_type: 'Professional', page_id: userRes.data.id }];
     }
 
@@ -158,7 +156,6 @@ export class SocialMediaService {
     }
 
     if (platform === 'gmb') {
-      console.log('[SocialMediaService] Starting GMB token exchange');
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
       params.append('client_secret', platformConfig.appSecret.trim());
@@ -169,13 +166,10 @@ export class SocialMediaService {
       const accessToken = tokenRes.data.access_token;
       const refreshToken = tokenRes.data.refresh_token;
       
-      console.log('[SocialMediaService] Fetching GMB accounts');
       const accountsRes = await axios.get('https://mybusinessbusinessinformation.googleapis.com/v1/accounts', { headers: { Authorization: `Bearer ${accessToken}` } });
       const profiles = [];
-      console.log(`[SocialMediaService] Found ${accountsRes.data.accounts?.length || 0} accounts`);
       
       for (const account of (accountsRes.data.accounts || [])) {
-        console.log(`[SocialMediaService] Fetching locations for account: ${account.name}`);
         const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { headers: { Authorization: `Bearer ${accessToken}` }, params: { readMask: 'name,title' } });
         for (const loc of (locationsRes.data.locations || [])) {
           profiles.push({ id: loc.name, name: loc.title, username: loc.title, platform: 'gmb', access_token: accessToken, refresh_token: refreshToken, account_type: 'Profile', page_id: loc.name });
@@ -223,12 +217,31 @@ export class SocialMediaService {
   static async saveSelectedAccount(businessId: string | bigint, profile: any) {
     const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
     if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
+    
     const encryptedToken = CryptoService.encrypt(profile.access_token);
     const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
+    
     return await prisma.socialAccount.upsert({
       where: { accountId: profile.id },
-      update: { accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
-      create: { businessId: BigInt(businessId), platformId: platformRecord.id, accountId: profile.id, accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
+      update: { 
+        accountName: profile.name, 
+        accessToken: encryptedToken, 
+        refreshToken: encryptedRefreshToken, 
+        profilePicture: profile.profile_picture, 
+        pageId: profile.page_id, 
+        isActive: true 
+      },
+      create: { 
+        businessId: BigInt(businessId), 
+        platformId: platformRecord.id, 
+        accountId: profile.id, 
+        accountName: profile.name, 
+        accessToken: encryptedToken, 
+        refreshToken: encryptedRefreshToken, 
+        profilePicture: profile.profile_picture, 
+        pageId: profile.page_id, 
+        isActive: true 
+      },
     });
   }
 
