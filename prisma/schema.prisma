@@ -481,17 +481,19 @@ model Service {
 }
 
 model SocialAccount {
-  id           BigInt    @id @default(autoincrement())
-  businessId   BigInt    @map("business_id")
-  platformId   BigInt    @map("platform_id")
-  accountName  String?   @map("account_name")
-  accountId    String?   @unique @map("account_id")
-  accessToken  String?   @map("access_token")
-  refreshToken String?   @map("refresh_token")
-  createdAt    DateTime? @default(now()) @map("created_at")
-  isActive     Boolean?  @default(true) @map("is_active")
-  business     Business  @relation(fields: [businessId], references: [id])
-  platform     Platform  @relation(fields: [platformId], references: [id])
+  id             BigInt    @id @default(autoincrement())
+  businessId     BigInt    @map("business_id")
+  platformId     BigInt    @map("platform_id")
+  accountName    String?   @map("account_name")
+  accountId      String?   @unique @map("account_id")
+  accessToken    String?   @map("access_token")
+  refreshToken   String?   @map("refresh_token")
+  profilePicture String?   @map("profile_picture")
+  pageId         String?   @map("page_id")
+  createdAt      DateTime? @default(now()) @map("created_at")
+  isActive       Boolean?  @default(true) @map("is_active")
+  business       Business  @relation(fields: [businessId], references: [id])
+  platform       Platform  @relation(fields: [platformId], references: [id])
 
   @@map("social_accounts")
 }

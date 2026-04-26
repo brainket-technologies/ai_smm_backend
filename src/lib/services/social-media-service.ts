@@ -42,36 +42,116 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram (Business).
-   * Using the specific Instagram Login redirect pattern for the best branding.
+   * Generates OAuth URL for Instagram Business via Meta Graph API.
+   * Uses facebook.com dialog — stays in browser on Android (no app interception).
+   * This is the official approach used by Hootsuite, Buffer, Later, etc.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const appId = platformConfig.appId;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
 
-    // Official Instagram Business Login Consent URL format used by Hootsuite, Buffer, etc.
-    // Scopes are separated by '-' (dash) not ',' (comma)
-    // This goes DIRECTLY to the Allow/Cancel permissions screen
     const scope = [
-      'instagram_business_basic',
-      'instagram_business_manage_comments',
-      'instagram_business_manage_messages',
-      'instagram_business_content_publish',
-      'instagram_business_manage_insights',
-    ].join('-');
+      'public_profile',
+      'email',
+      'pages_show_list',
+      'pages_read_engagement',
+      'instagram_basic',
+      'instagram_content_publish',
+    ].join(',');
 
-    const paramsJson = encodeURIComponent(JSON.stringify({
-      client_id: appId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      state: state,
-      scope: scope,
-      app_id: appId,
-      platform_app_id: appId,
-    }));
+    // Official Meta Graph API OAuth dialog — guaranteed to stay in browser
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
+  }
 
-    return `https://www.instagram.com/consent/?flow=ig_biz_login_oauth&params_json=${paramsJson}&source=oauth_permissions_page_www`;
+  /**
+   * After Instagram OAuth: exchange code, get long-lived token, fetch FB Pages + linked IG accounts.
+   * Returns page list for user to select which account to connect.
+   */
+  static async getInstagramPages(code: string, redirectUri: string) {
+    const platformConfig = await this.getPlatformConfig('instagram') as any;
+
+    // Step 1: Exchange code → short-lived user token
+    const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+      params: {
+        client_id: platformConfig.appId,
+        client_secret: platformConfig.appSecret,
+        redirect_uri: redirectUri,
+        code: code,
+      }
+    });
+    const shortLivedToken = tokenRes.data.access_token;
+
+    // Step 2: Exchange short-lived → long-lived token (60 days)
+    const longLivedRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
+      params: {
+        grant_type: 'fb_exchange_token',
+        client_id: platformConfig.appId,
+        client_secret: platformConfig.appSecret,
+        fb_exchange_token: shortLivedToken,
+      }
+    });
+    const longLivedToken = longLivedRes.data.access_token;
+
+    // Step 3: Fetch Facebook Pages + linked Instagram Business accounts
+    const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+      params: {
+        access_token: longLivedToken,
+        fields: 'id,name,access_token,instagram_business_account{id,username,name,profile_picture_url}',
+      }
+    });
+
+    const pages = pagesRes.data.data || [];
+
+    // Step 4: Filter pages with a linked Instagram Business account
+    return pages
+      .filter((page: any) => page.instagram_business_account)
+      .map((page: any) => ({
+        pageId: page.id,
+        pageName: page.name,
+        longLivedToken: longLivedToken,
+        instagramId: page.instagram_business_account.id,
+        username: page.instagram_business_account.username || page.instagram_business_account.name,
+        profilePicture: page.instagram_business_account.profile_picture_url || null,
+      }));
+  }
+
+  /**
+   * Save a user-selected Instagram Business account to the existing social_accounts table.
+   * Upserts based on accountId (instagram_business_id).
+   */
+  static async saveInstagramAccount(businessId: string, data: {
+    instagramId: string;
+    username: string;
+    profilePicture: string | null;
+    pageId: string;
+    longLivedToken: string;
+  }) {
+    const platformRecord = await prisma.platform.findUnique({ where: { nameKey: 'instagram' } });
+    if (!platformRecord) throw new Error('Instagram platform not found in database.');
+
+    const encryptedToken = CryptoService.encrypt(data.longLivedToken);
+
+    return await prisma.socialAccount.upsert({
+      where: { accountId: data.instagramId },
+      update: {
+        accountName: data.username,
+        accessToken: encryptedToken,
+        profilePicture: data.profilePicture,
+        pageId: data.pageId,
+        isActive: true,
+      },
+      create: {
+        businessId: BigInt(businessId),
+        platformId: platformRecord.id,
+        accountId: data.instagramId,
+        accountName: data.username,
+        accessToken: encryptedToken,
+        profilePicture: data.profilePicture,
+        pageId: data.pageId,
+        isActive: true,
+      },
+    });
   }
 
   /**
