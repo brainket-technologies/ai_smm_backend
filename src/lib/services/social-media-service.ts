@@ -38,70 +38,25 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram Professional (Instagram-Only Flow).
+   * Generates OAuth URL for Instagram Professional.
+   * This uses the Official Meta Dialog which is the standard path for Professional accounts.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
     const scope = [
-      'instagram_business_basic',
-      'instagram_business_content_publish',
-      'instagram_business_manage_comments',
-      'instagram_business_manage_insights'
+      'instagram_basic',
+      'instagram_content_publish',
+      'instagram_manage_comments',
+      'instagram_manage_insights',
+      'pages_show_list',
+      'pages_read_engagement',
+      'public_profile',
+      'email'
     ].join(',');
 
-    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
-  }
-
-  /**
-   * Generates OAuth URL for Threads.
-   */
-  static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('threads') as any;
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' })));
-    const scope = 'threads_basic,threads_content_publish';
-    return `https://www.threads.net/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
-  }
-
-  /**
-   * Generates OAuth URL for Google/GMB.
-   */
-  static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('gmb') as any;
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
-    const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.profile');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&prompt=consent`;
-  }
-
-  /**
-   * Generates OAuth URL for YouTube.
-   */
-  static async getYouTubeAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('youtube') as any;
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'youtube' })));
-    const scope = encodeURIComponent('https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube.upload');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&prompt=consent`;
-  }
-
-  /**
-   * Generates OAuth URL for LinkedIn.
-   */
-  static async getLinkedInAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('linkedin') as any;
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'linkedin' })));
-    const scope = encodeURIComponent('r_liteprofile r_emailaddress w_member_social rw_organization_admin w_organization_social');
-    return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
-  }
-
-  /**
-   * Generates OAuth URL for Pinterest.
-   */
-  static async getPinterestAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('pinterest') as any;
-    const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'pinterest' })));
-    const scope = 'read_public,write_public';
-    return `https://www.pinterest.com/oauth/?consumer_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
   }
 
   /**
@@ -110,44 +65,43 @@ export class SocialMediaService {
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    if (platform === 'instagram') {
-      const params = new URLSearchParams();
-      params.append('client_id', platformConfig.appId);
-      params.append('client_secret', platformConfig.appSecret);
-      params.append('grant_type', 'authorization_code');
-      params.append('redirect_uri', redirectUri);
-      params.append('code', code);
-
-      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
-      const accessToken = tokenRes.data.access_token;
-      const userId = tokenRes.data.user_id;
-
-      const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
-        params: { fields: 'id,username,name,profile_picture_url', access_token: accessToken }
-      });
-
-      return [{
-        id: userRes.data.id,
-        name: userRes.data.name || userRes.data.username,
-        username: userRes.data.username,
-        profile_picture: userRes.data.profile_picture_url || null,
-        platform: 'instagram',
-        access_token: accessToken,
-        account_type: 'Professional'
-      }];
-    }
-
-    if (platform === 'facebook' || platform === 'threads') {
+    if (platform === 'instagram' || platform === 'facebook') {
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: { client_id: platformConfig.appId, client_secret: platformConfig.appSecret, redirect_uri: redirectUri, code: code }
+        params: {
+          client_id: platformConfig.appId,
+          client_secret: platformConfig.appSecret,
+          redirect_uri: redirectUri,
+          code: code,
+        }
       });
       const accessToken = tokenRes.data.access_token;
 
-      if (platform === 'threads') {
-         const userRes = await axios.get('https://graph.threads.net/me', {
-           params: { fields: 'id,username,name,threads_profile_picture_url', access_token: accessToken }
-         });
-         return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.threads_profile_picture_url || null, platform: 'threads', access_token: accessToken, account_type: 'Profile' }];
+      if (platform === 'instagram') {
+        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+          params: {
+            access_token: accessToken,
+            fields: 'id,name,instagram_business_account{id,username,name,profile_picture_url}',
+          }
+        });
+
+        const pages = pagesRes.data.data || [];
+        const igAccounts = pages
+          .filter((page: any) => page.instagram_business_account)
+          .map((page: any) => ({
+            id: page.instagram_business_account.id,
+            name: page.instagram_business_account.name || page.instagram_business_account.username,
+            username: page.instagram_business_account.username,
+            profile_picture: page.instagram_business_account.profile_picture_url || null,
+            platform: 'instagram',
+            access_token: accessToken,
+            page_id: page.id,
+            account_type: 'Professional'
+          }));
+
+        if (igAccounts.length === 0) {
+          throw new Error('No Instagram Professional accounts found. Please ensure your Instagram account is a Professional account and linked to a Facebook Page.');
+        }
+        return igAccounts;
       }
 
       const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
@@ -165,6 +119,7 @@ export class SocialMediaService {
       }));
     }
 
+    // Restore other platforms...
     if (platform === 'gmb') {
       const params = new URLSearchParams();
       params.append('client_id', platformConfig.appId.trim());
@@ -219,59 +174,21 @@ export class SocialMediaService {
       return (channelsRes.data.items || []).map((item: any) => ({ id: item.id, name: item.snippet.title, username: item.snippet.customUrl || item.snippet.title, profile_picture: item.snippet.thumbnails?.default?.url || null, platform: 'youtube', access_token: accessToken, refresh_token: refreshToken, account_type: 'Channel' }));
     }
 
-    if (platform === 'pinterest') {
-      const params = new URLSearchParams();
-      params.append('grant_type', 'authorization_code');
-      params.append('code', code);
-      params.append('redirect_uri', redirectUri);
-      params.append('client_id', platformConfig.appId);
-      params.append('client_secret', platformConfig.appSecret);
-      const tokenRes = await axios.post('https://api.pinterest.com/v5/oauth/token', params.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-      const accessToken = tokenRes.data.access_token;
-      const userRes = await axios.get('https://api.pinterest.com/v5/user_account', { headers: { Authorization: `Bearer ${accessToken}` } });
-      return [{ id: userRes.data.username, name: userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.profile_image || null, platform: 'pinterest', access_token: accessToken, account_type: 'Profile' }];
-    }
-
     throw new Error(`Platform ${platform} not supported for unified profile flow.`);
   }
 
-  /**
-   * Final step: Save the user-selected account to the database.
-   */
   static async saveSelectedAccount(businessId: string | bigint, profile: any) {
     const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
     if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
-
     const encryptedToken = CryptoService.encrypt(profile.access_token);
     const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
-
     return await prisma.socialAccount.upsert({
       where: { accountId: profile.id },
-      update: {
-        accountName: profile.name,
-        accessToken: encryptedToken,
-        refreshToken: encryptedRefreshToken,
-        profilePicture: profile.profile_picture,
-        pageId: profile.page_id,
-        isActive: true,
-      },
-      create: {
-        businessId: BigInt(businessId),
-        platformId: platformRecord.id,
-        accountId: profile.id,
-        accountName: profile.name,
-        accessToken: encryptedToken,
-        refreshToken: encryptedRefreshToken,
-        profilePicture: profile.profile_picture,
-        pageId: profile.page_id,
-        isActive: true,
-      },
+      update: { accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
+      create: { businessId: BigInt(businessId), platformId: platformRecord.id, accountId: profile.id, accountName: profile.name, accessToken: encryptedToken, refreshToken: encryptedRefreshToken, profilePicture: profile.profile_picture, pageId: profile.page_id, isActive: true },
     });
   }
 
-  /**
-   * Legacy method for backward compatibility.
-   */
   static async saveInstagramAccount(businessId: string | bigint, data: any) {
     return this.saveSelectedAccount(businessId, {
       id: data.instagramId,
