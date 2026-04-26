@@ -62,8 +62,17 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
 
-    // Use Configuration ID for Instagram onboarding (Facebook Login for Business)
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&config_id=949385448077001&response_type=code`;
+    const scopesFromDb = (platformConfig as any).scopes;
+    const scopes = scopesFromDb || [
+      'instagram_business_basic',
+      'instagram_business_manage_comments',
+      'instagram_business_content_publish',
+      'instagram_business_manage_messages',
+      'instagram_business_manage_insights'
+    ].join(',');
+
+    // Back to standard OAuth for Instagram Business
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scopes)}&response_type=code`;
   }
 
   /**
