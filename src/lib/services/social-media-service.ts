@@ -34,7 +34,7 @@ export class SocialMediaService {
   /**
    * Helper to generate non-encrypted state for stability
    */
-  private static generateState(data: any): string {
+  public static generateState(data: any): string {
     return Buffer.from(JSON.stringify(data)).toString('base64');
   }
 

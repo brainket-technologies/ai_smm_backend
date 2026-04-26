@@ -36,8 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else if (platform === 'google' || platform === 'gmb') {
       // Matching opponent's URL style more closely
       const platformConfig = await SocialMediaService.getPlatformConfig('gmb') as any;
-      const state = encodeURIComponent(JSON.stringify({ businessId, platform: 'gmb' }));
-      const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage');
+      const state = (SocialMediaService as any).generateState({ businessId, platform: 'gmb' });
+      const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.profile');
       
       authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` + 
                 `client_id=${platformConfig.appId.trim()}&` +
