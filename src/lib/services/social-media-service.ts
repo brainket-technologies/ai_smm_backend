@@ -72,7 +72,7 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig('gmb') as any;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' })));
     const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.profile');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&prompt=consent`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${platformConfig.appId.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&include_granted_scopes=true&prompt=consent`;
   }
 
   /**
@@ -215,34 +215,39 @@ export class SocialMediaService {
   }
 
   static async saveSelectedAccount(businessId: string | bigint, profile: any) {
-    const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
-    if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
-    
-    const encryptedToken = CryptoService.encrypt(profile.access_token);
-    const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
-    
-    return await prisma.socialAccount.upsert({
-      where: { accountId: profile.id },
-      update: { 
-        accountName: profile.name, 
-        accessToken: encryptedToken, 
-        refreshToken: encryptedRefreshToken, 
-        profilePicture: profile.profile_picture, 
-        pageId: profile.page_id, 
-        isActive: true 
-      },
-      create: { 
-        businessId: BigInt(businessId), 
-        platformId: platformRecord.id, 
-        accountId: profile.id, 
-        accountName: profile.name, 
-        accessToken: encryptedToken, 
-        refreshToken: encryptedRefreshToken, 
-        profilePicture: profile.profile_picture, 
-        pageId: profile.page_id, 
-        isActive: true 
-      },
-    });
+    try {
+      const platformRecord = await prisma.platform.findUnique({ where: { nameKey: profile.platform } });
+      if (!platformRecord) throw new Error(`${profile.platform} platform not found.`);
+      
+      const encryptedToken = CryptoService.encrypt(profile.access_token);
+      const encryptedRefreshToken = profile.refresh_token ? CryptoService.encrypt(profile.refresh_token) : null;
+      
+      return await prisma.socialAccount.upsert({
+        where: { accountId: profile.id },
+        update: { 
+          accountName: profile.name, 
+          accessToken: encryptedToken, 
+          refreshToken: encryptedRefreshToken, 
+          profilePicture: profile.profile_picture, 
+          pageId: profile.page_id, 
+          isActive: true 
+        },
+        create: { 
+          businessId: BigInt(businessId), 
+          platformId: platformRecord.id, 
+          accountId: profile.id, 
+          accountName: profile.name, 
+          accessToken: encryptedToken, 
+          refreshToken: encryptedRefreshToken, 
+          profilePicture: profile.profile_picture, 
+          pageId: profile.page_id, 
+          isActive: true 
+        },
+      });
+    } catch (error: any) {
+      console.error(`[SocialMediaService] Error in saveSelectedAccount:`, error.message);
+      throw new Error(`Failed to save account: ${error.message}`);
+    }
   }
 
   static async saveInstagramAccount(businessId: string | bigint, data: any) {
