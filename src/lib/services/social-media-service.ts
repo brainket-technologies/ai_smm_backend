@@ -126,7 +126,7 @@ export class SocialMediaService {
     let accountName = '';
 
     if (platform === 'facebook' || platform === 'instagram') {
-      const platformConfig = await this.getPlatformConfig(platform);
+      const platformConfig = await this.getPlatformConfig(platform) as any;
 
       // Exchange code for short-lived access token
       const tokenRes = await axios.get('https://graph.facebook.com/v25.0/oauth/access_token', {
