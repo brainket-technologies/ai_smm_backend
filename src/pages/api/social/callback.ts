@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // 3. Compact profiles for deep link
-    const optimizedProfiles = profiles.map(p => ({
+    const optimizedProfiles = profiles.map((p: any) => ({
       id: p.id,
       name: p.name,
       username: p.username,
