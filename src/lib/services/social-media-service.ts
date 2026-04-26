@@ -57,9 +57,9 @@ export class SocialMediaService {
       'instagram_business_manage_insights'
     ].join(',');
     
-    // Go directly to the OAuth dialog. Since the user is logged in, 
-    // it will show the Permission screen immediately.
-    return `https://www.instagram.com/oauth/authorize/third_party/?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}&enable_fb_login=1&force_reauth=0`;
+    // Using Facebook Dialog for Instagram Professional accounts 
+    // This is the most reliable way to stay in the browser and get business permissions.
+    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code&scope=${encodeURIComponent(scopes)}&config_id=1506175574548062`;
   }
 
   /**
