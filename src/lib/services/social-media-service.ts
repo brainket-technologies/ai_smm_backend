@@ -42,26 +42,23 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram Business via Meta Graph API.
-   * Uses facebook.com dialog — stays in browser on Android (no app interception).
-   * This is the official approach used by Hootsuite, Buffer, Later, etc.
+   * Generates OAuth URL for Instagram Professional (Direct).
+   * No Facebook Page link required for this flow.
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
-    const appId = platformConfig.appId;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
-
-    const scope = [
-      'public_profile',
-      'email',
-      'pages_show_list',
-      'pages_read_engagement',
-      'instagram_basic',
-      'instagram_content_publish',
+    
+    // Modern Instagram Professional Scopes (Direct)
+    const scope = platformConfig.scopes || [
+      'instagram_business_basic',
+      'instagram_business_content_publish',
+      'instagram_business_manage_comments',
+      'instagram_business_manage_insights',
+      'instagram_business_manage_messages'
     ].join(',');
 
-    // Official Meta Graph API OAuth dialog — guaranteed to stay in browser
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
+    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
   }
 
   /**
@@ -236,7 +233,38 @@ export class SocialMediaService {
   static async getProfilesFromCallback(platform: string, code: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
-    if (platform === 'facebook' || platform === 'instagram') {
+    if (platform === 'instagram') {
+      const params = new URLSearchParams();
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+      params.append('grant_type', 'authorization_code');
+      params.append('redirect_uri', redirectUri);
+      params.append('code', code);
+
+      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
+      const accessToken = tokenRes.data.access_token;
+      const userId = tokenRes.data.user_id;
+
+      // Fetch Instagram Profile details directly
+      const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
+        params: {
+          fields: 'id,username,name,profile_picture_url',
+          access_token: accessToken
+        }
+      });
+
+      return [{
+        id: userRes.data.id,
+        name: userRes.data.name || userRes.data.username,
+        username: userRes.data.username,
+        profile_picture: userRes.data.profile_picture_url || null,
+        platform: 'instagram',
+        access_token: accessToken,
+        account_type: 'Professional'
+      }];
+    }
+
+    if (platform === 'facebook') {
       const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
         params: {
           client_id: platformConfig.appId,
@@ -247,22 +275,18 @@ export class SocialMediaService {
       });
       const accessToken = tokenRes.data.access_token;
 
-      if (platform === 'facebook') {
-        const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-          params: { access_token: accessToken, fields: 'id,name,picture' }
-        });
-        return (pagesRes.data.data || []).map((page: any) => ({
-          id: page.id,
-          name: page.name,
-          username: page.name,
-          profile_picture: page.picture?.data?.url || null,
-          platform: 'facebook',
-          access_token: accessToken,
-          page_id: page.id
-        }));
-      } else {
-        return this.getInstagramPages(code, redirectUri);
-      }
+      const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
+        params: { access_token: accessToken, fields: 'id,name,picture' }
+      });
+      return (pagesRes.data.data || []).map((page: any) => ({
+        id: page.id,
+        name: page.name,
+        username: page.name,
+        profile_picture: page.picture?.data?.url || null,
+        platform: 'facebook',
+        access_token: accessToken,
+        page_id: page.id
+      }));
     }
 
     if (platform === 'gmb') {

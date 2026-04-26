@@ -539,15 +539,16 @@ async function main() {
 
   // 3.4 Create Platforms
   const platformList = [
-    { name: 'Facebook', nameKey: 'facebook', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg', url: 'https://facebook.com', isActive: true, appId: '2697511273965745', appSecret: 'ed31267591a8833b4ac51a58eef94afb' },
-    { name: 'Instagram', nameKey: 'instagram', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', url: 'https://instagram.com', isActive: true, appId: '2697511273965745', appSecret: 'ed31267591a8833b4ac51a58eef94afb' },
-    { name: 'Threads', nameKey: 'threads', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Threads_(app)_logo.svg', url: 'https://threads.net', isActive: true, appId: '2142058796632041', appSecret: '79a2260b9cf3f980f48f02e12927e4ab' },
-    { name: 'LinkedIn', nameKey: 'linkedin', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png', url: 'https://linkedin.com', isActive: true },
-    { name: 'Google Business', nameKey: 'gmb', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Google_Images_2015_logo.svg', url: 'https://business.google.com', isActive: true },
+    { name: 'Facebook', nameKey: 'facebook', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg', url: 'https://facebook.com', isActive: true, appId: '731880461729854', appSecret: 'ed31267591a8833b4ac51a58eef94afb' },
+    { name: 'Instagram', nameKey: 'instagram', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', url: 'https://instagram.com', isActive: true, appId: '693568212935084', appSecret: 'ed31267591a8833b4ac51a58eef94afb', scopes: 'instagram_business_basic,instagram_business_content_publish,instagram_business_manage_comments,instagram_business_manage_insights,instagram_business_manage_messages' },
+    { name: 'Threads', nameKey: 'threads', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Threads_(app)_logo.svg', url: 'https://threads.net', isActive: true, appId: '1380111775991047', appSecret: '79a2260b9cf3f980f48f02e12927e4ab' },
+    { name: 'LinkedIn', nameKey: 'linkedin', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png', url: 'https://linkedin.com', isActive: true, appId: '214437684' },
+    { name: 'Google Business', nameKey: 'gmb', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg', url: 'https://business.google.com', isActive: true, appId: '982519183015-484j3rtb13uj5rgce4biijh8idfp96ta.apps.googleusercontent.com' },
+    { name: 'YouTube', nameKey: 'youtube', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg', url: 'https://youtube.com', isActive: true, appId: '982519183015-484j3rtb13uj5rgce4biijh8idfp96ta.apps.googleusercontent.com' },
     { name: 'X (Twitter)', nameKey: 'twitter', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg', url: 'https://twitter.com', isActive: true },
     { name: 'WhatsApp', nameKey: 'whatsapp', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg', url: 'https://whatsapp.com', isActive: true },
     { name: 'TikTok', nameKey: 'tiktok', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Ionicons_logo-tiktok.svg', url: 'https://tiktok.com', isActive: true },
-    { name: 'Pinterest', nameKey: 'pinterest', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png', url: 'https://pinterest.com', isActive: true },
+    { name: 'Pinterest', nameKey: 'pinterest', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png', url: 'https://pinterest.com', isActive: true, appId: '1440620' },
   ];
 
   for (const plat of platformList) {
@@ -561,6 +562,7 @@ async function main() {
         mediaId: mediaId,
         appId: plat.appId,
         appSecret: plat.appSecret,
+        scopes: plat.scopes,
       },
       create: {
         name: plat.name,
@@ -570,6 +572,7 @@ async function main() {
         mediaId: mediaId,
         appId: plat.appId,
         appSecret: plat.appSecret,
+        scopes: plat.scopes,
       }
     });
   }
