@@ -22,7 +22,7 @@ export class SocialMediaService {
    * Generates OAuth URL for Facebook.
    */
   static async getFacebookAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('facebook');
+    const platformConfig = await this.getPlatformConfig('facebook') as any;
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'facebook' })));
     
@@ -49,7 +49,7 @@ export class SocialMediaService {
    * Generates OAuth URL for Instagram (Business).
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('instagram'); // Use instagram specific config
+    const platformConfig = await this.getPlatformConfig('instagram') as any; // Use instagram specific config
     
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
     
@@ -70,7 +70,7 @@ export class SocialMediaService {
    * Generates OAuth URL for Google Business Profile.
    */
   static async getGoogleAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('gmb');
+    const platformConfig = await this.getPlatformConfig('gmb') as any;
     
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'gmb' }));
     const scopesFromDb = (platformConfig as any).scopes;
@@ -85,7 +85,7 @@ export class SocialMediaService {
    * Generates OAuth URL for Threads.
    */
   static async getThreadsAuthUrl(businessId: string, redirectUri: string) {
-    const platformConfig = await this.getPlatformConfig('threads');
+    const platformConfig = await this.getPlatformConfig('threads') as any;
     
     const state = CryptoService.encrypt(JSON.stringify({ businessId, platform: 'threads' }));
     const scopesFromDb = (platformConfig as any).scopes;
@@ -184,7 +184,7 @@ export class SocialMediaService {
       }
     } 
     else if (platform === 'gmb') {
-      const platformConfig = await this.getPlatformConfig('gmb');
+      const platformConfig = await this.getPlatformConfig('gmb') as any;
 
       const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
         client_id: platformConfig.appId,
@@ -207,7 +207,7 @@ export class SocialMediaService {
       accountName = userRes.data.email || userRes.data.name;
     }
     else if (platform === 'threads') {
-      const platformConfig = await this.getPlatformConfig('threads');
+      const platformConfig = await this.getPlatformConfig('threads') as any;
 
       const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', {
         client_id: platformConfig.appId,
