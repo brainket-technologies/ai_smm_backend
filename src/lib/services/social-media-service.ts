@@ -50,16 +50,28 @@ export class SocialMediaService {
     const appId = platformConfig.appId;
     const state = encodeURIComponent(CryptoService.encrypt(JSON.stringify({ businessId, platform: 'instagram' })));
 
-    const scopes = [
+    // Official Instagram Business Login Consent URL format used by Hootsuite, Buffer, etc.
+    // Scopes are separated by '-' (dash) not ',' (comma)
+    // This goes DIRECTLY to the Allow/Cancel permissions screen
+    const scope = [
       'instagram_business_basic',
-      'instagram_business_manage_messages',
       'instagram_business_manage_comments',
+      'instagram_business_manage_messages',
       'instagram_business_content_publish',
       'instagram_business_manage_insights',
-    ].join(',');
+    ].join('-');
 
-    // Official Instagram OAuth URL — browser interception now handled natively in MainActivity.kt
-    return `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${state}`;
+    const paramsJson = encodeURIComponent(JSON.stringify({
+      client_id: appId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      state: state,
+      scope: scope,
+      app_id: appId,
+      platform_app_id: appId,
+    }));
+
+    return `https://www.instagram.com/consent/?flow=ig_biz_login_oauth&params_json=${paramsJson}&source=oauth_permissions_page_www`;
   }
 
   /**
