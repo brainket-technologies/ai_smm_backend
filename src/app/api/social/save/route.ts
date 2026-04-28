@@ -9,32 +9,32 @@ export async function POST(request: Request) {
     return auth.response;
   }
 
+  // 2. Check Business context
   const businessId = request.headers.get('X-Business-Id');
   if (!businessId) {
     return NextResponse.json({ success: false, message: 'X-Business-Id header required' }, { status: 400 });
   }
 
   try {
-    const body = await request.json();
-    const { instagramId, username, profilePicture, pageId, longLivedToken } = body;
+    const profile = await request.json();
 
-    if (!instagramId || !username || !pageId || !longLivedToken) {
-      return NextResponse.json({ success: false, message: 'Missing required fields: instagramId, username, pageId, longLivedToken' }, { status: 400 });
+    // Required fields check (platform specific IDs and tokens)
+    if (!profile.id || !profile.platform || !profile.access_token) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Missing required profile fields: id, platform, access_token' 
+      }, { status: 400 });
     }
 
-    await SocialManager.saveAccount(businessId, {
-      id: instagramId,
-      name: username,
-      username,
-      profile_picture: profilePicture || null,
-      platform: 'instagram',
-      access_token: longLivedToken,
-      page_id: pageId
-    });
+    // 3. Save to database using standardized manager
+    await SocialManager.saveAccount(businessId, profile);
 
-    return NextResponse.json({ success: true, message: `@${username} connected successfully!` });
+    return NextResponse.json({ 
+      success: true, 
+      message: `${profile.platform.charAt(0).toUpperCase() + profile.platform.slice(1)} account connected successfully!` 
+    });
   } catch (error: any) {
-    console.error('Instagram Save Error:', error.message);
+    console.error('Social Save Error:', error.message);
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
