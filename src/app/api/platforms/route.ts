@@ -54,6 +54,7 @@ export async function GET(request: Request) {
         logo: logoUrl,
         isConnected: p.socialAccounts ? p.socialAccounts.length > 0 : false,
         accountName: p.socialAccounts && p.socialAccounts.length > 0 ? p.socialAccounts[0].accountName : null,
+        profilePicture: p.socialAccounts && p.socialAccounts.length > 0 ? p.socialAccounts[0].profilePicture : null,
       };
     });
 
