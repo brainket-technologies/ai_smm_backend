@@ -53,7 +53,7 @@ export class LinkedinService implements SocialPlatformService {
       username: userData.name,
       platform: 'linkedin',
       access_token: accessToken,
-      refresh_token: null, // LinkedIn v2 tokens usually don't return refresh_token unless specifically requested/configured
+      refresh_token: undefined, // LinkedIn v2 tokens usually don't return refresh_token unless specifically requested/configured
       account_type: 'Profile',
       page_id: userData.sub,
       profile_picture: userData.picture || null
