@@ -70,9 +70,20 @@ export async function GET(req: NextRequest) {
     `, { headers: { 'Content-Type': 'text/html' } });
 
   } catch (error: any) {
-    const googleError = error.response?.data?.error?.message || error.response?.data?.error_description;
-    const errorMessage = googleError ? `Google API Error: ${googleError}` : error.message;
-    console.error(`[${timestamp}] AppRouter Callback Error Details:`, error.response?.data || error.message);
+    const responseData = error.response?.data;
+    let errorMessage = error.message;
+
+    if (responseData?.error?.message) {
+      // Facebook/Instagram error format
+      errorMessage = responseData.error.message;
+    } else if (responseData?.error_description) {
+      // Google/Other error format
+      errorMessage = responseData.error_description;
+    } else if (responseData?.message) {
+      errorMessage = responseData.message;
+    }
+
+    console.error(`[${timestamp}] AppRouter Callback Error Details:`, responseData || error.message);
     
     const deepLink = `brandboost://oauth?status=error&message=${encodeURIComponent(errorMessage)}`;
     return new NextResponse(`<html><head><meta http-equiv="refresh" content="0;url=${deepLink}"></head><body><script>window.location='${deepLink}'</script></body></html>`, { headers: { 'Content-Type': 'text/html' } });
