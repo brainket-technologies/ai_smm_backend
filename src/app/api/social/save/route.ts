@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SocialMediaService } from '@/lib/services/social-media-service';
+import { SocialManager } from '@/lib/services/social';
 import { validateAuth } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
@@ -26,8 +26,8 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // 3. Save to database using standardized service
-    await SocialMediaService.saveSelectedAccount(businessId, profile);
+    // 3. Save to database using standardized manager
+    await SocialManager.saveAccount(businessId, profile);
 
     return NextResponse.json({ 
       success: true, 
