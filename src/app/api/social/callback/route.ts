@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SocialMediaService } from '@/lib/services/social-media-service';
+import { SocialManager } from '@/lib/services/social';
 
 export async function GET(req: NextRequest) {
   const timestamp = new Date().toISOString();
@@ -22,18 +22,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const decryptedState = SocialMediaService.parseState(state);
+    const decryptedState = SocialManager.parseState ? SocialManager.parseState(state) : JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
     const platform = decryptedState.platform;
     const businessId = decryptedState.businessId;
 
     console.log(`[${timestamp}] State parsed - Platform: ${platform}, BusinessId: ${businessId}`);
 
-    const protocol = 'https';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const host = req.headers.get('host');
     const redirectUri = `${protocol}://${host}/api/social/callback`;
 
     console.log(`[${timestamp}] Fetching profiles for ${platform}.`);
-    const profiles = await SocialMediaService.getProfilesFromCallback(platform, code, redirectUri);
+    const service = SocialManager.getService(platform);
+    const profiles = await service.getProfiles(code, redirectUri);
     
     if (profiles.length === 0) {
       const deepLink = `brandboost://oauth?status=no_pages&platform=${platform}`;

@@ -3,6 +3,14 @@ import prisma from '@/lib/prisma';
 import { validateApiKey, validateBusinessId } from '@/lib/auth-utils';
 
 export async function DELETE(request: Request) {
+  return handleDisconnect(request);
+}
+
+export async function POST(request: Request) {
+  return handleDisconnect(request);
+}
+
+async function handleDisconnect(request: Request) {
   try {
     const auth = validateApiKey(request);
     if (!auth.isValid) return auth.response;
@@ -12,14 +20,19 @@ export async function DELETE(request: Request) {
     const businessId = businessCheck.businessId!;
 
     const { searchParams } = new URL(request.url);
-    const platformNameKey = searchParams.get('platform');
+    const platformNameKey = searchParams.get('platform') || request.headers.get('x-platform-id');
 
     if (!platformNameKey) {
       return NextResponse.json({ success: false, message: 'Platform is required' }, { status: 400 });
     }
 
-    const platform = await prisma.platform.findUnique({
-      where: { nameKey: platformNameKey }
+    const platform = await prisma.platform.findFirst({
+      where: { 
+        OR: [
+          { nameKey: platformNameKey },
+          { nameKey: platformNameKey.toLowerCase() }
+        ]
+      }
     });
 
     if (!platform) {

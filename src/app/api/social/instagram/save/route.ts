@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SocialMediaService } from '@/lib/services/social-media-service';
+import { SocialManager } from '@/lib/services/social';
 import { validateAuth } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
@@ -22,12 +22,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Missing required fields: instagramId, username, pageId, longLivedToken' }, { status: 400 });
     }
 
-    await SocialMediaService.saveInstagramAccount(businessId, {
-      instagramId,
+    await SocialManager.saveAccount(businessId, {
+      id: instagramId,
+      name: username,
       username,
-      profilePicture: profilePicture || null,
-      pageId,
-      longLivedToken,
+      profile_picture: profilePicture || null,
+      platform: 'instagram',
+      access_token: longLivedToken,
+      page_id: pageId
     });
 
     return NextResponse.json({ success: true, message: `@${username} connected successfully!` });
