@@ -3,6 +3,7 @@ import { FacebookService } from './facebook';
 import { InstagramService } from './instagram';
 import { GoogleService } from './google';
 import { ThreadsService } from './threads';
+import { YoutubeService } from './youtube';
 import prisma from '@/lib/prisma';
 
 export class SocialManager {
@@ -11,6 +12,7 @@ export class SocialManager {
     instagram: new InstagramService(),
     gmb: new GoogleService(),
     threads: new ThreadsService(),
+    youtube: new YoutubeService(),
     // Add other platforms as needed
   };
 

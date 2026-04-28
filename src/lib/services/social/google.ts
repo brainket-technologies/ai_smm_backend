@@ -34,21 +34,26 @@ export class GoogleService implements SocialPlatformService {
     const accessToken = tokenRes.data.access_token;
     const refreshToken = tokenRes.data.refresh_token;
     
+    console.log(`[GoogleService] Fetching accounts for ${accessToken.substring(0, 10)}...`);
     const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', { 
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     
     const profiles: SocialProfile[] = [];
     const accounts = accountsRes.data.accounts || [];
+    console.log(`[GoogleService] Found ${accounts.length} accounts.`);
     
-    await Promise.all(accounts.map(async (account: any) => {
+    // Use for...of instead of Promise.all to avoid hitting quota too fast
+    for (const account of accounts) {
       try {
+        console.log(`[GoogleService] Fetching locations for account: ${account.name}`);
         const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations`, { 
           headers: { Authorization: `Bearer ${accessToken}` }, 
           params: { readMask: 'name,title' }
         });
         
         if (locationsRes.data.locations) {
+          console.log(`[GoogleService] Found ${locationsRes.data.locations.length} locations for ${account.name}`);
           locationsRes.data.locations.forEach((loc: any) => {
             profiles.push({ 
               id: loc.name, 
@@ -63,10 +68,15 @@ export class GoogleService implements SocialPlatformService {
             });
           });
         }
+        
+        // Add a small delay between accounts to respect quota
+        if (accounts.length > 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       } catch (locError) {
         console.warn(`[GoogleService] fetch failed for account ${account.name}:`, locError);
       }
-    }));
+    }
     
     return profiles;
   }
