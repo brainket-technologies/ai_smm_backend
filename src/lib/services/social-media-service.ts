@@ -69,24 +69,21 @@ export class SocialMediaService {
   }
 
   /**
-   * Generates OAuth URL for Instagram Business (via Meta/Facebook Login).
-   * Note: This uses the Facebook OAuth dialog as required for Professional accounts.
+   * Generates OAuth URL for Instagram Professional (Direct Flow).
    */
   static async getInstagramAuthUrl(businessId: string, redirectUri: string) {
     const platformConfig = await this.getPlatformConfig('instagram') as any;
     const state = this.generateState({ businessId, platform: 'instagram' });
     
     const scope = [
-      'instagram_basic',
-      'instagram_content_publish',
-      'instagram_manage_comments',
-      'instagram_manage_insights',
-      'pages_show_list',
-      'pages_read_engagement',
-      'public_profile'
+      'instagram_business_basic',
+      'instagram_business_content_publish',
+      'instagram_business_manage_comments',
+      'instagram_business_manage_insights',
+      'instagram_business_manage_messages'
     ].join(',');
 
-    return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code&state=${state}`;
+    return `https://api.instagram.com/oauth/authorize?client_id=${platformConfig.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
   }
 
   /**
@@ -146,46 +143,19 @@ export class SocialMediaService {
     const platformConfig = await this.getPlatformConfig(platform) as any;
     
     if (platform === 'instagram') {
-      // Exchange code for Facebook Access Token (used for IG Business)
-      const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-        params: {
-          client_id: platformConfig.appId,
-          client_secret: platformConfig.appSecret,
-          redirect_uri: redirectUri,
-          code: code
-        }
-      });
-      
+      const params = new URLSearchParams();
+      params.append('client_id', platformConfig.appId);
+      params.append('client_secret', platformConfig.appSecret);
+      params.append('grant_type', 'authorization_code');
+      params.append('redirect_uri', redirectUri);
+      params.append('code', code);
+      const tokenRes = await axios.post('https://api.instagram.com/oauth/access_token', params.toString());
       const accessToken = tokenRes.data.access_token;
-
-      // Get Facebook Pages and their linked Instagram Business accounts
-      const pagesRes = await axios.get('https://graph.facebook.com/v22.0/me/accounts', {
-        params: {
-          access_token: accessToken,
-          fields: 'id,name,instagram_business_account{id,username,profile_picture_url,name}'
-        }
+      const userId = tokenRes.data.user_id;
+      const userRes = await axios.get(`https://graph.instagram.com/v22.0/${userId}`, {
+        params: { fields: 'id,username,name,profile_picture_url', access_token: accessToken }
       });
-
-      const pages = pagesRes.data.data || [];
-      const igAccounts: any[] = [];
-
-      for (const page of pages) {
-        if (page.instagram_business_account) {
-          const ig = page.instagram_business_account;
-          igAccounts.push({
-            id: ig.id,
-            name: ig.name || ig.username,
-            username: ig.username,
-            profile_picture: ig.profile_picture_url || null,
-            platform: 'instagram',
-            access_token: accessToken, // Use the FB token to manage IG
-            account_type: 'Business',
-            page_id: page.id // Required to manage the IG account via FB Page
-          });
-        }
-      }
-
-      return igAccounts;
+      return [{ id: userRes.data.id, name: userRes.data.name || userRes.data.username, username: userRes.data.username, profile_picture: userRes.data.profile_picture_url || null, platform: 'instagram', access_token: accessToken, account_type: 'Professional', page_id: userRes.data.id }];
     }
 
     if (platform === 'facebook' || platform === 'threads') {
