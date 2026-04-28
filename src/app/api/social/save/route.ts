@@ -20,18 +20,18 @@ export async function POST(request: Request) {
 
     // Required fields check (platform specific IDs and tokens)
     if (!profile.id || !profile.platform || !profile.access_token) {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Missing required profile fields: id, platform, access_token' 
+      return NextResponse.json({
+        success: false,
+        message: 'Missing required profile fields: id, platform, access_token'
       }, { status: 400 });
     }
 
     // 3. Save to database using standardized manager
     await SocialManager.saveAccount(businessId, profile);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `${profile.platform.charAt(0).toUpperCase() + profile.platform.slice(1)} account connected successfully!` 
+    return NextResponse.json({
+      success: true,
+      message: `${profile.platform.charAt(0).toUpperCase() + profile.platform.slice(1)} account connected successfully!`
     });
   } catch (error: any) {
     console.error('Social Save Error:', error.message);

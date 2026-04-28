@@ -42,7 +42,7 @@ export async function GET(request: Request) {
       let logoUrl = p.media?.fileUrl || null;
       // Override Google logo to 'G' only logo
       if (p.nameKey === 'gmb') {
-        logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg';
+        logoUrl = 'https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png';
       }
 
       return {
