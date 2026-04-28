@@ -17,8 +17,8 @@ export class LinkedinService implements SocialPlatformService {
     const config = await this.getPlatformConfig();
     const state = Buffer.from(JSON.stringify({ businessId, platform: 'linkedin' })).toString('base64');
     
-    // Added organization scopes for Pages support
-    const scope = encodeURIComponent('openid profile email w_member_social rw_organization_admin w_organization_social');
+    // Reverted to basic scopes because original app doesn't have Organization products
+    const scope = encodeURIComponent('openid profile email w_member_social');
     
     return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${config.appId!.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
