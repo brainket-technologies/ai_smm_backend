@@ -17,8 +17,8 @@ export class LinkedinService implements SocialPlatformService {
     const config = await this.getPlatformConfig();
     const state = Buffer.from(JSON.stringify({ businessId, platform: 'linkedin' })).toString('base64');
     
-    // Using OpenID Connect scopes (recommended for new apps)
-    const scope = encodeURIComponent('openid profile email w_member_social');
+    // Added organization scopes for Pages support
+    const scope = encodeURIComponent('openid profile email w_member_social rw_organization_admin w_organization_social');
     
     return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${config.appId!.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
@@ -39,25 +39,63 @@ export class LinkedinService implements SocialPlatformService {
     });
     
     const accessToken = tokenRes.data.access_token;
-    
+    const profiles: SocialProfile[] = [];
+
+    // 1. Fetch User Profile
     console.log('[LinkedinService] Fetching profile via OpenID Connect...');
     const userRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
-    
     const userData = userRes.data;
-    
-    return [{
-      id: userData.sub, // OpenID 'sub' is the unique identifier
+
+    profiles.push({
+      id: userData.sub,
       name: userData.name,
       username: userData.name,
       platform: 'linkedin',
       access_token: accessToken,
-      refresh_token: undefined, // LinkedIn v2 tokens usually don't return refresh_token unless specifically requested/configured
+      refresh_token: undefined,
       account_type: 'Profile',
       page_id: userData.sub,
       profile_picture: userData.picture || null
-    }];
+    });
+
+    // 2. Fetch Organizations (Pages)
+    try {
+      console.log('[LinkedinService] Fetching managed organizations...');
+      const orgAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls?q=roleAssignee&role=ADMINISTRATOR&state=APPROVED', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      const orgElements = orgAclRes.data.elements || [];
+      for (const element of orgElements) {
+        const orgUrn = element.organizationalTarget; // Format: urn:li:organization:12345
+        const orgId = orgUrn.split(':').pop();
+
+        console.log(`[LinkedinService] Fetching details for organization: ${orgUrn}`);
+        const orgDetailsRes = await axios.get(`https://api.linkedin.com/v2/organizations/${orgId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        const orgData = orgDetailsRes.data;
+        profiles.push({
+          id: orgUrn,
+          name: orgData.localizedName || orgData.id,
+          username: orgData.localizedName || orgData.id,
+          platform: 'linkedin',
+          access_token: accessToken,
+          refresh_token: undefined,
+          account_type: 'Page',
+          page_id: orgUrn,
+          profile_picture: null // Logo fetching in LinkedIn is complex, defaulting to null for now
+        });
+      }
+    } catch (error: any) {
+      console.log('[LinkedinService] Error fetching organizations (likely missing scopes or products):', error.response?.data || error.message);
+      // We don't throw here to at least return the personal profile
+    }
+    
+    return profiles;
   }
 
   async disconnect(businessId: string, accountId: string): Promise<void> {
