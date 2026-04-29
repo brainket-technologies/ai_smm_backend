@@ -150,6 +150,24 @@ export async function GET(request: Request) {
       });
     }
 
+    // 7. Payment Config Construction
+    const paymentMethods = await prisma.paymentMethod.findMany({ where: { isActive: true } });
+    const defaultPayment = paymentMethods.find(p => p.isDefault) || paymentMethods[0];
+    const dynamicPayment: Record<string, any> = {
+      gateway: defaultPayment?.name || 'none',
+      mode: defaultPayment?.mode || 'test',
+      credentials: {}
+    };
+
+    if (defaultPayment) {
+      const cfg = (defaultPayment.config as any) || {};
+      if (defaultPayment.name === 'razorpay') {
+        dynamicPayment.credentials = { key_id: cfg.keyId || '' };
+      } else if (defaultPayment.name === 'stripe') {
+        dynamicPayment.credentials = { publishable_key: cfg.publishableKey || '' };
+      }
+    }
+
     const staticPagesRecords = await prisma.staticPage.findMany({ where: { isActive: true } });
     const dynamicStaticPages = staticPagesRecords.map(page => {
       // Extract root URL from apiBaseUrl or use default
@@ -202,6 +220,7 @@ export async function GET(request: Request) {
         auth: dynamicAuth,
         ads_config: dynamicAds,
         otp_config: dynamicOtp,
+        payment_config: dynamicPayment,
         static_pages: dynamicStaticPages
       },
       features: dynamicFeatures,

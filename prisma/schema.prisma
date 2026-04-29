@@ -587,6 +587,22 @@ model UserBlock {
   @@map("user_blocks")
 }
 
+model SubscriptionTransaction {
+  id               BigInt   @id @default(autoincrement())
+  userId           BigInt   @map("user_id")
+  tierKey          String   @map("tier_key")
+  amount           Decimal  @db.Decimal
+  currency         String
+  gateway          String   // 'razorpay' | 'stripe'
+  gatewayOrderId   String   @unique @map("gateway_order_id")
+  gatewayPaymentId String?  @unique @map("gateway_payment_id")
+  status           String   // 'pending' | 'success' | 'failed'
+  createdAt        DateTime @default(now()) @map("created_at")
+  user             User     @relation(fields: [userId], references: [id])
+
+  @@map("subscription_transactions")
+}
+
 model UserSubscription {
   id        BigInt           @id @default(autoincrement())
   userId    BigInt           @map("user_id")
@@ -632,6 +648,7 @@ model User {
   blockedUsers      UserBlock[]          @relation("UserToUserBlockBlocker")
   blocks            UserBlock[]          @relation("UserToUserBlockUser")
   userSubscriptions UserSubscription[]
+  subscriptionTransactions SubscriptionTransaction[]
   currency          Currency?            @relation(fields: [currencyCode], references: [code])
   profileMedia      MediaFile?           @relation("UserProfileImage", fields: [mediaId], references: [id])
   role              Role?                @relation(fields: [roleId], references: [id])

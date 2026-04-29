@@ -203,6 +203,9 @@ export class AuthService {
         where: { id: user.id },
         data: { isVerified: true },
       });
+
+      // Auto-assign trial on first verification
+      await this.assignTrialSubscription(user.id);
     }
 
     // 6. Generate JWT
@@ -284,6 +287,9 @@ export class AuthService {
           },
         });
         isNewUser = true;
+
+        // Auto-assign trial on first registration
+        await this.assignTrialSubscription(user.id);
       } else {
         // Link the account if not already linked
         const updateData: any = { isVerified: true };
@@ -294,6 +300,11 @@ export class AuthService {
           where: { id: user.id },
           data: updateData,
         });
+
+        // If user was newly verified (linked social for first time), assign trial
+        if (updateData.isVerified) {
+           await this.assignTrialSubscription(user.id);
+        }
       }
 
       // 3. Handle Device Token and Versioning
@@ -462,7 +473,17 @@ export class AuthService {
   static async getFormattedUserData(userId: bigint) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { role: true, profileMedia: true, deviceTokens: true },
+      include: { 
+        role: true, 
+        profileMedia: true, 
+        deviceTokens: true,
+        userSubscriptions: {
+          where: { status: 'active' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: { tier: true }
+        }
+      },
     }) as any;
 
     if (!user) return null;
@@ -477,12 +498,59 @@ export class AuthService {
     userData.is_blocked = blockCount > 0;
     userData.devices = userData.deviceTokens || [];
     
+    // Format subscription info
+    const activeSub = user.userSubscriptions?.[0];
+    userData.subscription = activeSub ? {
+      tier_key: activeSub.tierKey,
+      status: activeSub.status,
+      start_date: activeSub.startDate,
+      end_date: activeSub.endDate,
+      plan_name: activeSub.tier?.name || activeSub.tierKey
+    } : {
+      tier_key: 'free',
+      status: 'active',
+      is_default: true
+    };
+
     delete userData.roleId;
     delete userData.mediaId;
     delete userData.profileMedia;
     delete userData.deviceTokens;
+    delete userData.userSubscriptions;
 
     return userData;
+  }
+
+  /**
+   * Assigns a dynamic trial subscription to a user.
+   */
+  static async assignTrialSubscription(userId: bigint) {
+    try {
+      // 1. Fetch Trial Days from AppConfig
+      const config = await prisma.appConfig.findFirst({
+        orderBy: { createdAt: 'desc' }
+      });
+      const trialDays = config?.freeTrialDays ?? 10;
+
+      // 2. Create Trial Subscription (Pro Tier)
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + trialDays);
+
+      await prisma.userSubscription.create({
+        data: {
+          userId,
+          tierKey: 'pro', // Trial gives Pro features
+          status: 'active',
+          startDate: new Date(),
+          endDate: endDate
+        }
+      });
+
+      console.log(`[AuthService] Assigned ${trialDays}-day trial to user ${userId}`);
+    } catch (error) {
+      console.error('[AuthService] Failed to assign trial:', error);
+      // Don't throw, let the user login continue as 'free'
+    }
   }
 
   /**
