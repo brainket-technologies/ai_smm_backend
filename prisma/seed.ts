@@ -239,6 +239,7 @@ async function main() {
     },
     "vcard": {
       "vcard_share_access": true,
+      "vcard_digital_access": true,
       "vcard_designer_carousel": true,
       "vcard_whatsapp_direct": true,
       "vcard_premium_themes": true
@@ -286,7 +287,8 @@ async function main() {
     },
     "notifications": {
       "notifications_view_access": true,
-      "notifications_clear_action": true
+      "notifications_clear_action": true,
+      "notifications_settings_access": true
     },
     "monetization": {
       "ads_free_experience": false,
@@ -339,8 +341,11 @@ async function main() {
         "settings_account_delete",
         "settings_help_support",
         "notifications_view_access",
+        "notifications_settings_access",
         "biz_social_connect",
-        "ai_rewarded_ads"
+        "ai_rewarded_ads",
+        "vcard_share_access",
+        "vcard_digital_access"
       ],
       "limits": {
         "unlimited": false,
@@ -406,8 +411,13 @@ async function main() {
         "settings_account_delete",
         "settings_help_support",
         "notifications_view_access",
+        "notifications_clear_action",
+        "notifications_settings_access",
         "biz_social_connect",
-        "ads_free_experience"
+        "ads_free_experience",
+        "vcard_share_access",
+        "vcard_digital_access",
+        "vcard_whatsapp_direct"
       ],
       "limits": {
         "unlimited": false,
