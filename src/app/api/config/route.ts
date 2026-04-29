@@ -1,11 +1,51 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { validateApiKey } from '@/lib/auth-utils';
+import { prisma } from '@/lib/prisma';
+import { validateApiKey, validateAuth } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
   // Validate API Key
-  const auth = validateApiKey(request);
-  if (!auth.isValid) return auth.response;
+  const apiKeyAuth = validateApiKey(request);
+  if (!apiKeyAuth.isValid) return apiKeyAuth.response;
+
+  // Optional: Validate User Auth to fetch specific subscription
+  let userSubscription = null;
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      const auth = await validateAuth(request);
+      if (auth.isValid && auth.userId) {
+        // Fetch active subscription for this user
+        const sub = await prisma.userSubscription.findFirst({
+          where: { 
+            userId: auth.userId,
+            status: 'active'
+          },
+          include: {
+            tier: true
+          }
+        });
+
+        if (sub) {
+          // Fetch permissions for this tier
+          const perms = await prisma.subscriptionPermission.findMany({
+            where: { tierKey: sub.tierKey }
+          });
+
+          userSubscription = {
+            tier_key: sub.tierKey,
+            start_date: sub.startDate,
+            end_date: sub.endDate,
+            status: sub.status,
+            badge: sub.tier.badge,
+            permissions: perms.map(p => p.permissionKey)
+          };
+        }
+      }
+    } catch (e) {
+      // Ignore auth errors for config call (fallback to guest config)
+      console.error('Config auth error:', e);
+    }
+  }
 
   try {
     // 1. Fetch App Config (taking the first one)
@@ -230,7 +270,8 @@ export async function GET(request: Request) {
       subscriptions: {
         free_trial_days: appConfig?.freeTrialDays ?? 7,
         tiers: serializedTiers
-      }
+      },
+      user_subscription: userSubscription
     };
 
     return NextResponse.json({
