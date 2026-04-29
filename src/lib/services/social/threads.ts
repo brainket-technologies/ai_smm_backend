@@ -17,7 +17,7 @@ export class ThreadsService implements SocialPlatformService {
     const config = await this.getPlatformConfig();
     const state = Buffer.from(JSON.stringify({ businessId, platform: 'threads' })).toString('base64');
     const scope = 'threads_basic,threads_content_publish';
-    return `https://threads.net/oauth/authorize?client_id=${config.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
+    return `https://www.threads.net/oauth/authorize?response_type=code&client_id=${config.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
   }
 
   async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
