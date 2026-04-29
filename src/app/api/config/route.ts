@@ -14,6 +14,17 @@ export async function GET(request: Request) {
     try {
       const auth = await validateAuth(request);
       if (auth.isValid && auth.userId) {
+        // --- Catch-up Logic for Old Users ---
+        // If user has a business but NO subscription record at all, give them a trial
+        const businessCount = await prisma.business.count({ where: { ownerId: auth.userId } });
+        const subCount = await prisma.userSubscription.count({ where: { userId: auth.userId } });
+
+        if (businessCount > 0 && subCount === 0) {
+          // Import AuthService dynamically to avoid circular dependencies if any
+          const { AuthService } = await import('@/lib/services/auth-service');
+          await AuthService.assignTrialSubscription(auth.userId);
+        }
+
         // Fetch active subscription for this user
         const sub = await prisma.userSubscription.findFirst({
           where: { 
