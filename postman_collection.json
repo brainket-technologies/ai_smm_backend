@@ -250,6 +250,70 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Reward Limit (Ad)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/user/reward-limit",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "reward-limit"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscription",
+			"item": [
+				{
+					"name": "Get History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscription/history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscription", "history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tierKey\": \"pro\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subscription/create-order",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscription", "create-order"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
