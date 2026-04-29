@@ -8,7 +8,10 @@ export async function GET(request: Request) {
     if (!auth.isValid) return auth.response;
 
     const transactions = await prisma.subscriptionTransaction.findMany({
-      where: { userId: auth.userId! },
+      where: { 
+        userId: auth.userId!,
+        status: { not: 'pending' }
+      },
       orderBy: { createdAt: 'desc' }
     });
 
