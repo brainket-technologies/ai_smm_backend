@@ -23,8 +23,17 @@ export class ThreadsService implements SocialPlatformService {
   async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
-    const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
-      params: { client_id: config.appId, client_secret: config.appSecret, redirect_uri: redirectUri, code: code }
+    const params = new URLSearchParams({
+      client_id: config.appId!.trim(),
+      client_secret: config.appSecret!.trim(),
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+      code: code,
+    });
+
+    console.log('[ThreadsService] Exchanging code for token...');
+    const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', params.toString(), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
     const accessToken = tokenRes.data.access_token;
 
