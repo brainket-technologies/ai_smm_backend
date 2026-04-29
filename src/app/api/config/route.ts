@@ -160,11 +160,14 @@ export async function GET(request: Request) {
     };
 
     if (defaultPayment) {
+      const mode = defaultPayment.mode || 'test';
       const cfg = (defaultPayment.config as any) || {};
+      const activeConfig = cfg[mode] || cfg;
+
       if (defaultPayment.name === 'razorpay') {
-        dynamicPayment.credentials = { key_id: cfg.keyId || '' };
+        dynamicPayment.credentials = { key_id: activeConfig.keyId || '' };
       } else if (defaultPayment.name === 'stripe') {
-        dynamicPayment.credentials = { publishable_key: cfg.publishableKey || '' };
+        dynamicPayment.credentials = { publishable_key: activeConfig.publishableKey || '' };
       }
     }
 
