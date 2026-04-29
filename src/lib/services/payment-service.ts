@@ -102,13 +102,37 @@ export class PaymentService {
 
   /**
    * Upgrades user subscription after successful payment.
+   * Implements "Subscription Stacking": If purchased during trial, the plan starts AFTER trial ends.
    */
   static async upgradeUser(userId: bigint, tierKey: string, transactionId: string) {
     const tier = await prisma.subscriptionTier.findUnique({ where: { tierKey } });
     if (!tier) throw new Error('Invalid tier key.');
 
-    // Calculate end date based on price period (month/year)
-    const endDate = new Date();
+    // 1. Calculate Trial End Date to see if we should stack
+    const firstBusiness = await prisma.business.findFirst({
+      where: { ownerId: userId },
+      orderBy: { createdAt: 'asc' },
+      select: { createdAt: true }
+    });
+
+    const appConfig = await prisma.appConfig.findFirst({ orderBy: { createdAt: 'desc' } });
+    const trialDays = appConfig?.freeTrialDays ?? 7;
+
+    let startDate = new Date();
+    
+    if (firstBusiness) {
+      const trialEndDate = new Date(firstBusiness.createdAt!.getTime() + trialDays * 24 * 60 * 60 * 1000);
+      const now = new Date();
+
+      // If trial is still active, start the new plan AFTER trial ends
+      if (trialEndDate > now) {
+        startDate = trialEndDate;
+        console.log(`[Subscription] Trial active until ${trialEndDate}. Stacking new plan to start then.`);
+      }
+    }
+
+    // 2. Calculate end date based on price period (month/year) from the NEW start date
+    const endDate = new Date(startDate);
     if (tier.pricePeriod === 'year') {
       endDate.setFullYear(endDate.getFullYear() + 1);
     } else {
@@ -123,7 +147,8 @@ export class PaymentService {
         update: {
           tierKey,
           status: 'active',
-          startDate: new Date(),
+          isTrial: false, // It's a paid plan now, though trial benefits might still apply via frontend override
+          startDate: startDate,
           endDate: endDate,
           createdAt: new Date()
         },
@@ -131,7 +156,8 @@ export class PaymentService {
           userId,
           tierKey,
           status: 'active',
-          startDate: new Date(),
+          isTrial: false,
+          startDate: startDate,
           endDate: endDate
         }
       }),
