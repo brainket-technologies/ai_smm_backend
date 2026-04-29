@@ -43,8 +43,19 @@ export class BusinessService {
         });
 
         if (!existingSub) {
-          // No longer creating a pro subscription. 
-          // We will use the business creation date as the trial trigger.
+          // Create a 'free' subscription record but mark it as a trial
+          // This keeps the plan as 'free' but allows us to track trial status in DB
+          await prisma.userSubscription.create({
+            data: {
+              userId: userId,
+              tierKey: 'free', 
+              isTrial: true,
+              startDate: new Date(),
+              endDate: new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000),
+              status: 'active'
+            }
+          });
+          console.log(`[BusinessService] Created free trial record for user ${userId}`);
         }
       } catch (error) {
         console.error('Error creating trial subscription:', error);

@@ -37,6 +37,27 @@ export async function GET(request: Request) {
           }
         });
 
+        // --- Catch-up Logic for Old Users ---
+        // If user has a business but NO subscription record at all, give them a free trial record
+        if (firstBusiness && !sub) {
+          // Fetch AppConfig to get freeTrialDays
+          const appConfig = await prisma.appConfig.findFirst({ orderBy: { createdAt: 'desc' } });
+          const trialDays = appConfig?.freeTrialDays ?? 7;
+
+          const trialEndDate = new Date(firstBusiness.createdAt!.getTime() + trialDays * 24 * 60 * 60 * 1000);
+          
+          await prisma.userSubscription.create({
+            data: {
+              userId: auth.userId,
+              tierKey: 'free',
+              isTrial: true,
+              startDate: firstBusiness.createdAt,
+              endDate: trialEndDate,
+              status: 'active'
+            }
+          });
+        }
+
         if (sub) {
           // Fetch permissions for this tier
           const perms = await prisma.subscriptionPermission.findMany({
@@ -48,6 +69,7 @@ export async function GET(request: Request) {
             start_date: sub.startDate,
             end_date: sub.endDate,
             status: sub.status,
+            is_trial: sub.isTrial,
             badge: sub.tier.badge,
             permissions: perms.map(p => p.permissionKey)
           };

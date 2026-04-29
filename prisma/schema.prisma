@@ -610,6 +610,7 @@ model UserSubscription {
   startDate DateTime?        @default(now()) @map("start_date")
   endDate   DateTime?        @map("end_date")
   status    String?          @default("active")
+  isTrial   Boolean?         @default(false) @map("is_trial")
   createdAt DateTime?        @default(now()) @map("created_at")
   tier      SubscriptionTier @relation(fields: [tierKey], references: [tierKey])
   user      User             @relation(fields: [userId], references: [id])
