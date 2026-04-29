@@ -5,6 +5,11 @@ export class BusinessService {
    * Registers a new business for a user.
    */
   static async register(userId: bigint, data: { name: string; phone: string; categoryId: string }) {
+    // Check if this is the user's first business
+    const businessCount = await prisma.business.count({
+      where: { ownerId: userId }
+    });
+
     const business = await prisma.business.create({
       data: {
         ownerId: userId,
@@ -24,6 +29,35 @@ export class BusinessService {
         },
       },
     });
+
+    // If this is the first business, give them a free trial
+    if (businessCount === 0) {
+      try {
+        // Get trial days from app config
+        const config = await prisma.appConfig.findFirst();
+        const trialDays = config?.freeTrialDays || 7;
+
+        // Check if user already has a subscription to avoid duplicates
+        const existingSub = await prisma.userSubscription.findFirst({
+          where: { userId: userId }
+        });
+
+        if (!existingSub) {
+          await prisma.userSubscription.create({
+            data: {
+              userId: userId,
+              tierKey: 'pro', // Default trial tier
+              startDate: new Date(),
+              endDate: new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000),
+              status: 'active'
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error creating trial subscription:', error);
+        // We don't throw here to avoid failing business registration if subscription fails
+      }
+    }
 
     return JSON.parse(JSON.stringify(business, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
