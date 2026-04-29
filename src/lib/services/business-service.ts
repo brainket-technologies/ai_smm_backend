@@ -43,15 +43,8 @@ export class BusinessService {
         });
 
         if (!existingSub) {
-          await prisma.userSubscription.create({
-            data: {
-              userId: userId,
-              tierKey: 'pro', // Default trial tier
-              startDate: new Date(),
-              endDate: new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000),
-              status: 'active'
-            }
-          });
+          // No longer creating a pro subscription. 
+          // We will use the business creation date as the trial trigger.
         }
       } catch (error) {
         console.error('Error creating trial subscription:', error);

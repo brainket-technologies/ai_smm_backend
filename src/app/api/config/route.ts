@@ -7,22 +7,23 @@ export async function GET(request: Request) {
   const apiKeyAuth = validateApiKey(request);
   if (!apiKeyAuth.isValid) return apiKeyAuth.response;
 
-  // Optional: Validate User Auth to fetch specific subscription
+  // Optional: Validate User Auth to fetch specific subscription and trial info
   let userSubscription = null;
+  let trialStartDate = null;
   const authHeader = request.headers.get('Authorization');
   if (authHeader?.startsWith('Bearer ')) {
     try {
       const auth = await validateAuth(request);
       if (auth.isValid && auth.userId) {
-        // --- Catch-up Logic for Old Users ---
-        // If user has a business but NO subscription record at all, give them a trial
-        const businessCount = await prisma.business.count({ where: { ownerId: auth.userId } });
-        const subCount = await prisma.userSubscription.count({ where: { userId: auth.userId } });
-
-        if (businessCount > 0 && subCount === 0) {
-          // Import AuthService dynamically to avoid circular dependencies if any
-          const { AuthService } = await import('@/lib/services/auth-service');
-          await AuthService.assignTrialSubscription(auth.userId);
+        // Fetch first business to determine trial start date
+        const firstBusiness = await prisma.business.findFirst({
+          where: { ownerId: auth.userId },
+          orderBy: { createdAt: 'asc' },
+          select: { createdAt: true }
+        });
+        
+        if (firstBusiness) {
+          trialStartDate = firstBusiness.createdAt;
         }
 
         // Fetch active subscription for this user
@@ -280,7 +281,8 @@ export async function GET(request: Request) {
       features: dynamicFeatures,
       subscriptions: {
         free_trial_days: appConfig?.freeTrialDays ?? 7,
-        tiers: serializedTiers
+        tiers: serializedTiers,
+        trial_start_date: trialStartDate
       },
       user_subscription: userSubscription
     };
