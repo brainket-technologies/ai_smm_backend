@@ -19,7 +19,7 @@ export class PaymentService {
     if (!gateway) throw new Error('No payment gateway configured.');
 
     const mode = gateway.mode || 'test';
-    const activeConfig = config[mode] || config;
+    const activeConfig = (gateway.config as any)[mode] || gateway.config;
 
     if (gateway.name === 'razorpay') {
       const razorpay = new Razorpay({
@@ -55,7 +55,7 @@ export class PaymentService {
         keyId: activeConfig.keyId
       };
     } else if (gateway.name === 'stripe') {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || config.secretKey, {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || (gateway.config as any).secretKey, {
         apiVersion: '2025-01-27' as any,
       });
 
@@ -93,7 +93,7 @@ export class PaymentService {
       return {
         gateway: 'stripe',
         sessionId: session.id,
-        publishableKey: activeConfig.publishableKey || config.publishableKey
+        publishableKey: activeConfig.publishableKey || (gateway.config as any).publishableKey
       };
     }
 
