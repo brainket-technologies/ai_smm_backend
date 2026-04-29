@@ -23,7 +23,7 @@ export class LinkedinService implements SocialPlatformService {
     return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${config.appId!.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   }
 
-  async getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]> {
+  async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
     const params = new URLSearchParams();

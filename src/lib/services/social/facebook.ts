@@ -29,7 +29,7 @@ export class FacebookService implements SocialPlatformService {
     return `https://www.facebook.com/v22.0/dialog/oauth?client_id=${config.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
   }
 
-  async getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]> {
+  async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
     const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {

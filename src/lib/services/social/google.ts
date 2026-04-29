@@ -20,7 +20,7 @@ export class GoogleService implements SocialPlatformService {
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${config.appId!.trim()}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}&access_type=offline&include_granted_scopes=true`;
   }
 
-  async getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]> {
+  async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
     const params = new URLSearchParams();

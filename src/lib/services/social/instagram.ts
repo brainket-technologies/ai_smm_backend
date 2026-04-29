@@ -28,7 +28,7 @@ export class InstagramService implements SocialPlatformService {
     return `https://api.instagram.com/oauth/authorize?client_id=${config.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
   }
 
-  async getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]> {
+  async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
     const params = new URLSearchParams();

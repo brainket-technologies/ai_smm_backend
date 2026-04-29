@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
     console.log(`[${timestamp}] Fetching profiles for ${platform}.`);
     const service = SocialManager.getService(platform);
-    const profiles = await service.getProfiles(code, redirectUri);
+    const profiles = await service.getProfiles(code, redirectUri, state);
     
     if (profiles.length === 0) {
       const deepLink = `brandboost://oauth?status=no_pages&platform=${platform}`;

@@ -12,6 +12,6 @@ export interface SocialProfile {
 
 export interface SocialPlatformService {
   getAuthUrl(businessId: string, redirectUri: string): Promise<string>;
-  getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]>;
+  getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]>;
   disconnect(businessId: string, accountId: string): Promise<void>;
 }

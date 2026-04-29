@@ -5,6 +5,7 @@ import { GoogleService } from './google';
 import { ThreadsService } from './threads';
 import { YoutubeService } from './youtube';
 import { LinkedinService } from './linkedin';
+import { TwitterService } from './twitter';
 import prisma from '@/lib/prisma';
 
 export class SocialManager {
@@ -15,6 +16,7 @@ export class SocialManager {
     threads: new ThreadsService(),
     youtube: new YoutubeService(),
     linkedin: new LinkedinService(),
+    twitter: new TwitterService(),
     // Add other platforms as needed
   };
 

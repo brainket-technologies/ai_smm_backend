@@ -20,7 +20,7 @@ export class ThreadsService implements SocialPlatformService {
     return `https://www.threads.net/oauth/authorize?client_id=${config.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${state}`;
   }
 
-  async getProfiles(code: string, redirectUri: string): Promise<SocialProfile[]> {
+  async getProfiles(code: string, redirectUri: string, state?: string): Promise<SocialProfile[]> {
     const config = await this.getPlatformConfig();
     
     const tokenRes = await axios.get('https://graph.facebook.com/v22.0/oauth/access_token', {
