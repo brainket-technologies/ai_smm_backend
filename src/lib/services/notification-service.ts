@@ -9,6 +9,7 @@ export class NotificationService {
 
     if (!admin.apps.length) {
       try {
+        console.log('[NotificationService] Initializing Firebase Admin...');
         const fcmConfig = await prisma.externalServiceConfig.findFirst({
           where: { 
             category: 'notifications',
@@ -19,24 +20,32 @@ export class NotificationService {
 
         if (fcmConfig && fcmConfig.config) {
           const config: any = fcmConfig.config;
+          console.log('[NotificationService] Using DB configuration for Project:', config.projectId);
           
+          if (!config.projectId || !config.clientEmail || !config.privateKey) {
+            throw new Error('Incomplete Firebase configuration in database');
+          }
+
           admin.initializeApp({
             credential: admin.credential.cert({
               projectId: config.projectId,
               clientEmail: config.clientEmail,
-              privateKey: config.privateKey?.replace(/\\n/g, '\n'),
+              privateKey: config.privateKey.replace(/\\n/g, '\n'),
             }),
           });
-          console.log('[NotificationService] Firebase Admin initialized from DB config.');
         } else {
+          console.log('[NotificationService] No DB config found, using environment variables.');
+          // Fallback to default initialization (expects GOOGLE_APPLICATION_CREDENTIALS or standard envs)
           admin.initializeApp();
-          console.log('[NotificationService] Firebase Admin initialized with default credentials.');
         }
       } catch (error) {
         console.error('[NotificationService] Initialization error:', error);
+        // If it fails, we don't set isInitialized to true so it can retry
+        return;
       }
     }
     this.isInitialized = true;
+    console.log('[NotificationService] Firebase Admin successfully initialized.');
   }
 
   /**
@@ -77,10 +86,11 @@ export class NotificationService {
       };
 
       const response = await admin.messaging().send(message);
-      return { success: true, response };
-    } catch (error) {
-      console.error('[NotificationService] Error sending to token:', error);
-      return { success: false, error };
+      console.log('[NotificationService] Successfully sent to token:', response);
+      return { success: true, messageId: response };
+    } catch (error: any) {
+      console.error('[NotificationService] Error sending to token:', error.message);
+      return { success: false, error: error.message };
     }
   }
 
@@ -90,6 +100,7 @@ export class NotificationService {
   static async sendToTopic(topic: string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
     await this.initialize();
     try {
+      console.log(`[NotificationService] Sending topic notification to "${topic}"...`);
       const message: admin.messaging.Message = {
         topic,
         notification: { 
@@ -99,21 +110,25 @@ export class NotificationService {
         },
         data: {
           ...(data || {}),
-          channelId: channelId || 'smm_post_alerts'
+          channelId: channelId || 'smm_post_alerts',
+          click_action: 'FLUTTER_NOTIFICATION_CLICK', // Legacy but helpful
         },
         android: {
+          priority: 'high',
           notification: {
             imageUrl: imageUrl || undefined,
             channelId: channelId || 'smm_post_alerts',
+            sound: 'default',
           }
         }
       };
 
       const response = await admin.messaging().send(message);
-      return { success: true, response };
-    } catch (error) {
-      console.error('[NotificationService] Error sending to topic:', error);
-      return { success: false, error };
+      console.log('[NotificationService] Successfully sent to topic:', response);
+      return { success: true, messageId: response };
+    } catch (error: any) {
+      console.error('[NotificationService] Error sending to topic:', error.message);
+      return { success: false, error: error.message };
     }
   }
 
