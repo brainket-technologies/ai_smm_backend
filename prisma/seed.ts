@@ -240,6 +240,7 @@ async function main() {
     "vcard": {
       "vcard_share_access": true,
       "vcard_digital_access": true,
+      "vcard_sound_access": true,
       "vcard_designer_carousel": true,
       "vcard_whatsapp_direct": true,
       "vcard_premium_themes": true
