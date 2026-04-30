@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if (!auth.isValid) return auth.response;
 
   try {
-    const { title, body, target, topic, userId, data } = await request.json();
+    const { title, body, imageUrl, channelId, target, topic, userId, data } = await request.json();
 
     if (!title || !body) {
       return NextResponse.json({ success: false, message: 'Title and Body are required' }, { status: 400 });
@@ -30,11 +30,11 @@ export async function POST(request: Request) {
 
     if (target === 'all') {
       // Broadcast to all users
-      result = await NotificationService.broadcast(title, body, data);
+      result = await NotificationService.broadcast(title, body, imageUrl, channelId, data);
     } 
     else if (target === 'topic' && topic) {
       // Send to specific topic
-      result = await NotificationService.sendToTopic(topic, title, body, data);
+      result = await NotificationService.sendToTopic(topic, title, body, imageUrl, channelId, data);
     } 
     else if (target === 'user' && userId) {
       // Send to specific user (Fetch their tokens)
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       }
 
       // Send to all tokens of this user
-      const promises = tokens.map(t => NotificationService.sendToToken(t.fcmToken!, title, body, data));
+      const promises = tokens.map(t => NotificationService.sendToToken(t.fcmToken!, title, body, imageUrl, channelId, data));
       const results = await Promise.all(promises);
       
       const successCount = results.filter(r => r.success).length;

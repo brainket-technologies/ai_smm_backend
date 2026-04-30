@@ -20,7 +20,8 @@ import {
   Layers,
   Palette,
   FolderTree,
-  Globe
+  Globe,
+  Bell
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -72,6 +73,7 @@ const menuGroups = [
     items: [
       { name: "Platform Users", href: "/admin/users",    icon: Users      },
       { name: "Roles",          href: "/admin/roles",    icon: Shield     },
+      { name: "Notifications",  href: "/admin/notifications", icon: Bell },
       { name: "User Feedback",  href: "/admin/feedback", icon: HelpCircle },
       { name: "Help & Support", href: "/admin/help",     icon: HelpCircle },
     ]
