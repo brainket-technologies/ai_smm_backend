@@ -10,6 +10,7 @@ interface TierFormModalProps {
   tier?: any; 
   availableFeatures: { moduleName: string; featureKey: string }[];
   availablePlatforms: { id: string; name: string }[];
+  onSuccess?: (tier: any) => void;
 }
 
 function cn(...classes: any[]) {
@@ -94,6 +95,7 @@ export default function TierFormModal({ isOpen, onClose, tier, availableFeatures
     const result = await upsertTier(formData);
     setIsLoading(false);
     if (result.success) {
+      if (onSuccess) onSuccess(result.tier);
       onClose();
     } else {
       alert("Error: " + result.error);

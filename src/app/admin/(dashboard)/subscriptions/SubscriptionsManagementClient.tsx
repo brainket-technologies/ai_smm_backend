@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit3, CreditCard, Shield, Star, Rocket, Sparkles, CheckCircle, Zap } from "lucide-react";
 import { deleteTier, toggleTierStatus } from './actions';
 import TierFormModal from "@/components/admin/TierFormModal";
@@ -16,6 +16,20 @@ export default function SubscriptionsManagementClient({ initialTiers, availableF
   const [selectedTier, setSelectedTier] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+
+  useEffect(() => {
+    setTiers(initialTiers);
+  }, [initialTiers]);
+
+  const handleSaveSuccess = (updatedTier: any) => {
+    setTiers(prev => {
+      const exists = prev.find(t => t.id === updatedTier.id);
+      if (exists) {
+        return prev.map(t => t.id === updatedTier.id ? updatedTier : t);
+      }
+      return [...prev, updatedTier];
+    });
+  };
 
   const filteredTiers = tiers.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -208,6 +222,7 @@ export default function SubscriptionsManagementClient({ initialTiers, availableF
         tier={selectedTier}
         availableFeatures={availableFeatures}
         availablePlatforms={availablePlatforms}
+        onSuccess={handleSaveSuccess}
       />
     </div>
   );
