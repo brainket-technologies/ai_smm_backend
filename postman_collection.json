@@ -939,13 +939,15 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/notifications?userId=1",
+							"raw": "{{base_url}}/api/notifications",
 							"host": ["{{base_url}}"],
-							"path": ["api", "notifications"],
-							"query": [{ "key": "userId", "value": "1" }]
+							"path": ["api", "notifications"]
 						}
 					},
 					"response": []
@@ -955,11 +957,14 @@
 					"request": {
 						"method": "PATCH",
 						"header": [
-							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": \"1\",\n    \"notificationId\": \"1\"\n}",
+							"raw": "{\n    \"notificationId\": \"1\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -975,11 +980,14 @@
 					"request": {
 						"method": "PATCH",
 						"header": [
-							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": \"1\",\n    \"markAll\": true\n}",
+							"raw": "{\n    \"markAll\": true\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -995,11 +1003,14 @@
 					"request": {
 						"method": "DELETE",
 						"header": [
-							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": \"1\",\n    \"notificationId\": \"1\"\n}",
+							"raw": "{\n    \"notificationId\": \"1\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -1015,13 +1026,15 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/notifications/count?userId=1",
+							"raw": "{{base_url}}/api/notifications/count",
 							"host": ["{{base_url}}"],
-							"path": ["api", "notifications", "count"],
-							"query": [{ "key": "userId", "value": "1" }]
+							"path": ["api", "notifications", "count"]
 						}
 					},
 					"response": []

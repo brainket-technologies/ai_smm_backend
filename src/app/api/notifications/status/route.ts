@@ -1,21 +1,19 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { validateApiKey } from '@/lib/auth-utils';
+import { validateApiKey, validateAuth } from '@/lib/auth-utils';
 
 export async function PATCH(request: Request) {
   try {
-    const apikey = request.headers.get('x-api-key');
-    if (!validateApiKey(apikey)) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+    const apiCheck = validateApiKey(request);
+    if (!apiCheck.isValid) return apiCheck.response;
+
+    const auth = await validateAuth(request);
+    if (!auth.isValid) return auth.response;
 
     const { userId, notificationId, markAll } = await request.json();
+    const uId = auth.userId || (userId ? BigInt(userId) : null);
 
-    if (!userId) {
+    if (!uId) {
       return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
     }
-
-    const uId = BigInt(userId);
 
     if (markAll) {
       // Mark all visible notifications as read for this user
@@ -72,18 +70,18 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const apikey = request.headers.get('x-api-key');
-    if (!validateApiKey(apikey)) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+    const apiCheck = validateApiKey(request);
+    if (!apiCheck.isValid) return apiCheck.response;
+
+    const auth = await validateAuth(request);
+    if (!auth.isValid) return auth.response;
 
     const { userId, notificationId, clearAll } = await request.json();
+    const uId = auth.userId || (userId ? BigInt(userId) : null);
 
-    if (!userId) {
+    if (!uId) {
       return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
     }
-
-    const uId = BigInt(userId);
 
     if (clearAll) {
       const visibleNotifications = await prisma.notifications.findMany({
