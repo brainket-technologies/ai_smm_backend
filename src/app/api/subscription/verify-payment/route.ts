@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
     // 3. Update Subscription (Find User from Transaction)
     // Find the order to get the tierKey and userId
-    const transaction = await prisma.transaction.findFirst({
+    const transaction = await prisma.subscriptionTransaction.findFirst({
       where: { gatewayOrderId: razorpay_order_id },
       orderBy: { createdAt: 'desc' }
     });
