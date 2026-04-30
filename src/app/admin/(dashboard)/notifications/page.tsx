@@ -30,8 +30,9 @@ export default function AdminNotificationsPage() {
     title: '',
     body: '',
     imageUrl: '',
-    target: 'all', // 'all' or 'user'
+    target: 'all', // 'all', 'user', or 'token'
     userId: '',
+    directToken: '',
     channelId: 'smm_post_alerts',
     sound: '',
   });
@@ -119,27 +120,40 @@ export default function AdminNotificationsPage() {
                       type="button"
                       onClick={() => setFormData({ ...formData, target: 'all' })}
                       className={cn(
-                        "flex-1 flex items-center justify-center py-2.5 rounded-xl text-xs font-bold transition-all",
+                        "flex-1 flex items-center justify-center py-2.5 rounded-xl text-[10px] font-bold transition-all",
                         formData.target === 'all' 
                           ? "bg-white dark:bg-slate-700 text-accent shadow-sm ring-1 ring-slate-200 dark:ring-slate-600" 
                           : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                       )}
                     >
-                      <Users className="h-3.5 w-3.5 mr-2" />
-                      All Users
+                      <Users className="h-3.5 w-3.5 mr-1" />
+                      All
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, target: 'user' })}
                       className={cn(
-                        "flex-1 flex items-center justify-center py-2.5 rounded-xl text-xs font-bold transition-all",
+                        "flex-1 flex items-center justify-center py-2.5 rounded-xl text-[10px] font-bold transition-all",
                         formData.target === 'user' 
                           ? "bg-white dark:bg-slate-700 text-accent shadow-sm ring-1 ring-slate-200 dark:ring-slate-600" 
                           : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                       )}
                     >
-                      <User className="h-3.5 w-3.5 mr-2" />
-                      Specific User
+                      <User className="h-3.5 w-3.5 mr-1" />
+                      User
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, target: 'token' })}
+                      className={cn(
+                        "flex-1 flex items-center justify-center py-2.5 rounded-xl text-[10px] font-bold transition-all",
+                        formData.target === 'token' 
+                          ? "bg-white dark:bg-slate-700 text-accent shadow-sm ring-1 ring-slate-200 dark:ring-slate-600" 
+                          : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      )}
+                    >
+                      <Hash className="h-3.5 w-3.5 mr-1" />
+                      Token
                     </button>
                   </div>
                 </div>
@@ -159,6 +173,22 @@ export default function AdminNotificationsPage() {
                           <option key={u.id} value={u.id}>{u.name || 'No Name'} ({u.email || u.phone})</option>
                         ))}
                       </select>
+                    </div>
+                  </div>
+                )}
+
+                {formData.target === 'token' && (
+                  <div className="animate-in slide-in-from-top-2 duration-300">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Direct FCM Token</label>
+                    <div className="relative group">
+                      <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-accent transition-colors" />
+                      <input
+                        type="text"
+                        placeholder="Paste FCM token here..."
+                        value={formData.directToken}
+                        onChange={(e) => setFormData({ ...formData, directToken: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                      />
                     </div>
                   </div>
                 )}

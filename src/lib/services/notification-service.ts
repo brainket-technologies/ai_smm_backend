@@ -20,17 +20,21 @@ export class NotificationService {
 
         if (fcmConfig && fcmConfig.config) {
           const config: any = fcmConfig.config;
-          console.log('[NotificationService] Using DB configuration for Project:', config.projectId);
+          const projectId = config.project_id || config.projectId;
+          const clientEmail = config.client_email || config.clientEmail;
+          const privateKey = config.private_key || config.privateKey;
+
+          console.log('[NotificationService] Using DB configuration for Project:', projectId);
           
-          if (!config.projectId || !config.clientEmail || !config.privateKey) {
-            throw new Error('Incomplete Firebase configuration in database');
+          if (!projectId || !clientEmail || !privateKey) {
+            throw new Error('Incomplete Firebase configuration in database (missing projectId, clientEmail or privateKey)');
           }
 
           admin.initializeApp({
             credential: admin.credential.cert({
-              projectId: config.projectId,
-              clientEmail: config.clientEmail,
-              privateKey: config.privateKey.replace(/\\n/g, '\n'),
+              projectId,
+              clientEmail,
+              privateKey: privateKey.replace(/\\n/g, '\n'),
             }),
           });
         } else {

@@ -116,6 +116,9 @@ export async function sendNotification(formData: any) {
       const successCount = results.filter(r => r.success).length;
       result = { success: successCount > 0, details: results };
     } 
+    else if (target === 'token' && formData.directToken) {
+      result = await NotificationService.sendToToken(formData.directToken, title, body, imageUrl, channelId, data);
+    }
     else {
       return { success: false, message: 'Invalid target or missing parameters' };
     }
