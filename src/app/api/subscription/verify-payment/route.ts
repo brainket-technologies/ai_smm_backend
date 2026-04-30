@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { PaymentService } from '@/lib/services/payment-service';
 import prisma from '@/lib/prisma';
-import { getAuthSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -28,14 +27,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Invalid payment signature' }, { status: 400 });
     }
 
-    // 3. Update Subscription (Find User from Order or Session)
-    // For now, we assume the user is authenticated in the session
-    const session = await getAuthSession();
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Find the order to get the tierKey
+    // 3. Update Subscription (Find User from Transaction)
+    // Find the order to get the tierKey and userId
     const transaction = await prisma.transaction.findFirst({
       where: { gatewayOrderId: razorpay_order_id },
       orderBy: { createdAt: 'desc' }
@@ -45,8 +38,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
     }
 
+    if (!transaction.userId) {
+        return NextResponse.json({ success: false, message: 'User not associated with order' }, { status: 400 });
+    }
+
     await PaymentService.upgradeUser(
-      BigInt(session.user.id), 
+      BigInt(transaction.userId), 
       transaction.tierKey, 
       razorpay_order_id
     );
