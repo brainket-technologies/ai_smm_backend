@@ -71,6 +71,22 @@ export async function sendNotification(formData: any) {
       return { success: false, message: 'Title and Body are required' };
     }
 
+    // 4. Save to History first so admin can see the attempt
+    let notification;
+    try {
+      notification = await prisma.notifications.create({
+        data: {
+          title,
+          message: body,
+          type: channelId || 'general',
+          isGlobal: target === 'all',
+        }
+      });
+      revalidatePath("/admin/notifications");
+    } catch (saveError) {
+      console.error('Failed to save notification to history:', saveError);
+    }
+
     let result;
     const data = { channelId, sound };
 
@@ -88,7 +104,10 @@ export async function sendNotification(formData: any) {
       });
 
       if (tokens.length === 0) {
-        return { success: false, message: 'No active device tokens found for this user' };
+        return { 
+          success: false, 
+          message: 'No active device tokens found for this user. The attempt was logged in history.' 
+        };
       }
 
       const promises = tokens.map(t => NotificationService.sendToToken(t.fcmToken!, title, body, imageUrl, channelId, data));
@@ -101,19 +120,10 @@ export async function sendNotification(formData: any) {
       return { success: false, message: 'Invalid target or missing parameters' };
     }
 
-    if (result.success) {
-      await prisma.notifications.create({
-        data: {
-          title,
-          message: body,
-          type: channelId || 'general',
-          isGlobal: target === 'all',
-        }
-      });
-      revalidatePath("/admin/notifications");
-    }
-
-    return { success: result.success, message: result.success ? 'Sent successfully' : 'Failed to send' };
+    return { 
+      success: result.success, 
+      message: result.success ? 'Sent successfully' : 'Failed to send to FCM. Check Firebase configuration.' 
+    };
   } catch (error: any) {
     console.error("Error sending notification:", error);
     return { success: false, message: error.message };
