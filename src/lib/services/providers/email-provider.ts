@@ -13,6 +13,50 @@ export class EmailProvider {
     }
   }
 
+  /**
+   * Generic method to send any email via SMTP.
+   */
+  static async sendEmail(to: string, subject: string, html: string, text?: string, config?: any) {
+    // If config is not provided, we might need to fetch it from DB or env
+    // For now, let's assume it's passed or available via env
+    const { host, port, user, pass, from, appName } = config || {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+      from: process.env.SMTP_FROM,
+      appName: process.env.APP_NAME
+    };
+
+    if (!host || !port || !user || !pass) {
+      console.warn('Incomplete SMTP configuration. Email not sent.');
+      return { success: false, error: 'Incomplete SMTP configuration' };
+    }
+
+    const transporter = nodemailer.createTransport({
+      host,
+      port: Number(port),
+      secure: Number(port) === 465,
+      auth: { user, pass },
+    });
+
+    const mailOptions = {
+      from: from || `"${appName || 'App'}" <${user}>`,
+      to,
+      subject,
+      text: text || '',
+      html,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      return { success: true };
+    } catch (error: any) {
+      console.error('SMTP Error:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
   private static async sendViaSmtp(email: string, otp: string, config: any) {
     const { host, port, user, pass, from, appName } = config;
 

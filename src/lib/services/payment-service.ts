@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import Razorpay from 'razorpay';
 import Stripe from 'stripe';
+import { InvoiceEmailService } from './invoice-email-service';
 
 export class PaymentService {
   /**
@@ -140,7 +141,7 @@ export class PaymentService {
     }
 
     // Use transaction for atomicity
-    return await prisma.$transaction([
+    await prisma.$transaction([
       // 1. Update/Create User Subscription
       prisma.userSubscription.upsert({
         where: { id: (await prisma.userSubscription.findFirst({ where: { userId } }))?.id || -1 },
@@ -167,5 +168,12 @@ export class PaymentService {
         data: { status: 'success' }
       })
     ]);
+
+    // 3. Send Invoice Email (Async, don't wait to respond to webhook)
+    InvoiceEmailService.sendInvoice(userId, transactionId, tierKey).catch((err: any) => {
+      console.error('[PaymentService] Failed to trigger invoice email:', err);
+    });
+
+    return { success: true };
   }
 }
