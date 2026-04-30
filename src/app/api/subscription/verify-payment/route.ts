@@ -50,7 +50,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Payment verified and subscription activated' 
+      message: 'Payment verified and subscription activated',
+      data: true
     });
 
   } catch (error: any) {
