@@ -14,6 +14,33 @@ import prisma from '@/lib/prisma';
  *   data?: any
  * }
  */
+
+export async function GET(request: Request) {
+  const auth = validateApiKey(request);
+  if (!auth.isValid) return auth.response;
+
+  try {
+    const history = await prisma.notifications.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      include: {
+        media: true
+      }
+    });
+
+    const serializedHistory = history.map(item => ({
+      ...item,
+      id: item.id.toString(),
+      mediaId: item.mediaId?.toString()
+    }));
+
+    return NextResponse.json({ success: true, history: serializedHistory });
+  } catch (error: any) {
+    console.error('[AdminNotificationHistoryAPI] Error:', error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   // 1. Security Check (Using API Key for Admin tools)
   const auth = validateApiKey(request);
@@ -60,6 +87,24 @@ export async function POST(request: Request) {
     } 
     else {
       return NextResponse.json({ success: false, message: 'Invalid target or missing parameters' }, { status: 400 });
+    }
+
+    // 4. Save to History (Optional but good for tracking)
+    if (result.success) {
+      try {
+        await prisma.notifications.create({
+          data: {
+            title,
+            message: body,
+            type: channelId || 'general',
+            isGlobal: target === 'all',
+            // Store target info in metadata if needed, but the basic fields are enough for now
+          }
+        });
+      } catch (saveError) {
+        console.error('Failed to save notification to history:', saveError);
+        // We don't fail the request if saving history fails, as the notification was sent
+      }
     }
 
     return NextResponse.json({

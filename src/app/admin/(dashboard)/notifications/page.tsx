@@ -16,6 +16,7 @@ import { toast } from "react-hot-toast";
 export default function AdminNotificationsPage() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     body: '',
@@ -28,7 +29,22 @@ export default function AdminNotificationsPage() {
 
   React.useEffect(() => {
     fetchUsers();
+    fetchHistory();
   }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch('/api/admin/notifications', {
+        headers: { 'apikey': process.env.NEXT_PUBLIC_ADMIN_API_KEY || '' }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setHistory(data.history);
+      }
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -74,7 +90,8 @@ export default function AdminNotificationsPage() {
       const result = await response.json();
       if (result.success) {
         toast.success("Notification sent successfully!");
-        setFormData({ ...formData, title: '', body: '', imageUrl: '', userId: '' });
+        setFormData({ ...formData, title: '', body: '', imageUrl: '', userId: '', sound: '' });
+        fetchHistory();
       } else {
         toast.error(result.message || "Failed to send notification");
       }
@@ -271,6 +288,65 @@ export default function AdminNotificationsPage() {
                 Connected
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* History Table */}
+      <div className="mt-12">
+        <div className="flex items-center space-x-3 mb-6">
+          <Hash className="h-5 w-5 text-accent" />
+          <h2 className="text-xl font-bold text-white">Recent Activity</h2>
+        </div>
+
+        <div className="bg-[#0D1512] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-white/5 bg-white/5">
+                  <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Date</th>
+                  <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Title</th>
+                  <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Category</th>
+                  <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Target</th>
+                  <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Message</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {history.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-12 text-center text-gray-600 font-medium">
+                      No notifications sent yet.
+                    </td>
+                  </tr>
+                ) : (
+                  history.map((item) => (
+                    <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
+                      <td className="p-4 text-xs text-gray-500 whitespace-nowrap">
+                        {new Date(item.createdAt).toLocaleString()}
+                      </td>
+                      <td className="p-4 text-sm font-bold text-white group-hover:text-accent transition-colors">
+                        {item.title}
+                      </td>
+                      <td className="p-4">
+                        <span className="px-3 py-1 bg-accent/10 border border-accent/20 rounded-full text-[10px] font-black uppercase text-accent tracking-wider">
+                          {item.type}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                          item.isGlobal ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+                        }`}>
+                          {item.isGlobal ? 'Broadcast' : 'Direct'}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-gray-400 max-w-xs truncate">
+                        {item.message}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
