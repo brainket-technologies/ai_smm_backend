@@ -8,15 +8,12 @@ import {
   User, 
   Image as ImageIcon, 
   Hash,
-  AlertCircle,
   CheckCircle2,
-  Clock,
-  ChevronRight,
-  MoreVertical,
   Plus
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import DataManagementToolbar from '@/components/admin/DataManagementToolbar';
+import { getUsersWithTokens, getNotificationHistory, sendNotification } from './actions';
 
 function cn(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -40,36 +37,17 @@ export default function AdminNotificationsPage() {
   });
 
   React.useEffect(() => {
-    fetchUsers();
-    fetchHistory();
+    loadData();
   }, []);
 
-  const fetchHistory = async () => {
-    try {
-      const response = await fetch('/api/admin/notifications', {
-        headers: { 'apikey': process.env.NEXT_PUBLIC_ADMIN_API_KEY || '' }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setHistory(data.history);
-      }
-    } catch (error) {
-      console.error("Error fetching history:", error);
-    }
-  };
+  const loadData = async () => {
+    const [usersRes, historyRes] = await Promise.all([
+      getUsersWithTokens(),
+      getNotificationHistory()
+    ]);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/admin/users', {
-        headers: { 'apikey': process.env.NEXT_PUBLIC_ADMIN_API_KEY || '' }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setUsers(data.users);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
+    if (usersRes.success) setUsers(usersRes.users || []);
+    if (historyRes.success) setHistory(historyRes.history || []);
   };
 
   const channels = [
@@ -83,37 +61,19 @@ export default function AdminNotificationsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.body) {
-      toast.error("Title and Body are required");
-      return;
-    }
-
     setLoading(true);
-    try {
-      const response = await fetch('/api/admin/notifications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': process.env.NEXT_PUBLIC_ADMIN_API_KEY || ''
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        toast.success("Notification sent successfully!");
-        setFormData({ ...formData, title: '', body: '', imageUrl: '', userId: '', sound: '' });
-        fetchHistory();
-        setShowForm(false);
-      } else {
-        toast.error(result.message || "Failed to send notification");
-      }
-    } catch (error) {
-      console.error("Error sending notification:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
+    
+    const result = await sendNotification(formData);
+    
+    if (result.success) {
+      toast.success("Notification sent successfully!");
+      setFormData({ ...formData, title: '', body: '', imageUrl: '', userId: '', sound: '' });
+      loadData();
+      setShowForm(false);
+    } else {
+      toast.error(result.message || "Failed to send");
     }
+    setLoading(false);
   };
 
   const filteredHistory = history.filter(item => 
@@ -151,7 +111,6 @@ export default function AdminNotificationsPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column */}
               <div className="space-y-4">
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Recipient Target</label>
@@ -187,7 +146,7 @@ export default function AdminNotificationsPage() {
 
                 {formData.target === 'user' && (
                   <div className="animate-in slide-in-from-top-2 duration-300">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Select User</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Select User (With Active App)</label>
                     <div className="relative group">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-accent transition-colors" />
                       <select
@@ -223,7 +182,7 @@ export default function AdminNotificationsPage() {
                     <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-accent transition-colors" />
                     <input
                       type="text"
-                      placeholder="e.g. fast_alert (res/raw resource name)"
+                      placeholder="e.g. fast_alert"
                       value={formData.sound}
                       onChange={(e) => setFormData({ ...formData, sound: e.target.value })}
                       className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
@@ -232,7 +191,6 @@ export default function AdminNotificationsPage() {
                 </div>
               </div>
 
-              {/* Right Column */}
               <div className="space-y-4">
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Content Details</label>
@@ -356,16 +314,6 @@ export default function AdminNotificationsPage() {
             </tbody>
           </table>
         </div>
-
-        {filteredHistory.length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center">
-            <div className="h-12 w-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-4">
-              <Bell className="h-6 w-6 text-slate-300" />
-            </div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest">No Logs Found</h3>
-            <p className="text-xs text-slate-500 mt-1">Try broadcasting your first notification above.</p>
-          </div>
-        )}
       </div>
     </div>
   );

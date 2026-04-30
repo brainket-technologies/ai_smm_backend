@@ -1,18 +1,24 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { validateApiKey } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const apikey = request.headers.get('apikey');
-
-  // Basic API key protection
-  if (apikey !== process.env.ADMIN_API_KEY) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-  }
+  // Use the standard utility for API key validation
+  const auth = validateApiKey(request);
+  if (!auth.isValid) return auth.response;
 
   try {
+    // Fetch users who have at least one active device with an FCM token
     const users = await prisma.user.findMany({
-      where: { isDeleted: false },
+      where: { 
+        isDeleted: false,
+        deviceTokens: {
+          some: {
+            isActive: true,
+            fcmToken: { not: null }
+          }
+        }
+      },
       select: {
         id: true,
         name: true,
