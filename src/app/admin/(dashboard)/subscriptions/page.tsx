@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import SubscriptionsManagementClient from "./SubscriptionsManagementClient";
 
+export const revalidate = 0;
+
 export default async function SubscriptionsPage() {
   // 1. Fetch Tiers
   const tiersRaw = await prisma.subscriptionTier.findMany({
