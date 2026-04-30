@@ -46,7 +46,7 @@ export async function GET(request: Request) {
         },
         media: {
           select: {
-            url: true
+            fileUrl: true
           }
         }
       },
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       isGlobal: n.isGlobal,
       isRead: n.states.length > 0 ? n.states[0].isRead : false,
       createdAt: n.createdAt,
-      imageUrl: n.media?.url || null,
+      imageUrl: n.media?.fileUrl || null,
       actionUrl: n.actionUrl
     }));
 
