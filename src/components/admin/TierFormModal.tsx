@@ -17,7 +17,7 @@ function cn(...classes: any[]) {
     return classes.filter(Boolean).join(' ');
 }
 
-export default function TierFormModal({ isOpen, onClose, tier, availableFeatures, availablePlatforms }: TierFormModalProps) {
+export default function TierFormModal({ isOpen, onClose, tier, availableFeatures, availablePlatforms, onSuccess }: TierFormModalProps) {
   const [formData, setFormData] = useState<any>({
     tierKey: '',
     name: '',
