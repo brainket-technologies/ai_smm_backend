@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     // 1. Get Razorpay Secret
     const gateway = await prisma.paymentMethod.findUnique({ where: { name: 'razorpay' } });
     const config = (gateway?.config as any) || {};
-    const secret = process.env.RAZORPAY_KEY_SECRET || config.key_secret;
+    const secret = process.env.RAZORPAY_KEY_SECRET || config.key_secret || config.keySecret || config.live?.keySecret;
 
     if (!secret) {
       return NextResponse.json({ success: false, message: 'Razorpay secret not configured' }, { status: 500 });
