@@ -71,7 +71,28 @@ export async function sendNotification(formData: any) {
       return { success: false, message: 'Title and Body are required' };
     }
 
-    // 4. Save to History first so admin can see the attempt
+    // 4. Handle MediaId if imageUrl exists
+    let mediaId = null;
+    if (imageUrl) {
+      const media = await prisma.mediaFile.findFirst({
+        where: { fileUrl: imageUrl }
+      });
+      
+      if (media) {
+        mediaId = media.id;
+      } else {
+        const newMedia = await prisma.mediaFile.create({
+          data: {
+            fileUrl: imageUrl,
+            fileType: 'image',
+            mediaCategory: 'notification'
+          }
+        });
+        mediaId = newMedia.id;
+      }
+    }
+
+    // 5. Save to History
     let notification;
     try {
       notification = await prisma.notifications.create({
@@ -80,6 +101,7 @@ export async function sendNotification(formData: any) {
           message: body,
           type: channelId || 'general',
           isGlobal: target === 'all',
+          mediaId: mediaId,
         }
       });
       revalidatePath("/admin/notifications");
