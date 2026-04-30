@@ -248,6 +248,7 @@ model Business {
   products           Product[]
   services           Service[]
   socialAccounts     SocialAccount[]
+  reviews            Review[]
 
   @@map("businesses")
 }
@@ -704,4 +705,17 @@ model OtpVerification {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_verifications")
+}
+
+model Review {
+  id              BigInt    @id @default(autoincrement())
+  businessId      BigInt    @map("business_id")
+  rating          Int       @default(5)
+  customerName    String?   @map("customer_name")
+  comment         String?
+  selectedTags    Json?     @map("selected_tags")
+  createdAt       DateTime? @default(now()) @map("created_at")
+  business        Business  @relation(fields: [businessId], references: [id])
+
+  @@map("reviews")
 }

@@ -7,6 +7,31 @@
 	},
 	"item": [
 		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Submit Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"businessId\": \"8\",\n    \"rating\": 5,\n    \"customerName\": \"John Doe\",\n    \"comment\": \"Excellent service!\",\n    \"selectedTags\": [\"Friendly Staff\", \"Fast Delivery\"]\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/public/review",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "public", "review"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Auth",
 			"item": [
 				{
