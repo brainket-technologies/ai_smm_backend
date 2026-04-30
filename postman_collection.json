@@ -930,6 +930,103 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications?userId=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications"],
+							"query": [{ "key": "userId", "value": "1" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"1\",\n    \"notificationId\": \"1\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"1\",\n    \"markAll\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"1\",\n    \"notificationId\": \"1\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "x-api-key", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/count?userId=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "count"],
+							"query": [{ "key": "userId", "value": "1" }]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
