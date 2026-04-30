@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 
 export default function AdminNotificationsPage() {
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     body: '',
@@ -24,6 +25,24 @@ export default function AdminNotificationsPage() {
     channelId: 'smm_post_alerts',
     sound: '',
   });
+
+  React.useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        headers: { 'apikey': process.env.NEXT_PUBLIC_ADMIN_API_KEY || '' }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUsers(data.users);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const channels = [
     { id: 'smm_post_alerts', name: 'Post Alerts' },
@@ -117,16 +136,21 @@ export default function AdminNotificationsPage() {
 
               {formData.target === 'user' && (
                 <div className="animate-in slide-in-from-top-2 duration-300">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">User ID</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Select User</label>
                   <div className="relative">
-                    <Hash className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
-                    <input
-                      type="text"
-                      placeholder="Enter user database ID..."
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
+                    <select
                       value={formData.userId}
                       onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-                    />
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all appearance-none"
+                    >
+                      <option value="" className="bg-[#0D1512]">-- Select a user --</option>
+                      {users.map(u => (
+                        <option key={u.id} value={u.id} className="bg-[#0D1512]">
+                          {u.name || 'No Name'} ({u.email || u.phone})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}
