@@ -1,0 +1,123 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { validateApiKey } from '@/lib/auth-utils';
+
+export async function PATCH(request: Request) {
+  try {
+    const apikey = request.headers.get('x-api-key');
+    if (!validateApiKey(apikey)) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { userId, notificationId, markAll } = await request.json();
+
+    if (!userId) {
+      return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
+    }
+
+    const uId = BigInt(userId);
+
+    if (markAll) {
+      // Mark all visible notifications as read for this user
+      // We first find all notifications the user can see
+      const visibleNotifications = await prisma.notifications.findMany({
+        where: {
+          OR: [{ userId: uId }, { isGlobal: true }],
+          states: { none: { userId: uId, isDeleted: true } }
+        },
+        select: { id: true }
+      });
+
+      const promises = visibleNotifications.map(n => 
+        prisma.userNotificationState.upsert({
+          where: { userId_notificationId: { userId: uId, notificationId: n.id } },
+          update: { isRead: true },
+          create: { userId: uId, notificationId: n.id, isRead: true }
+        })
+      );
+      
+      await Promise.all(promises);
+
+      return NextResponse.json({ success: true, message: 'All marked as read' });
+    }
+
+    if (!notificationId) {
+      return NextResponse.json({ success: false, message: 'Missing notificationId' }, { status: 400 });
+    }
+
+    const nId = BigInt(notificationId);
+
+    await prisma.userNotificationState.upsert({
+      where: {
+        userId_notificationId: {
+          userId: uId,
+          notificationId: nId
+        }
+      },
+      update: { isRead: true },
+      create: {
+        userId: uId,
+        notificationId: nId,
+        isRead: true
+      }
+    });
+
+    return NextResponse.json({ success: true, message: 'Marked as read' });
+
+  } catch (error: any) {
+    console.error('[API Notifications Patch] Error:', error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const apikey = request.headers.get('x-api-key');
+    if (!validateApiKey(apikey)) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { userId, notificationId, clearAll } = await request.json();
+
+    if (!userId) {
+      return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
+    }
+
+    const uId = BigInt(userId);
+
+    if (clearAll) {
+      const visibleNotifications = await prisma.notifications.findMany({
+        where: {
+          OR: [{ userId: uId }, { isGlobal: true }]
+        },
+        select: { id: true }
+      });
+
+      const promises = visibleNotifications.map(n => 
+        prisma.userNotificationState.upsert({
+          where: { userId_notificationId: { userId: uId, notificationId: n.id } },
+          update: { isDeleted: true },
+          create: { userId: uId, notificationId: n.id, isDeleted: true }
+        })
+      );
+      
+      await Promise.all(promises);
+      return NextResponse.json({ success: true, message: 'All cleared' });
+    }
+
+    if (!notificationId) {
+      return NextResponse.json({ success: false, message: 'Missing notificationId' }, { status: 400 });
+    }
+
+    await prisma.userNotificationState.upsert({
+      where: { userId_notificationId: { userId: uId, notificationId: BigInt(notificationId) } },
+      update: { isDeleted: true },
+      create: { userId: uId, notificationId: BigInt(notificationId), isDeleted: true }
+    });
+
+    return NextResponse.json({ success: true, message: 'Notification cleared' });
+
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
