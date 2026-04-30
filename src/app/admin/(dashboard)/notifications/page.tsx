@@ -22,6 +22,7 @@ export default function AdminNotificationsPage() {
     target: 'all', // 'all' or 'user'
     userId: '',
     channelId: 'smm_post_alerts',
+    sound: '',
   });
 
   const channels = [
@@ -30,6 +31,7 @@ export default function AdminNotificationsPage() {
     { id: 'smm_marketing', name: 'Marketing' },
     { id: 'smm_engagement', name: 'Engagement' },
     { id: 'smm_reviews', name: 'Reviews' },
+    { id: 'smm_festivals', name: 'Festivals' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,6 +143,21 @@ export default function AdminNotificationsPage() {
                     <option key={c.id} value={c.id} className="bg-[#0D1512]">{c.name}</option>
                   ))}
                 </select>
+              </div>
+
+              {/* Sound Name */}
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Custom Sound (Optional)</label>
+                <div className="relative">
+                  <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
+                  <input
+                    type="text"
+                    placeholder="e.g. notification_sound (without extension)"
+                    value={formData.sound}
+                    onChange={(e) => setFormData({ ...formData, sound: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                  />
+                </div>
               </div>
 
               {/* Title & Body */}
