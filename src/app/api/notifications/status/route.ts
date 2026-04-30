@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { validateApiKey, validateAuth } from '@/lib/auth-utils';
 
 export async function PATCH(request: Request) {
