@@ -39,7 +39,13 @@ export async function GET(req: NextRequest) {
         typeof value === 'bigint' ? value.toString() : value
       ));
 
-      return NextResponse.json({ res: "success", message: 'Account fetched successfully', data: serializedAccount });
+      const enrichedAccount = await populateLocationNames(serializedAccount);
+
+      return NextResponse.json({ 
+        res: "success", 
+        message: 'Account fetched successfully', 
+        data: enrichedAccount 
+      });
     }
 
     let orderBy: any = { updatedAt: 'desc' };

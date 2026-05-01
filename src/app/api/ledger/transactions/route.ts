@@ -59,7 +59,33 @@ export async function GET(req: NextRequest) {
     const check = await validateRequest(req);
     if (!check.isValid) return check.response;
 
+    const id = req.nextUrl.searchParams.get('id');
     const ledgerAccountId = req.nextUrl.searchParams.get('ledgerAccountId');
+
+    if (id) {
+      const transaction = await prisma.ledgerTransaction.findUnique({
+        where: { id: BigInt(id) },
+        include: {
+          product: { select: { name: true } },
+          service: { select: { name: true } },
+          ledgerAccount: { select: { name: true, businessId: true } }
+        }
+      });
+
+      if (!transaction) return NextResponse.json({ res: "error", message: 'Transaction not found' }, { status: 404 });
+
+      return NextResponse.json({
+        res: "success",
+        message: 'Transaction fetched successfully',
+        data: {
+          ...transaction,
+          id: transaction.id.toString(),
+          ledgerAccountId: transaction.ledgerAccountId.toString(),
+          productId: transaction.productId?.toString(),
+          serviceId: transaction.serviceId?.toString(),
+        }
+      });
+    }
 
     if (!ledgerAccountId) {
       return NextResponse.json({ error: 'ledgerAccountId is required' }, { status: 400 });
