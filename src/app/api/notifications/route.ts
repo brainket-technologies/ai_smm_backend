@@ -1,22 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
   try {
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
+    const check = await validateRequest(request);
+    if (!check.isValid) return check.response!;
 
-    const auth = await validateAuth(request);
-    if (!auth.isValid) return auth.response;
+    const userId = check.userId;
 
     const { searchParams } = new URL(request.url);
-    const userIdStr = searchParams.get('userId');
-    const userId = auth.userId || (userIdStr ? BigInt(userIdStr) : null);
-
-    if (!userId) {
-      return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
-    }
 
     // 1. Get all notifications for this user or global
     // 2. Filter out deleted ones
