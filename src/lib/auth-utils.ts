@@ -128,15 +128,18 @@ export function validateBusinessId(request: Request) {
 /**
  * Combined validation for API Key, Auth, and Business ID.
  */
-export async function validateRequest(request: Request) {
+export async function validateRequest(request: Request): Promise<
+  | { isValid: false; response: NextResponse }
+  | { isValid: true; userId: bigint; businessId: bigint; deviceId: string | null; deviceType: string; response?: never }
+> {
   const apiKeyCheck = validateApiKey(request);
-  if (!apiKeyCheck.isValid) return apiKeyCheck;
+  if (!apiKeyCheck.isValid) return apiKeyCheck as { isValid: false; response: NextResponse };
 
   const authCheck = await validateAuth(request);
-  if (!authCheck.isValid) return authCheck;
+  if (!authCheck.isValid) return authCheck as { isValid: false; response: NextResponse };
 
   const businessIdCheck = validateBusinessId(request);
-  if (!businessIdCheck.isValid) return businessIdCheck;
+  if (!businessIdCheck.isValid) return businessIdCheck as { isValid: false; response: NextResponse };
 
   const deviceType = request.headers.get('device-type');
   if (!deviceType) {
@@ -150,7 +153,7 @@ export async function validateRequest(request: Request) {
     isValid: true,
     userId: authCheck.userId as bigint,
     businessId: businessIdCheck.businessId as bigint,
-    deviceId: authCheck.deviceId,
+    deviceId: authCheck.deviceId ?? null,
     deviceType: deviceType
   };
 }
