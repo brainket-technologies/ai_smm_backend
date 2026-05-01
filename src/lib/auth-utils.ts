@@ -13,7 +13,7 @@ export function validateApiKey(request: Request) {
     return {
       isValid: false,
       response: NextResponse.json(
-        { success: false, message: 'Invalid or missing API Key' },
+        { res: false, message: 'Invalid or missing API Key' },
         { status: 401 }
       ),
     };
@@ -33,7 +33,7 @@ export async function validateAuth(request: Request) {
   if (!authHeader?.startsWith('Bearer ')) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'Authorization token required' }, { status: 401 })
+      response: NextResponse.json({ res: false, message: 'Authorization token required' }, { status: 401 })
     };
   }
 
@@ -43,7 +43,7 @@ export async function validateAuth(request: Request) {
   if (!decoded) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'Invalid or expired token' }, { status: 401 })
+      response: NextResponse.json({ res: false, message: 'Invalid or expired token' }, { status: 401 })
     };
   }
 
@@ -63,7 +63,7 @@ export async function validateAuth(request: Request) {
   if (!currentDeviceId) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'device-id header is required for this session' }, { status: 401 })
+      response: NextResponse.json({ res: false, message: 'device-id header is required for this session' }, { status: 401 })
     };
   }
 
@@ -81,7 +81,7 @@ export async function validateAuth(request: Request) {
   if (!device || device.tokenVersion !== decoded.version) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'Session expired or logged in from another device' }, { status: 401 })
+      response: NextResponse.json({ res: false, message: 'Session expired or logged in from another device' }, { status: 401 })
     };
   }
 
@@ -103,7 +103,7 @@ export function validateBusinessId(request: Request) {
     return {
       isValid: false,
       response: NextResponse.json(
-        { success: false, message: 'x-business-id header is required' },
+        { res: false, message: 'x-business-id header is required' },
         { status: 400 }
       ),
     };
@@ -118,7 +118,7 @@ export function validateBusinessId(request: Request) {
     return {
       isValid: false,
       response: NextResponse.json(
-        { success: false, message: 'Invalid x-business-id format' },
+        { res: false, message: 'Invalid x-business-id format' },
         { status: 400 }
       ),
     };
@@ -145,7 +145,7 @@ export async function validateRequest(request: Request): Promise<
   if (!deviceType) {
     return {
       isValid: false,
-      response: NextResponse.json({ success: false, message: 'device-type header is required' }, { status: 400 })
+      response: NextResponse.json({ res: false, message: 'device-type header is required' }, { status: 400 })
     };
   }
 
