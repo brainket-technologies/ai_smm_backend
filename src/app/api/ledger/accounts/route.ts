@@ -79,11 +79,16 @@ export async function GET(req: NextRequest) {
     ));
 
     return NextResponse.json({
+      success: true,
       accounts: serializedAccounts,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching ledger accounts:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Internal server error',
+      details: error.message 
+    }, { status: 500 });
   }
 }
 
