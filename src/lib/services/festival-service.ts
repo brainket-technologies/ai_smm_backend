@@ -38,15 +38,24 @@ export class FestivalService {
 
   static async getFestivals(country: string, year: number, state?: string) {
     // 1. Check if we already fetched for this combination
-    const fetchLog = await prisma.festivalFetchLog.findUnique({
-      where: {
-        country_state_year: {
-          country,
-          state: (state || null) as any,
-          year,
-        }
-      }
-    });
+    const fetchLog = await (state 
+      ? prisma.festivalFetchLog.findUnique({
+          where: {
+            country_state_year: {
+              country,
+              state,
+              year,
+            }
+          }
+        })
+      : prisma.festivalFetchLog.findFirst({
+          where: {
+            country,
+            state: null,
+            year,
+          }
+        })
+    );
 
     if (fetchLog?.fetched) {
       // 2. Fetch from database
@@ -58,24 +67,41 @@ export class FestivalService {
       await this.fetchAndStoreFromCalendarific(country, year, state);
       
       // 4. Update fetch log
-      await prisma.festivalFetchLog.upsert({
-        where: {
-          country_state_year: {
+      if (state) {
+        await prisma.festivalFetchLog.upsert({
+          where: {
+            country_state_year: {
+              country,
+              state,
+              year,
+            }
+          },
+          create: {
             country,
-            state: (state || null) as any,
+            state,
             year,
+            fetched: true,
+          },
+          update: {
+            fetched: true,
           }
-        },
-        create: {
-          country,
-          state: (state || null) as any,
-          year,
-          fetched: true,
-        },
-        update: {
-          fetched: true,
+        });
+      } else {
+        // For national (state: null), we use updateMany or find/create
+        const existing = await prisma.festivalFetchLog.findFirst({
+          where: { country, state: null, year }
+        });
+        if (existing) {
+          await prisma.festivalFetchLog.update({
+            where: { id: existing.id },
+            data: { fetched: true }
+          });
+        } else {
+          await prisma.festivalFetchLog.create({
+            data: { country, state: null, year, fetched: true }
+          });
         }
-      });
+      }
 
       // 5. Return from DB
       return await this.getFestivalsFromDb(country, year, state);
@@ -131,31 +157,38 @@ export class FestivalService {
         try {
           const holidayDate = new Date(holiday.date.iso);
           
-          await prisma.festival.upsert({
+          const existing = await prisma.festival.findFirst({
             where: {
-              name_date_country_state: {
-                name: holiday.name,
-                date: holidayDate,
-                country,
-                state: (state || null) as any,
-              }
-            },
-            create: {
               name: holiday.name,
-              description: holiday.description || '',
               date: holidayDate,
-              type: holiday.type?.[0] || 'Holiday',
-              primaryType: holiday.primary_type || 'Holiday',
               country,
               state: (state || null) as any,
-              year,
-            },
-            update: {
-              description: holiday.description || '',
-              type: holiday.type?.[0] || 'Holiday',
-              primaryType: holiday.primary_type || 'Holiday',
             }
           });
+
+          if (existing) {
+            await prisma.festival.update({
+              where: { id: existing.id },
+              data: {
+                description: holiday.description || '',
+                type: holiday.type?.[0] || 'Holiday',
+                primaryType: holiday.primary_type || 'Holiday',
+              }
+            });
+          } else {
+            await prisma.festival.create({
+              data: {
+                name: holiday.name,
+                description: holiday.description || '',
+                date: holidayDate,
+                type: holiday.type?.[0] || 'Holiday',
+                primaryType: holiday.primary_type || 'Holiday',
+                country,
+                state: (state || null) as any,
+                year,
+              }
+            });
+          }
         } catch (err: any) {
           // Skip duplicates or errors for individual items
           console.error(`Error saving holiday ${holiday.name}:`, err.message);
