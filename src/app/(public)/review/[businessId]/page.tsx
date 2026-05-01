@@ -40,7 +40,7 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
   }
 
   // Use primary logo (mediaId) or fallback to latest uploaded logo from mediaFiles relation
-  let logoUrl = business.media?.fileUrl || business.mediaFiles[0]?.fileUrl;
+  let logoUrl: string | undefined = business.media?.fileUrl || business.mediaFiles[0]?.fileUrl;
 
   // Final fallback: double check media_files table directly for any image linked to this businessId
   if (!logoUrl) {
