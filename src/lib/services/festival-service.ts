@@ -36,7 +36,7 @@ export class FestivalService {
     return apiKey;
   }
 
-  static async getFestivals(country: string, year: number, state?: string) {
+  static async getFestivals(country: string, year: number, state?: string, upcomingOnly: boolean = false) {
     // 1. Check if we already fetched for this combination
     const fetchLog = await (state 
       ? prisma.festivalFetchLog.findUnique({
@@ -59,7 +59,7 @@ export class FestivalService {
 
     if (fetchLog?.fetched) {
       // 2. Fetch from database
-      return await this.getFestivalsFromDb(country, year, state);
+      return await this.getFestivalsFromDb(country, year, state, upcomingOnly);
     }
 
     // 3. If not fetched, call external API
@@ -104,24 +104,32 @@ export class FestivalService {
       }
 
       // 5. Return from DB
-      return await this.getFestivalsFromDb(country, year, state);
+      return await this.getFestivalsFromDb(country, year, state, upcomingOnly);
     } catch (error: any) {
       console.error('Error in FestivalService:', error.message);
       // If API fails, return whatever is in DB
-      return await this.getFestivalsFromDb(country, year, state);
+      return await this.getFestivalsFromDb(country, year, state, upcomingOnly);
     }
   }
 
-  private static async getFestivalsFromDb(country: string, year: number, state?: string) {
+  private static async getFestivalsFromDb(country: string, year: number, state?: string, upcomingOnly: boolean = false) {
+    const where: any = {
+      country,
+      year,
+      OR: [
+        { state: null }, // National holidays
+        { state: (state || undefined) as any }, // State holidays if state provided
+      ]
+    };
+
+    if (upcomingOnly) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      where.date = { gte: today };
+    }
+
     return await prisma.festival.findMany({
-      where: {
-        country,
-        year,
-        OR: [
-          { state: null }, // National holidays
-          { state: (state || undefined) as any }, // State holidays if state provided
-        ]
-      },
+      where,
       orderBy: {
         date: 'asc'
       }

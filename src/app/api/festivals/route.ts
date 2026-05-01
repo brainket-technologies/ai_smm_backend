@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     let state = searchParams.get('state');
     let yearParam = searchParams.get('year');
     let year = yearParam ? parseInt(yearParam) : new Date().getFullYear();
+    let upcomingOnly = searchParams.get('upcomingOnly') === 'true';
 
     // Fetch business location regardless to ensure we have the context
     const businessId = check.businessId;
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
     if (!country) country = 'IN';
 
     // Fetch festivals using the service (lazy loading + caching logic)
-    const festivals = await FestivalService.getFestivals(country, year, state || undefined);
+    const festivals = await FestivalService.getFestivals(country, year, state || undefined, upcomingOnly);
 
     // Filter results if state was provided to include both national and state festivals
     // (The service already does this, but we ensure it here)
