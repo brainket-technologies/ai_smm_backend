@@ -1187,6 +1187,61 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "Get All Countries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/countries",
+							"host": ["{{base_url}}"],
+							"path": ["api", "countries"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get States by Country",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/states?country=IN",
+							"host": ["{{base_url}}"],
+							"path": ["api", "states"],
+							"query": [{ "key": "country", "value": "IN" }]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities by State",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities?country=IN&state=UP",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities"],
+							"query": [
+								{ "key": "country", "value": "IN" },
+								{ "key": "state", "value": "UP" }
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
