@@ -55,7 +55,7 @@ export class NotificationService {
   /**
    * Send notification to a specific device token
    */
-  static async sendToToken(token: string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
+  static async sendToToken(token: string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any, sound?: string) {
     await this.initialize();
     try {
       const message: admin.messaging.Message = {
@@ -72,7 +72,7 @@ export class NotificationService {
         android: {
           priority: 'high',
           notification: {
-            sound: 'default',
+            sound: sound || 'default',
             channelId: channelId || 'smm_post_alerts',
             imageUrl: imageUrl || undefined,
           },
@@ -81,6 +81,7 @@ export class NotificationService {
           payload: {
             aps: {
               mutableContent: imageUrl ? true : false,
+              sound: sound ? `${sound}.caf` : 'default',
             },
           },
           fcmOptions: {
@@ -101,7 +102,7 @@ export class NotificationService {
   /**
    * Send notification to a specific topic
    */
-  static async sendToTopic(topic: string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
+  static async sendToTopic(topic: string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any, sound?: string) {
     await this.initialize();
     try {
       console.log(`[NotificationService] Sending topic notification to "${topic}"...`);
@@ -122,7 +123,14 @@ export class NotificationService {
           notification: {
             imageUrl: imageUrl || undefined,
             channelId: channelId || 'smm_post_alerts',
-            sound: 'default',
+            sound: sound || 'default',
+          }
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: sound ? `${sound}.caf` : 'default',
+            }
           }
         }
       };
@@ -139,14 +147,14 @@ export class NotificationService {
   /**
    * Send notification to ALL users (Broadcast)
    */
-  static async broadcast(title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
-    return await this.sendToTopic('all_users', title, body, imageUrl, channelId, data);
+  static async broadcast(title: string, body: string, imageUrl?: string, channelId?: string, data?: any, sound?: string) {
+    return await this.sendToTopic('all_users', title, body, imageUrl, channelId, data, sound);
   }
 
   /**
    * Send notification to a specific user (all their devices)
    */
-  static async sendNotificationToUser(userId: bigint | string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
+  static async sendNotificationToUser(userId: bigint | string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any, sound?: string) {
     await this.initialize();
     try {
       const tokens = await prisma.deviceToken.findMany({
@@ -166,7 +174,7 @@ export class NotificationService {
       console.log(`[NotificationService] Sending notification to ${tokens.length} devices for user ${userId}`);
       
       const results = await Promise.all(
-        tokens.map(t => this.sendToToken(t.fcmToken!, title, body, imageUrl, channelId, data))
+        tokens.map(t => this.sendToToken(t.fcmToken!, title, body, imageUrl, channelId, data, sound))
       );
 
       return { 
