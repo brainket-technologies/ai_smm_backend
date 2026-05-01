@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type');
     const search = searchParams.get('search');
     const sort = searchParams.get('sort');
+    const filter = searchParams.get('filter');
 
     if (id) {
       const account = await prisma.ledgerAccount.findUnique({
