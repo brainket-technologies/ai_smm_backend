@@ -41,10 +41,13 @@ export async function POST(req: NextRequest) {
       const customer = customerName || 'A customer';
 
       // 3. Send Push Notification to owner with custom sound
+      const notificationTitle = "New Business Review! ⭐";
+      const notificationBody = `${customer} gave ${business.name} a ${rating}-star review.`;
+
       await NotificationService.sendNotificationToUser(
         business.ownerId,
-        "New Business Review! ⭐",
-        `${customer} gave ${business.name} a ${rating}-star review.`,
+        notificationTitle,
+        notificationBody,
         undefined,
         "smm_reviews_v2",
         {
@@ -55,7 +58,18 @@ export async function POST(req: NextRequest) {
         "review_notification" // Custom sound filename
       );
 
-      // 4. Send Email Alert to owner if email exists
+      // 4. Save to Database Notifications Table
+      await prisma.notifications.create({
+        data: {
+          userId: business.ownerId,
+          title: notificationTitle,
+          message: notificationBody,
+          type: "business_review",
+          actionUrl: `/reviews/${review.id}` // Example action URL
+        }
+      });
+
+      // 5. Send Email Alert to owner if email exists
       if (ownerEmail) {
         // Fetch SMTP config from DB (same as OTP/Invoice)
         const smtpConfigRecord = await prisma.externalServiceConfig.findFirst({
