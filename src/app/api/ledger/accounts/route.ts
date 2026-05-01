@@ -3,15 +3,41 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
-    const businessIdHeader = req.headers.get('x-business-id');
-    const businessId = businessIdHeader || req.nextUrl.searchParams.get('businessId');
+    const businessId = req.headers.get('x-business-id');
+    const id = req.nextUrl.searchParams.get('id');
     const type = req.nextUrl.searchParams.get('type'); // CUSTOMER or SUPPLIER
     const search = req.nextUrl.searchParams.get('search');
     const filter = req.nextUrl.searchParams.get('filter'); // all, positive, negative
     const sort = req.nextUrl.searchParams.get('sort'); // newest, oldest, name, balance_high, balance_low
 
     if (!businessId) {
-      return NextResponse.json({ error: 'x-business-id header or businessId query param is required' }, { status: 400 });
+      return NextResponse.json({ error: 'x-business-id header is required' }, { status: 400 });
+    }
+
+    if (id) {
+      const account = await prisma.ledgerAccount.findUnique({
+        where: { id: BigInt(id) },
+        include: {
+          transactions: {
+            select: { amount: true, type: true }
+          },
+          profileImage: true,
+        }
+      });
+
+      if (!account) return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+
+      let balance = 0;
+      account.transactions.forEach(tx => {
+        if (tx.type === 'GET') balance += Number(tx.amount);
+        else balance -= Number(tx.amount);
+      });
+
+      const serializedAccount = JSON.parse(JSON.stringify({ ...account, balance, transactions: undefined }, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+      ));
+
+      return NextResponse.json({ success: true, message: 'Account fetched successfully', data: serializedAccount });
     }
 
     let orderBy: any = { updatedAt: 'desc' };
@@ -80,7 +106,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      accounts: serializedAccounts,
+      message: 'Accounts fetched successfully',
+      data: serializedAccounts,
     });
   } catch (error: any) {
     console.error('Error fetching ledger accounts:', error);
@@ -94,17 +121,15 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const businessId = req.headers.get('x-business-id');
     const body = await req.json();
-    const businessIdHeader = req.headers.get('x-business-id');
     const { 
-      businessId: bodyBusinessId, type, name, phone, gender, birthday, 
+      type, name, phone, gender, birthday, 
       gstNo, flatBuilding, locality, pincode, city, state, country, mediaId 
     } = body;
 
-    const businessId = businessIdHeader || bodyBusinessId;
-
     if (!businessId || !type || !name) {
-      return NextResponse.json({ error: 'Missing required fields: businessId, type, name' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields: x-business-id header, type, name' }, { status: 400 });
     }
 
     const account = await prisma.ledgerAccount.create({
@@ -127,8 +152,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
+      success: true,
       message: 'Account created successfully',
-      account: {
+      data: {
         ...account,
         id: account.id.toString(),
         businessId: account.businessId.toString(),
@@ -174,8 +200,9 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json({
+      success: true,
       message: 'Account updated successfully',
-      account: {
+      data: {
         ...account,
         id: account.id.toString(),
         businessId: account.businessId.toString(),
@@ -202,7 +229,7 @@ export async function DELETE(req: NextRequest) {
       where: { id: BigInt(id) },
     });
 
-    return NextResponse.json({ message: 'Account deleted successfully' });
+    return NextResponse.json({ success: true, message: 'Account deleted successfully' });
   } catch (error) {
     console.error('Error deleting ledger account:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

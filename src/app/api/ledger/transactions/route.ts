@@ -34,8 +34,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
+      success: true,
       message: 'Transaction recorded successfully',
-      transaction: {
+      data: {
         ...transaction,
         id: transaction.id.toString(),
         ledgerAccountId: transaction.ledgerAccountId.toString(),
@@ -67,7 +68,9 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      transactions: transactions.map(tx => ({
+      success: true,
+      message: 'Transactions fetched successfully',
+      data: transactions.map(tx => ({
         ...tx,
         id: tx.id.toString(),
         ledgerAccountId: tx.ledgerAccountId.toString(),

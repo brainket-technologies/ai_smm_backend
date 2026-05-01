@@ -3,13 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
-    const businessIdHeader = req.headers.get('x-business-id');
-    const businessId = businessIdHeader || req.nextUrl.searchParams.get('businessId');
-
+    const businessId = req.headers.get('x-business-id');
     const type = req.nextUrl.searchParams.get('type');
     
     if (!businessId) {
-      return NextResponse.json({ error: 'x-business-id header or businessId query param is required' }, { status: 400 });
+      return NextResponse.json({ error: 'x-business-id header is required' }, { status: 400 });
     }
 
     const transactions = await prisma.ledgerTransaction.findMany({
@@ -37,7 +35,9 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      summary: {
+      success: true,
+      message: 'Summary fetched successfully',
+      data: {
         totalGet,
         totalGive,
         netBalance: totalGet - totalGive,
