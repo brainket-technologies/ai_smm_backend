@@ -5,7 +5,7 @@ import { validateRequest } from '@/lib/auth-utils';
 export async function POST(req: NextRequest) {
   try {
     const check = await validateRequest(req);
-    if (!check.isValid) return check.response!;
+    if (!check.isValid) return check.response;
 
     const body = await req.json();
     const { ledgerAccountId, type, amount, note, date, ref, productId, serviceId } = body;
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const check = await validateRequest(req);
-    if (!check.isValid) return check.response!;
+    if (!check.isValid) return check.response;
 
     const ledgerAccountId = req.nextUrl.searchParams.get('ledgerAccountId');
 
