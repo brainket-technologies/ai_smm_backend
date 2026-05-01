@@ -129,7 +129,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { 
       type, name, phone, gender, birthday, 
-      gstNo, flatBuilding, locality, pincode, city, state, country, mediaId 
+      gstNo, flatBuilding, locality, pincode, city, state, country, 
+      countryId, stateId, cityId, mediaId 
     } = body;
 
     if (!type || !name) {
@@ -151,6 +152,9 @@ export async function POST(req: NextRequest) {
         city,
         state,
         country,
+        countryId,
+        stateId,
+        cityId,
         mediaId: mediaId ? BigInt(mediaId) : null,
       },
     });
@@ -179,7 +183,8 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const { 
       id, name, phone, gender, birthday, 
-      gstNo, flatBuilding, locality, pincode, city, state, country, mediaId, type
+      gstNo, flatBuilding, locality, pincode, city, state, country,
+      countryId, stateId, cityId, mediaId, type
     } = body;
 
     if (!id) {
@@ -200,6 +205,9 @@ export async function PATCH(req: NextRequest) {
         city,
         state,
         country,
+        countryId,
+        stateId,
+        cityId,
         type,
         mediaId: mediaId ? BigInt(mediaId) : undefined,
         updatedAt: new Date(),

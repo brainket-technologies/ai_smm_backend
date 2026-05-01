@@ -120,6 +120,9 @@ export class BusinessService {
     if (data.country !== undefined) updateData.country = data.country;
     if (data.state !== undefined) updateData.state = data.state;
     if (data.city !== undefined) updateData.city = data.city;
+    if (data.countryId !== undefined) updateData.countryId = data.countryId;
+    if (data.stateId !== undefined) updateData.stateId = data.stateId;
+    if (data.cityId !== undefined) updateData.cityId = data.cityId;
     if (data.pinCode !== undefined) updateData.postalCode = data.pinCode;
     if (data.brandColor !== undefined) updateData.brandColor = data.brandColor;
     if (data.description !== undefined) updateData.description = data.description;
