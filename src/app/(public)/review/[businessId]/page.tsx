@@ -4,8 +4,8 @@ import ReviewForm from "./ReviewForm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-export default async function BusinessReviewPage({ params }: { params: { businessId: string } }) {
-  const { businessId } = params;
+export default async function BusinessReviewPage({ params }: { params: Promise<{ businessId: string }> }) {
+  const { businessId } = await params;
   console.log(`[ReviewPage] Fetching business for ID: ${businessId}`);
 
   // Fetch Business details and GMB social account
