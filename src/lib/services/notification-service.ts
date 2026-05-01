@@ -67,7 +67,8 @@ export class NotificationService {
         },
         data: {
           ...(data || {}),
-          channelId: channelId || 'smm_post_alerts'
+          channelId: channelId || 'smm_post_alerts',
+          sound: sound || 'default'
         },
         android: {
           priority: 'high',
@@ -116,6 +117,7 @@ export class NotificationService {
         data: {
           ...(data || {}),
           channelId: channelId || 'smm_post_alerts',
+          sound: sound || 'default',
           click_action: 'FLUTTER_NOTIFICATION_CLICK', // Legacy but helpful
         },
         android: {

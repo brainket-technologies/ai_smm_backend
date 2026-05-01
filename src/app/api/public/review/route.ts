@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         notificationTitle,
         notificationBody,
         undefined,
-        "smm_reviews_v2",
+        "smm_reviews_v3",
         {
           reviewId: review.id.toString(),
           businessId: businessId.toString(),
