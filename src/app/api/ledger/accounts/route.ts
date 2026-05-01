@@ -5,7 +5,7 @@ import { validateRequest } from '@/lib/auth-utils';
 export async function GET(req: NextRequest) {
   try {
     const check = await validateRequest(req);
-    if (!check.isValid) return check.response!;
+    if (!check.isValid) return check.response;
 
     const businessId = check.businessId;
     const id = req.nextUrl.searchParams.get('id');

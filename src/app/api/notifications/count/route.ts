@@ -1,22 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateApiKey, validateAuth } from '@/lib/auth-utils';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
   try {
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
+    const check = await validateRequest(request);
+    if (!check.isValid) return check.response!;
 
-    const auth = await validateAuth(request);
-    if (!auth.isValid) return auth.response;
+    const userId = check.userId;
 
     const { searchParams } = new URL(request.url);
-    const userIdStr = searchParams.get('userId');
-    const userId = auth.userId || (userIdStr ? BigInt(userIdStr) : null);
-
-    if (!userId) {
-      return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
-    }
 
     // Count notifications where:
     // 1. (userId = current OR isGlobal = true)
@@ -38,7 +31,7 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json({ success: true, count });
+    return NextResponse.json({ success: true, message: 'Notification count fetched successfully', data: { count } });
 
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
