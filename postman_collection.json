@@ -22,9 +22,9 @@
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/public/review",
+							"raw": "{{base_url}}/api/public/review",
 							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "public", "review"]
+							"path": ["api", "public", "review"]
 						}
 					},
 					"response": []

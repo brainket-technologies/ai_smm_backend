@@ -46,7 +46,7 @@ export default function ReviewForm({ businessId, businessName, gmbReviewLink }: 
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/v1/public/review', {
+      const response = await fetch('/api/public/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
