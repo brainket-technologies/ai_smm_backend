@@ -3,10 +3,12 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const businessId = params.id;
+    const { id } = await params;
+    const headerBusinessId = req.headers.get('x-business-id');
+    const businessId = id || headerBusinessId;
 
     if (!businessId) {
       return NextResponse.json({ message: "Business ID is required" }, { status: 400 });
