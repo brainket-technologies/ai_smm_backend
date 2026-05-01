@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
         if (!authType || !value || !otp) {
             return NextResponse.json(
-                { success: false, message: 'Value (phone/email), type and OTP are required' },
+                { res: false, message: 'Value (phone/email), type and OTP are required' },
                 { status: 400 }
             );
         }
@@ -28,14 +28,14 @@ export async function POST(request: Request) {
         const result = await AuthService.verifyOtp(authType as 'phone' | 'email', value, otp, deviceId, deviceType);
 
         return NextResponse.json({
-            success: true,
+            res: true,
             message: 'Logged in successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Verify OTP Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

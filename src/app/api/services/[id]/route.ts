@@ -9,21 +9,21 @@ export async function GET(
         const { id } = await params;
         const businessId = req.headers.get('x-business-id');
         if (!businessId) {
-            return NextResponse.json({ success: false, message: 'Business ID is required' }, { status: 400 });
+            return NextResponse.json({ res: false, message: 'Business ID is required' }, { status: 400 });
         }
 
         const service = await ServiceService.getServiceDetails(BigInt(id), BigInt(businessId));
 
         if (!service) {
-            return NextResponse.json({ success: false, message: 'Service not found' }, { status: 404 });
+            return NextResponse.json({ res: false, message: 'Service not found' }, { status: 404 });
         }
 
         return NextResponse.json({
-            success: true,
+            res: true,
             data: service
         });
     } catch (error: any) {
-        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+        return NextResponse.json({ res: false, message: error.message }, { status: 500 });
     }
 }
 
@@ -35,7 +35,7 @@ export async function PATCH(
         const { id } = await params;
         const businessId = req.headers.get('x-business-id');
         if (!businessId) {
-            return NextResponse.json({ success: false, message: 'Business ID is required' }, { status: 400 });
+            return NextResponse.json({ res: false, message: 'Business ID is required' }, { status: 400 });
         }
 
         const body = await req.json();
@@ -48,7 +48,7 @@ export async function PATCH(
 
         return NextResponse.json(result);
     } catch (error: any) {
-        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+        return NextResponse.json({ res: false, message: error.message }, { status: 500 });
     }
 }
 
@@ -60,13 +60,13 @@ export async function DELETE(
         const { id } = await params;
         const businessId = req.headers.get('x-business-id');
         if (!businessId) {
-            return NextResponse.json({ success: false, message: 'Business ID is required' }, { status: 400 });
+            return NextResponse.json({ res: false, message: 'Business ID is required' }, { status: 400 });
         }
 
         const result = await ServiceService.deleteService(BigInt(id), BigInt(businessId));
 
         return NextResponse.json(result);
     } catch (error: any) {
-        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+        return NextResponse.json({ res: false, message: error.message }, { status: 500 });
     }
 }

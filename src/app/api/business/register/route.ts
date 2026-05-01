@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
         if (!business_name || !number || !category_id) {
             return NextResponse.json(
-                { success: false, message: 'Business name, number, and category_id are required' },
+                { res: false, message: 'Business name, number, and category_id are required' },
                 { status: 400 }
             );
         }
@@ -30,14 +30,14 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json({
-            success: true,
+            res: true,
             message: 'Business registered successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Business Register Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

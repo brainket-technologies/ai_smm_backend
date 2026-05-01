@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Update Profile Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

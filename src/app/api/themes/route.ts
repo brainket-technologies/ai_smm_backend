@@ -35,14 +35,14 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: 'Themes fetched successfully',
       data: serializedThemes,
     });
   } catch (error: any) {
     console.error('Fetch themes error:', error);
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { res: false, message: 'Internal server error' },
       { status: 500 }
     );
   }

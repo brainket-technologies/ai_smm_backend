@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: 'Transaction recorded successfully',
       data: {
         ...transaction,
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: 'Transactions fetched successfully',
       data: transactions.map(tx => ({
         ...tx,
@@ -87,6 +87,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching ledger transactions:', error);
-    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: false, message: 'Internal server error' }, { status: 500 });
   }
 }

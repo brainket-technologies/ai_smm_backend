@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   // 2. Check Business context
   const businessId = request.headers.get('X-Business-Id');
   if (!businessId) {
-    return NextResponse.json({ success: false, message: 'X-Business-Id header required' }, { status: 400 });
+    return NextResponse.json({ res: false, message: 'X-Business-Id header required' }, { status: 400 });
   }
 
   try {
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     // Required fields check (platform specific IDs and tokens)
     if (!profile.id || !profile.platform || !profile.access_token) {
       return NextResponse.json({
-        success: false,
+        res: false,
         message: 'Missing required profile fields: id, platform, access_token'
       }, { status: 400 });
     }
@@ -30,11 +30,11 @@ export async function POST(request: Request) {
     await SocialManager.saveAccount(businessId, profile);
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: `${profile.platform.charAt(0).toUpperCase() + profile.platform.slice(1)} account connected successfully!`
     });
   } catch (error: any) {
     console.error('Social Save Error:', error.message);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
   }
 }

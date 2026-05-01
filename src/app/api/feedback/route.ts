@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
         if (!message || !type) {
             return NextResponse.json(
-                { success: false, message: 'Message and type are required' },
+                { res: false, message: 'Message and type are required' },
                 { status: 400 }
             );
         }
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Feedback API Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }
@@ -54,12 +54,12 @@ export async function GET(request: Request) {
         const feedbacks = await FeedbackService.getAllFeedback();
 
         return NextResponse.json({
-            success: true,
+            res: true,
             data: feedbacks
         });
     } catch (error: any) {
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

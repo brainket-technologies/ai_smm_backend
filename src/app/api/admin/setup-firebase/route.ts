@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const apikey = searchParams.get('apikey');
   
   if (apikey !== process.env.API_KEY) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ res: false, message: 'Unauthorized' }, { status: 401 });
   }
 
   const firebaseConfig = {
@@ -44,8 +44,8 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json({ success: true, message: 'Firebase configuration updated successfully' });
+    return NextResponse.json({ res: true, message: 'Firebase configuration updated successfully' });
   } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
   }
 }

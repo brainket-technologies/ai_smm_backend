@@ -34,9 +34,9 @@ export async function GET(request: Request) {
       id: user.id.toString()
     }));
 
-    return NextResponse.json({ success: true, users: serializedUsers });
+    return NextResponse.json({ res: true, users: serializedUsers });
   } catch (error) {
     console.error('Error fetching admin users:', error);
-    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ res: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }

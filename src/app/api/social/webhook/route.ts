@@ -49,9 +49,9 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ success: true, message: 'EVENT_RECEIVED' });
+    return NextResponse.json({ res: true, message: 'EVENT_RECEIVED' });
   } catch (error: any) {
     console.error('Webhook Error:', error.message);
-    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ res: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }

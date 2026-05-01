@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     if (!type || value === undefined) {
       return NextResponse.json(
-        { success: false, message: 'Type and value are required' },
+        { res: false, message: 'Type and value are required' },
         { status: 400 }
       );
     }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const validTypes = ['push', 'email', 'sms', 'whatsapp'];
     if (!validTypes.includes(type)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid toggle type' },
+        { res: false, message: 'Invalid toggle type' },
         { status: 400 }
       );
     }
@@ -47,14 +47,14 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: `${type.charAt(0).toUpperCase() + type.slice(1)} notification setting updated`
     });
 
   } catch (error: any) {
     console.error('Toggle setting error:', error);
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { res: false, message: 'Internal server error' },
       { status: 500 }
     );
   }

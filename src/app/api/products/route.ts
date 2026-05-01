@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
         if (!name || price === undefined) {
             return NextResponse.json(
-                { success: false, message: 'Missing required fields: name, price' },
+                { res: false, message: 'Missing required fields: name, price' },
                 { status: 400 }
             );
         }
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Product POST Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }
@@ -62,13 +62,13 @@ export async function GET(request: Request) {
         const products = await ProductService.getBusinessProducts(check.businessId, search);
 
         return NextResponse.json({
-            success: true,
+            res: true,
             data: products
         });
     } catch (error: any) {
         console.error('Product GET Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

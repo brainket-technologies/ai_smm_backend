@@ -20,14 +20,14 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({
-      success: true,
+      res: true,
       message: 'Currencies fetched successfully',
       data: serializedCurrencies,
     });
   } catch (error: any) {
     console.error('Fetch currencies error:', error);
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { res: false, message: 'Internal server error' },
       { status: 500 }
     );
   }

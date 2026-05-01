@@ -16,14 +16,14 @@ export async function GET(request: Request) {
         const result = await BusinessService.list(auth.userId!);
 
         return NextResponse.json({
-            success: true,
+            res: true,
             message: 'Businesses fetched successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Business List Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

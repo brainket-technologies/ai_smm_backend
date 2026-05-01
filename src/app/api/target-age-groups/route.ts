@@ -18,13 +18,13 @@ export async function GET(request: Request) {
         }));
 
         return NextResponse.json({
-            success: true,
+            res: true,
             message: 'Target age groups fetched successfully',
             data: formatted
         });
     } catch (error: any) {
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

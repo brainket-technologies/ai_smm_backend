@@ -38,14 +38,14 @@ export async function GET(request: Request) {
         }));
 
         return NextResponse.json({
-            success: true,
+            res: true,
             message: 'Categories fetched successfully',
             data: formattedCategories
         });
     } catch (error: any) {
         console.error('Fetch Categories Error:', error);
         return NextResponse.json(
-            { success: false, message: error.message || 'Internal server error' },
+            { res: false, message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

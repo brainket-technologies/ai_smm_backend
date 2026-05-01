@@ -72,7 +72,7 @@ export async function GET(request: Request) {
     `);
     
     return NextResponse.json({ 
-      success: true, 
+      res: true, 
       message: "Schema updated and system URLs auto-set dynamically.",
       data: {
         detected_origin: origin,
@@ -83,6 +83,6 @@ export async function GET(request: Request) {
     });
   } catch(error: any) {
     console.error("Migration Failed:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ res: false, error: error.message }, { status: 500 });
   }
 }
