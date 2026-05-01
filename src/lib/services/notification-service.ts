@@ -67,6 +67,9 @@ export class NotificationService {
         },
         data: {
           ...(data || {}),
+          title: title,
+          body: body,
+          imageUrl: imageUrl || '',
           channelId: channelId || 'smm_post_alerts',
           sound: sound || 'default'
         },
@@ -116,6 +119,9 @@ export class NotificationService {
         },
         data: {
           ...(data || {}),
+          title: title,
+          body: body,
+          imageUrl: imageUrl || '',
           channelId: channelId || 'smm_post_alerts',
           sound: sound || 'default',
           click_action: 'FLUTTER_NOTIFICATION_CLICK', // Legacy but helpful
