@@ -45,6 +45,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching ledger summary:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
