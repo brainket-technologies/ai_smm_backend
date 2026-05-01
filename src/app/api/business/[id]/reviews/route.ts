@@ -6,12 +6,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
     const headerBusinessId = req.headers.get('x-business-id');
-    const businessId = id || headerBusinessId;
+    const { id } = await params;
+    const businessId = headerBusinessId || id;
 
     if (!businessId) {
-      return NextResponse.json({ message: "Business ID is required" }, { status: 400 });
+      return NextResponse.json({ message: "Business ID is required in headers or URL" }, { status: 400 });
     }
 
     const reviews = await prisma.review.findMany({
