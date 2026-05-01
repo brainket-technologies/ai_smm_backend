@@ -36,15 +36,14 @@ export async function POST(req: NextRequest) {
       // We use a custom type 'business_review' so the app can play a custom sound
       await NotificationService.sendNotificationToUser(
         business.ownerId,
+        "New Business Review! ⭐",
+        `${customerName || 'A customer'} gave ${business.name} a ${rating}-star review.`,
+        undefined,
+        "smm_reviews",
         {
-          title: "New Business Review! ⭐",
-          body: `${customerName || 'A customer'} gave ${business.name} a ${rating}-star review.`,
-          channelId: "smm_reviews",
-          data: {
-            reviewId: review.id.toString(),
-            businessId: businessId.toString(),
-            rating: rating.toString()
-          }
+          reviewId: review.id.toString(),
+          businessId: businessId.toString(),
+          rating: rating.toString()
         }
       );
     }
