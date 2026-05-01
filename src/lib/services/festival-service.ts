@@ -42,7 +42,7 @@ export class FestivalService {
       where: {
         country_state_year: {
           country,
-          state: state || null,
+          state: (state || null) as any,
           year,
         }
       }
@@ -62,13 +62,13 @@ export class FestivalService {
         where: {
           country_state_year: {
             country,
-            state: state || null,
+            state: (state || null) as any,
             year,
           }
         },
         create: {
           country,
-          state: state || null,
+          state: (state || null) as any,
           year,
           fetched: true,
         },
@@ -93,7 +93,7 @@ export class FestivalService {
         year,
         OR: [
           { state: null }, // National holidays
-          { state: state || undefined }, // State holidays if state provided
+          { state: (state || undefined) as any }, // State holidays if state provided
         ]
       },
       orderBy: {
@@ -137,7 +137,7 @@ export class FestivalService {
                 name: holiday.name,
                 date: holidayDate,
                 country,
-                state: state || null,
+                state: (state || null) as any,
               }
             },
             create: {
@@ -147,7 +147,7 @@ export class FestivalService {
               type: holiday.type?.[0] || 'Holiday',
               primaryType: holiday.primary_type || 'Holiday',
               country,
-              state: state || null,
+              state: (state || null) as any,
               year,
             },
             update: {
