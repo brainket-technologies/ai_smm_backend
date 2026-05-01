@@ -58,6 +58,13 @@ export async function GET(req: NextRequest) {
         balance,
         transactions: undefined,
         mediaId: account.mediaId?.toString(),
+        profileImage: account.profileImage ? {
+          ...account.profileImage,
+          id: account.profileImage.id.toString(),
+          userId: account.profileImage.userId?.toString(),
+          businessId: account.profileImage.businessId?.toString(),
+          relatedId: account.profileImage.relatedId?.toString(),
+        } : null,
       };
     });
 
