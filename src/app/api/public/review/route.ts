@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const { businessId, rating, customerName, comment, selectedTags } = body;
 
     if (!businessId || !rating) {
-      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+      return NextResponse.json({ res: "error", message: "Missing required fields" }, { status: 400 });
     }
 
     // 1. Save review in DB
@@ -129,12 +129,13 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ 
+      res: "success",
       message: "Review submitted successfully", 
-      reviewId: review.id.toString() 
+      data: { reviewId: review.id.toString() }
     });
 
   } catch (error: any) {
     console.error("Review Submission Error:", error);
-    return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message || "Internal Server Error" }, { status: 500 });
   }
 }

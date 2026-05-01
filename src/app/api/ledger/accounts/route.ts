@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
     if (!check.isValid) return check.response;
 
     const businessId = check.businessId;
-    const id = req.nextUrl.searchParams.get('id');
+    const { searchParams } = req.nextUrl;
+    const id = searchParams.get('id');
+    const type = searchParams.get('type');
+    const search = searchParams.get('search');
+    const sort = searchParams.get('sort');
 
     if (id) {
       const account = await prisma.ledgerAccount.findUnique({
