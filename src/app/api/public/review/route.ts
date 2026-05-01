@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
         {
           reviewId: review.id.toString(),
           businessId: businessId.toString(),
-          rating: rating.toString()
+          rating: rating.toString(),
+          type: "review"
         },
         "review_notification" // Custom sound filename
       );
