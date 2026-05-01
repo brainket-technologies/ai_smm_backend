@@ -1,6 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../src/lib/prisma';
+import dotenv from 'dotenv';
 
-const prisma = new PrismaClient();
+// Load environment variables from .env
+dotenv.config();
 
 async function main() {
   const category = 'holiday';
@@ -33,11 +35,12 @@ async function main() {
       }
     });
 
-    console.log('Successfully upserted Calendarific config:', result);
-  } catch (error) {
-    console.error('Error upserting config:', error);
+    console.log('Successfully upserted Calendarific config:', JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v, 2));
+  } catch (error: any) {
+    console.error('Error upserting config:', error.message);
   } finally {
-    await prisma.$disconnect();
+    // No explicit disconnect needed for the shared client usually, but good practice in standalone scripts
+    // However, since it uses a pool, we might want to close it if we want the script to exit immediately
   }
 }
 
