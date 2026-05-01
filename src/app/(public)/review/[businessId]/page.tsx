@@ -16,7 +16,6 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
       include: {
         media: true,
         mediaFiles: {
-          where: { mediaCategory: 'logo' },
           orderBy: { createdAt: 'desc' },
           take: 1
         },
