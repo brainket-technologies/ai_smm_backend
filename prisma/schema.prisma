@@ -186,6 +186,7 @@ model MediaFile {
   productsWithThisImage       Product[]            @relation("ProductImage")
   servicesWithThisImage       Service[]            @relation("ServiceImage")
   usersWithThisImage          User[]               @relation("UserProfileImage")
+  ledgerAccountsWithThisImage LedgerAccount[]      @relation("LedgerProfileImage")
 
   @@map("media_files")
 }
@@ -249,8 +250,53 @@ model Business {
   services           Service[]
   socialAccounts     SocialAccount[]
   reviews            Review[]
+  ledgerAccounts     LedgerAccount[]
 
   @@map("businesses")
+}
+
+model LedgerAccount {
+  id           BigInt              @id @default(autoincrement())
+  businessId   BigInt              @map("business_id")
+  type         String              // 'CUSTOMER' | 'SUPPLIER'
+  name         String
+  phone        String?
+  gstNo        String?             @map("gst_no")
+  flatBuilding String?             @map("flat_building")
+  locality     String?
+  pincode      String?
+  city         String?
+  state        String?
+  country      String?             @default("India")
+  gender       String?             @default("male")
+  birthday     DateTime?           @db.Date
+  mediaId      BigInt?             @map("media_id")
+  createdAt    DateTime?           @default(now()) @map("created_at")
+  updatedAt    DateTime?           @default(now()) @map("updated_at")
+  business     Business            @relation(fields: [businessId], references: [id])
+  transactions LedgerTransaction[]
+  profileImage MediaFile?          @relation("LedgerProfileImage", fields: [mediaId], references: [id])
+
+  @@map("ledger_accounts")
+}
+
+model LedgerTransaction {
+  id              BigInt        @id @default(autoincrement())
+  ledgerAccountId BigInt        @map("ledger_account_id")
+  type            String        // 'GIVE' | 'GET'
+  amount          Decimal       @db.Decimal
+  ref             String?       // Invoice / Reference
+  productId       BigInt?       @map("product_id")
+  serviceId       BigInt?       @map("service_id")
+  note            String?
+  date            DateTime?     @default(now())
+  createdAt       DateTime?     @default(now()) @map("created_at")
+  updatedAt       DateTime?     @default(now()) @map("updated_at")
+  ledgerAccount   LedgerAccount @relation(fields: [ledgerAccountId], references: [id])
+  product         Product?      @relation(fields: [productId], references: [id])
+  service         Service?      @relation(fields: [serviceId], references: [id])
+
+  @@map("ledger_transactions")
 }
 
 model BusinessCategory {
@@ -443,8 +489,9 @@ model Product {
   mediaId              BigInt?              @map("media_id")
   productCategories    ProductCategory[]
   productSubCategories ProductSubCategory[]
-  business             Business             @relation(fields: [businessId], references: [id])
+  business             Business            @relation(fields: [businessId], references: [id])
   media                MediaFile?           @relation("ProductImage", fields: [mediaId], references: [id])
+  ledgerTransactions   LedgerTransaction[]
 
   @@map("products")
 }
@@ -494,8 +541,9 @@ model Service {
   mediaId              BigInt?              @map("media_id")
   serviceCategories    ServiceCategory[]
   serviceSubCategories ServiceSubCategory[]
-  business             Business             @relation(fields: [businessId], references: [id])
+  business             Business            @relation(fields: [businessId], references: [id])
   media                MediaFile?           @relation("ServiceImage", fields: [mediaId], references: [id])
+  ledgerTransactions   LedgerTransaction[]
 
   @@map("services")
 }

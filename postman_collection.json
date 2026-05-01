@@ -1065,6 +1065,125 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Ledger",
+			"item": [
+				{
+					"name": "Get Ledger Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ledger/summary",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "summary"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ledger Accounts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ledger/accounts?type=CUSTOMER&search=&filter=all&sort=newest",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "accounts"],
+							"query": [
+								{ "key": "type", "value": "CUSTOMER" },
+								{ "key": "search", "value": "", "description": "Search by name or phone" },
+								{ "key": "filter", "value": "all", "description": "all, positive, negative" },
+								{ "key": "sort", "value": "newest", "description": "newest, oldest, name, balance_high, balance_low" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Ledger Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"CUSTOMER\",\n    \"name\": \"John Doe\",\n    \"phone\": \"+919876543210\",\n    \"city\": \"Mumbai\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ledger/accounts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "accounts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ledgerAccountId\": \"1\",\n    \"type\": \"GET\",\n    \"amount\": 500,\n    \"note\": \"First payment\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ledger/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "transactions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ledger/transactions?ledgerAccountId=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "transactions"],
+							"query": [
+								{ "key": "ledgerAccountId", "value": "1" }
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
