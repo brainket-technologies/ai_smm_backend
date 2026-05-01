@@ -11,6 +11,9 @@ interface BusinessLogoProps {
 export default function BusinessLogo({ src, name }: BusinessLogoProps) {
   const [error, setError] = useState(false);
 
+  // Debug log to see what URL is being passed
+  console.log(`[BusinessLogo] Loading image: ${src || 'null'}`);
+
   // If no source or image fails to load, show placeholder with initials
   if (!src || error) {
     return (
@@ -24,14 +27,14 @@ export default function BusinessLogo({ src, name }: BusinessLogoProps) {
 
   return (
     <div className="h-20 w-20 rounded-2xl overflow-hidden mb-4 border-2 border-white dark:border-slate-800 shadow-lg relative bg-white dark:bg-slate-800">
-      <Image 
+      <img 
         src={src} 
         alt={name} 
-        fill
-        sizes="80px"
-        className="object-cover transition-opacity duration-300"
-        onError={() => setError(true)}
-        priority
+        className="w-full h-full object-cover transition-opacity duration-300"
+        onError={(e) => {
+          console.error(`[BusinessLogo] Failed to load image: ${src}`);
+          setError(true);
+        }}
       />
     </div>
   );

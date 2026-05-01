@@ -39,10 +39,20 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
     return notFound();
   }
 
-  // Use primary logo (mediaId) or fallback to latest uploaded logo
-  const logoUrl = business.media?.fileUrl || business.mediaFiles[0]?.fileUrl;
+  // Use primary logo (mediaId) or fallback to latest uploaded logo from mediaFiles relation
+  let logoUrl = business.media?.fileUrl || business.mediaFiles[0]?.fileUrl;
+
+  // Final fallback: double check media_files table directly for any image linked to this businessId
+  if (!logoUrl) {
+    const fallbackMedia = await prisma.mediaFile.findFirst({
+      where: { businessId: BigInt(businessId) },
+      orderBy: { createdAt: 'desc' }
+    });
+    logoUrl = fallbackMedia?.fileUrl;
+  }
   
   console.log(`[ReviewPage] Found business: ${business.name}, Logo: ${logoUrl ? 'Yes' : 'No'}`);
+  if (logoUrl) console.log(`[ReviewPage] Logo URL: ${logoUrl}`);
 
   // Construct GMB Review Link if account exists
   // Assuming the Review Link is stored in accountName or we can construct it if we have the placeId
