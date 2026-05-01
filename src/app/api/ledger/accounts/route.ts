@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(req: NextRequest) {
   try {
-    const businessId = req.headers.get('x-business-id');
-    const id = req.nextUrl.searchParams.get('id');
-    const type = req.nextUrl.searchParams.get('type'); // CUSTOMER or SUPPLIER
-    const search = req.nextUrl.searchParams.get('search');
-    const filter = req.nextUrl.searchParams.get('filter'); // all, positive, negative
-    const sort = req.nextUrl.searchParams.get('sort'); // newest, oldest, name, balance_high, balance_low
+    const check = await validateRequest(req);
+    if (!check.isValid) return check.response!;
 
-    if (!businessId) {
-      return NextResponse.json({ error: 'x-business-id header is required' }, { status: 400 });
-    }
+    const businessId = check.businessId;
+    const id = req.nextUrl.searchParams.get('id');
 
     if (id) {
       const account = await prisma.ledgerAccount.findUnique({
@@ -46,7 +42,7 @@ export async function GET(req: NextRequest) {
 
     const accounts = await prisma.ledgerAccount.findMany({
       where: {
-        businessId: BigInt(businessId),
+        businessId: businessId,
         ...(type ? { type } : {}),
         ...(search ? {
           OR: [
@@ -121,20 +117,23 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const businessId = req.headers.get('x-business-id');
+    const check = await validateRequest(req);
+    if (!check.isValid) return check.response!;
+
+    const businessId = check.businessId;
     const body = await req.json();
     const { 
       type, name, phone, gender, birthday, 
       gstNo, flatBuilding, locality, pincode, city, state, country, mediaId 
     } = body;
 
-    if (!businessId || !type || !name) {
-      return NextResponse.json({ error: 'Missing required fields: x-business-id header, type, name' }, { status: 400 });
+    if (!type || !name) {
+      return NextResponse.json({ error: 'Missing required fields: type, name' }, { status: 400 });
     }
 
     const account = await prisma.ledgerAccount.create({
       data: {
-        businessId: BigInt(businessId),
+        businessId: businessId,
         type,
         name,
         phone,
@@ -169,6 +168,9 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const check = await validateRequest(req);
+    if (!check.isValid) return check.response!;
+
     const body = await req.json();
     const { 
       id, name, phone, gender, birthday, 
@@ -217,6 +219,9 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const check = await validateRequest(req);
+    if (!check.isValid) return check.response!;
+
     const id = req.nextUrl.searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 

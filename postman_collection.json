@@ -1185,6 +1185,50 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete Ledger Account",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ledger/accounts?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "accounts"],
+							"query": [
+								{ "key": "id", "value": "1" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ledger Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ledger/summary?type=CUSTOMER",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ledger", "summary"],
+							"query": [
+								{ "key": "type", "value": "CUSTOMER" }
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1196,7 +1240,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/countries",
@@ -1211,7 +1259,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/states?country=IN",
@@ -1227,7 +1279,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "apikey", "value": "{{apikey}}", "type": "text" }
+							{ "key": "apikey", "value": "{{apikey}}", "type": "text" },
+							{ "key": "device-id", "value": "unique_device_id_123", "type": "text" },
+							{ "key": "device-type", "value": "android", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities?country=IN&state=UP",

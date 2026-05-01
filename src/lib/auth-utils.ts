@@ -124,3 +124,33 @@ export function validateBusinessId(request: Request) {
     };
   }
 }
+
+/**
+ * Combined validation for API Key, Auth, and Business ID.
+ */
+export async function validateRequest(request: Request) {
+  const apiKeyCheck = validateApiKey(request);
+  if (!apiKeyCheck.isValid) return apiKeyCheck;
+
+  const authCheck = await validateAuth(request);
+  if (!authCheck.isValid) return authCheck;
+
+  const businessIdCheck = validateBusinessId(request);
+  if (!businessIdCheck.isValid) return businessIdCheck;
+
+  const deviceType = request.headers.get('device-type');
+  if (!deviceType) {
+    return {
+      isValid: false,
+      response: NextResponse.json({ success: false, message: 'device-type header is required' }, { status: 400 })
+    };
+  }
+
+  return {
+    isValid: true,
+    userId: authCheck.userId as bigint,
+    businessId: businessIdCheck.businessId as bigint,
+    deviceId: authCheck.deviceId,
+    deviceType: deviceType
+  };
+}

@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ServiceService } from '@/lib/services/service-service';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(req: NextRequest) {
     try {
-        const businessId = req.headers.get('x-business-id');
-        if (!businessId) {
-            return NextResponse.json({ success: false, message: 'Business ID is required' }, { status: 400 });
-        }
+        const check = await validateRequest(req);
+        if (!check.isValid) return check.response!;
+
+        const businessId = check.businessId;
 
         const { searchParams } = new URL(req.url);
         const search = searchParams.get('search') || undefined;
 
-        const services = await ServiceService.getBusinessServices(BigInt(businessId), search);
+        const services = await ServiceService.getBusinessServices(businessId, search);
 
         return NextResponse.json({
             success: true,
@@ -24,15 +25,15 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const businessId = req.headers.get('x-business-id');
-        if (!businessId) {
-            return NextResponse.json({ success: false, message: 'Business ID is required' }, { status: 400 });
-        }
+        const check = await validateRequest(req);
+        if (!check.isValid) return check.response!;
+
+        const businessId = check.businessId;
 
         const body = await req.json();
         const result = await ServiceService.createService({
             ...body,
-            businessId: BigInt(businessId),
+            businessId: businessId,
             mediaId: body.mediaId ? BigInt(body.mediaId) : undefined,
             categoryIds: body.categoryIds?.map((id: string) => BigInt(id)),
             subCategoryIds: body.subCategoryIds?.map((id: string) => BigInt(id))

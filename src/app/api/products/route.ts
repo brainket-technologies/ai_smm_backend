@@ -1,20 +1,11 @@
 import { NextResponse } from 'next/server';
 import { ProductService } from '@/lib/services/product-service';
-import { validateApiKey, validateAuth, validateBusinessId } from '@/lib/auth-utils';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
     try {
-        // Validate API Key
-        const apiCheck = validateApiKey(request);
-        if (!apiCheck.isValid) return apiCheck.response;
-
-        // Validate Auth
-        const authCheck = await validateAuth(request);
-        if (!authCheck.isValid) return authCheck.response;
-
-        // Validate Business Id from Header
-        const businessCheck = validateBusinessId(request);
-        if (!businessCheck.isValid) return businessCheck.response;
+        const check = await validateRequest(request);
+        if (!check.isValid) return check.response!;
 
         const body = await request.json();
         const { 
@@ -37,7 +28,7 @@ export async function POST(request: Request) {
         }
 
         const result = await ProductService.createProduct({
-            businessId: businessCheck.businessId!,
+            businessId: check.businessId,
             name,
             price: Number(price),
             stock: stock ? Number(stock) : 0,
@@ -61,18 +52,14 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
     try {
-        const apiCheck = validateApiKey(request);
-        if (!apiCheck.isValid) return apiCheck.response;
-
-        // Validate Business Id from Header
-        const businessCheck = validateBusinessId(request);
-        if (!businessCheck.isValid) return businessCheck.response;
+        const check = await validateRequest(request);
+        if (!check.isValid) return check.response!;
 
         // Get search query
         const { searchParams } = new URL(request.url);
         const search = searchParams.get('search') || undefined;
 
-        const products = await ProductService.getBusinessProducts(businessCheck.businessId!, search);
+        const products = await ProductService.getBusinessProducts(check.businessId, search);
 
         return NextResponse.json({
             success: true,

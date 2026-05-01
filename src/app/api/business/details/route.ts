@@ -1,23 +1,14 @@
 import { NextResponse } from 'next/server';
 import { BusinessService } from '@/lib/services/business-service';
-import { validateApiKey, validateAuth, validateBusinessId } from '@/lib/auth-utils';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(request: Request) {
     try {
-        // 1. Validate API Key
-        const apiCheck = validateApiKey(request);
-        if (!apiCheck.isValid) return apiCheck.response;
-
-        // 2. Validate Auth (to get userId)
-        const auth = await validateAuth(request);
-        if (!auth.isValid) return auth.response;
-
-        // 3. Get Business ID from header
-        const businessCheck = validateBusinessId(request);
-        if (!businessCheck.isValid) return businessCheck.response;
+        const check = await validateRequest(request);
+        if (!check.isValid) return check.response!;
 
         // 4. Fetch business details
-        const result = await BusinessService.getById(auth.userId!, businessCheck.businessId!.toString());
+        const result = await BusinessService.getById(check.userId!, check.businessId.toString());
 
         if (!result) {
             return NextResponse.json(

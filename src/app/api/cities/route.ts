@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    const check = await validateRequest(request);
+    if (!check.isValid) return check.response!;
     const { searchParams } = new URL(request.url);
     const country = searchParams.get('country');
     const state = searchParams.get('state');
@@ -17,9 +20,17 @@ export async function GET(request: NextRequest) {
       WHERE country_code = ${country} AND state_code = ${state}
       ORDER BY name ASC
     `;
-    return NextResponse.json(cities);
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      message: 'Cities fetched successfully',
+      data: cities
+    });
+  } catch (error: any) {
     console.error('Error fetching cities:', error);
-    return NextResponse.json({ error: 'Failed to fetch cities' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      message: 'Failed to fetch cities',
+      error: error.message 
+    }, { status: 500 });
   }
 }

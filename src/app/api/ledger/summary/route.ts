@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(req: NextRequest) {
   try {
-    const businessId = req.headers.get('x-business-id');
+    const check = await validateRequest(req);
+    if (!check.isValid) return check.response!;
+
+    const businessId = check.businessId;
     const type = req.nextUrl.searchParams.get('type');
-    
-    if (!businessId) {
-      return NextResponse.json({ error: 'x-business-id header is required' }, { status: 400 });
-    }
 
     const transactions = await prisma.ledgerTransaction.findMany({
       where: {
         ledgerAccount: {
-          businessId: BigInt(businessId),
+          businessId: businessId,
           ...(type ? { type } : {}),
         },
       },
