@@ -21,12 +21,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -70,12 +70,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -114,12 +114,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -158,12 +158,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -202,12 +202,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -251,12 +251,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -291,12 +291,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -340,12 +340,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -389,12 +389,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -443,12 +443,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -492,12 +492,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -540,12 +540,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -574,12 +574,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -619,12 +619,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -659,12 +659,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -713,12 +713,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -758,12 +758,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -811,12 +811,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -856,12 +856,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -896,12 +896,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -950,12 +950,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1000,12 +1000,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1050,12 +1050,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1103,12 +1103,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1153,12 +1153,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1198,12 +1198,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1252,12 +1252,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1302,12 +1302,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1351,12 +1351,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1391,12 +1391,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1440,12 +1440,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1490,12 +1490,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1524,12 +1524,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1558,12 +1558,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1598,12 +1598,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1632,12 +1632,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1666,12 +1666,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1700,12 +1700,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1734,12 +1734,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1768,12 +1768,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1802,12 +1802,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1841,12 +1841,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1875,12 +1875,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1914,12 +1914,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -1969,12 +1969,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2026,12 +2026,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2065,12 +2065,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2114,12 +2114,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2163,12 +2163,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2212,12 +2212,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2257,12 +2257,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2309,12 +2309,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2375,12 +2375,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2429,12 +2429,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2483,12 +2483,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2534,12 +2534,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2585,12 +2585,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2641,12 +2641,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2685,12 +2685,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2735,12 +2735,12 @@
                             },
                             {
                                 "key": "device-id",
-                                "value": "unique_device_id_123",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
@@ -2796,6 +2796,14 @@
         {
             "key": "business_id",
             "value": "1"
+        },
+        {
+            "key": "device_id",
+            "value": "unique_device_id_123"
+        },
+        {
+            "key": "device_type",
+            "value": "android"
         }
     ]
 }
