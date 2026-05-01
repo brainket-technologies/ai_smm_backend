@@ -16,7 +16,8 @@ import {
   CreditCard,
   Shield,
   Globe,
-  Apple
+  Apple,
+  Calendar
 } from 'lucide-react';
 import { getExternalServiceConfigs, upsertExternalServiceConfig, toggleExternalServiceStatus } from './service-actions';
 
@@ -44,6 +45,7 @@ const CATEGORIES = [
   { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
   { id: 'ads', label: 'Ad Networks', icon: Globe },
   { id: 'login', label: 'App Login', icon: Shield },
+  { id: 'holiday', label: 'Holiday Services', icon: Calendar },
 ];
 
 const PROVIDERS: Record<string, { id: string; label: string; icon: any }[]> = {
@@ -76,6 +78,9 @@ const PROVIDERS: Record<string, { id: string; label: string; icon: any }[]> = {
     { id: 'email_otp', label: 'Email OTP Login', icon: Mail },
     { id: 'google', label: 'Google Sign-In', icon: Globe },
     { id: 'apple', label: 'Apple Login', icon: AppleIcon },
+  ],
+  holiday: [
+    { id: 'calendarific', label: 'Calendarific API', icon: Calendar },
   ],
 };
 
@@ -1122,6 +1127,35 @@ export default function ExternalServiceManagement({ initialConfigs }: { initialC
                             />
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Holiday / Calendarific fields ── */}
+                  {p.id === 'calendarific' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">API Key</label>
+                        <input
+                          type="password"
+                          value={config.config?.apiKey || ''}
+                          onChange={(e) => handleFieldChange(p.id, 'apiKey', e.target.value, true)}
+                          placeholder="Enter Calendarific API Key"
+                          className="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold p-2.5 rounded-xl outline-none border-2 border-transparent focus:border-accent/30"
+                        />
+                      </div>
+                      
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">API Usage Count</p>
+                            <p className="text-2xl font-black text-accent mt-1">{config.config?.callCount || 0}</p>
+                          </div>
+                          <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center">
+                            <Zap className="h-5 w-5 text-accent" />
+                          </div>
+                        </div>
+                        <p className="text-[9px] text-slate-400 mt-2 italic font-medium">Total successful API requests made to fetch festival data.</p>
                       </div>
                     </div>
                   )}

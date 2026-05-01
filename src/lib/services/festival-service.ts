@@ -1,0 +1,166 @@
+import { prisma } from '@/lib/prisma';
+import axios from 'axios';
+
+export class FestivalService {
+  private static BASE_URL = 'https://calendarific.com/api/v2/holidays';
+
+  private static async getApiKeyAndIncrement() {
+    const config = await prisma.externalServiceConfig.findUnique({
+      where: {
+        category_provider: {
+          category: 'holiday',
+          provider: 'calendarific'
+        }
+      }
+    });
+
+    if (!config || !config.is_active) return null;
+
+    const configObj = (config.config as any) || {};
+    const apiKey = configObj.apiKey;
+
+    if (!apiKey) return null;
+
+    // Increment call count
+    const newCount = (configObj.callCount || 0) + 1;
+    await prisma.externalServiceConfig.update({
+      where: { id: config.id },
+      data: {
+        config: {
+          ...configObj,
+          callCount: newCount
+        }
+      }
+    });
+
+    return apiKey;
+  }
+
+  static async getFestivals(country: string, year: number, state?: string) {
+    // 1. Check if we already fetched for this combination
+    const fetchLog = await prisma.festivalFetchLog.findUnique({
+      where: {
+        country_state_year: {
+          country,
+          state: state || null,
+          year,
+        }
+      }
+    });
+
+    if (fetchLog?.fetched) {
+      // 2. Fetch from database
+      return await this.getFestivalsFromDb(country, year, state);
+    }
+
+    // 3. If not fetched, call external API
+    try {
+      await this.fetchAndStoreFromCalendarific(country, year, state);
+      
+      // 4. Update fetch log
+      await prisma.festivalFetchLog.upsert({
+        where: {
+          country_state_year: {
+            country,
+            state: state || null,
+            year,
+          }
+        },
+        create: {
+          country,
+          state: state || null,
+          year,
+          fetched: true,
+        },
+        update: {
+          fetched: true,
+        }
+      });
+
+      // 5. Return from DB
+      return await this.getFestivalsFromDb(country, year, state);
+    } catch (error: any) {
+      console.error('Error in FestivalService:', error.message);
+      // If API fails, return whatever is in DB
+      return await this.getFestivalsFromDb(country, year, state);
+    }
+  }
+
+  private static async getFestivalsFromDb(country: string, year: number, state?: string) {
+    return await prisma.festival.findMany({
+      where: {
+        country,
+        year,
+        OR: [
+          { state: null }, // National holidays
+          { state: state || undefined }, // State holidays if state provided
+        ]
+      },
+      orderBy: {
+        date: 'asc'
+      }
+    });
+  }
+
+  private static async fetchAndStoreFromCalendarific(country: string, year: number, state?: string) {
+    const apiKey = await this.getApiKeyAndIncrement();
+    if (!apiKey) {
+      console.warn('Calendarific API Key not set or service inactive. Skipping fetch.');
+      return;
+    }
+
+    const params: any = {
+      api_key: apiKey,
+      country,
+      year,
+      type: 'national,religious,observance'
+    };
+
+    if (state) {
+      // Calendarific often expects location as IN-UP or just UP depending on the country
+      // We will try with the provided state code
+      params.location = state;
+    }
+
+    const response = await axios.get(this.BASE_URL, { params });
+
+    if (response.data?.response?.holidays) {
+      const holidays = response.data.response.holidays;
+
+      for (const holiday of holidays) {
+        try {
+          const holidayDate = new Date(holiday.date.iso);
+          
+          await prisma.festival.upsert({
+            where: {
+              name_date_country_state: {
+                name: holiday.name,
+                date: holidayDate,
+                country,
+                state: state || null,
+              }
+            },
+            create: {
+              name: holiday.name,
+              description: holiday.description || '',
+              date: holidayDate,
+              type: holiday.type?.[0] || 'Holiday',
+              primaryType: holiday.primary_type || 'Holiday',
+              country,
+              state: state || null,
+              year,
+            },
+            update: {
+              description: holiday.description || '',
+              type: holiday.type?.[0] || 'Holiday',
+              primaryType: holiday.primary_type || 'Holiday',
+            }
+          });
+        } catch (err: any) {
+          // Skip duplicates or errors for individual items
+          console.error(`Error saving holiday ${holiday.name}:`, err.message);
+        }
+      }
+    }
+  }
+}

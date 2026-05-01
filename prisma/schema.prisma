@@ -815,3 +815,32 @@ model City {
   @@unique([countryCode, stateCode, name])
   @@map("cities")
 }
+model Festival {
+  id          BigInt   @id @default(autoincrement())
+  name        String
+  description String?
+  date        DateTime @db.Date
+  type        String?
+  primaryType String?  @map("primary_type")
+  country     String   // iso2
+  state       String?  // state_code
+  year        Int
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@unique([name, date, country, state])
+  @@index([date, country, state])
+  @@map("festivals")
+}
+
+model FestivalFetchLog {
+  id        BigInt   @id @default(autoincrement())
+  country   String
+  state     String?
+  year      Int
+  fetched   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([country, state, year])
+  @@map("festival_fetch_logs")
+}
