@@ -237,6 +237,6 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: true, message: 'Account deleted successfully' });
   } catch (error) {
     console.error('Error deleting ledger account:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
