@@ -5,12 +5,12 @@ import { validateRequest } from '@/lib/auth-utils';
 export async function GET(request: NextRequest) {
   try {
     const check = await validateRequest(request);
-    if (!check.isValid) return check.response!;
+    if (!check.isValid) return check.response;
     const { searchParams } = new URL(request.url);
     const country = searchParams.get('country');
 
     if (!country) {
-      return NextResponse.json({ error: 'Country code is required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Country code is required' }, { status: 400 });
     }
 
     const states = await prisma.$queryRaw`

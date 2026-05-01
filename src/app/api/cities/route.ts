@@ -5,13 +5,13 @@ import { validateRequest } from '@/lib/auth-utils';
 export async function GET(request: NextRequest) {
   try {
     const check = await validateRequest(request);
-    if (!check.isValid) return check.response!;
+    if (!check.isValid) return check.response;
     const { searchParams } = new URL(request.url);
     const country = searchParams.get('country');
     const state = searchParams.get('state');
 
     if (!country || !state) {
-      return NextResponse.json({ error: 'Country and state codes are required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Country and state codes are required' }, { status: 400 });
     }
 
     const cities = await prisma.$queryRaw`
