@@ -14,7 +14,7 @@ export class FestivalService {
       }
     });
 
-    if (!config || !config.is_active) return null;
+    if (!config || !config.isActive) return null;
 
     const configObj = (config.config as any) || {};
     const apiKey = configObj.apiKey;
