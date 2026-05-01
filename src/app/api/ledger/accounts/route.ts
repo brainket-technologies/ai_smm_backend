@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateRequest } from '@/lib/auth-utils';
-import { populateLocationNamesList } from "@/lib/utils/location-names";
+import { populateLocationNames, populateLocationNamesList } from "@/lib/utils/location-names";
 
 export async function GET(req: NextRequest) {
   try {
