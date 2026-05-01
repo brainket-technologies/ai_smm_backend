@@ -139,7 +139,7 @@ export class FestivalService {
       api_key: apiKey,
       country,
       year,
-      type: 'national,religious,observance'
+      type: 'national,religious,observance,local,international'
     };
 
     if (state) {

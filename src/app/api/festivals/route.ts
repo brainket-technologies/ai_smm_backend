@@ -14,39 +14,31 @@ export async function GET(req: NextRequest) {
     let yearParam = searchParams.get('year');
     let year = yearParam ? parseInt(yearParam) : new Date().getFullYear();
 
-    // If country is not provided, try to get it from the user's business
-    if (!country) {
-      const businessId = check.businessId;
-      if (businessId) {
-        const business = await prisma.business.findUnique({
-          where: { id: businessId },
-          select: { countryId: true, stateId: true }
+    // Fetch business location regardless to ensure we have the context
+    const businessId = check.businessId;
+    const business = await prisma.business.findUnique({
+      where: { id: businessId },
+      select: { countryId: true, stateId: true }
+    });
+    
+    if (business) {
+      if (!country && business.countryId) {
+        const countryData = await prisma.country.findUnique({
+          where: { id: parseInt(business.countryId) }
         });
-        
-        if (business?.countryId) {
-          // countryId in business is stored as a string (the record ID in countries table)
-          const countryData = await prisma.country.findUnique({
-            where: { id: parseInt(business.countryId) }
-          });
-          country = countryData?.iso2 || null;
-          
-          if (!state && business.stateId) {
-            const stateData = await prisma.state.findUnique({
-              where: { id: parseInt(business.stateId) }
-            });
-            state = stateData?.stateCode || null;
-          }
-        }
+        country = countryData?.iso2 || null;
+      }
+      
+      if (!state && business.stateId) {
+        const stateData = await prisma.state.findUnique({
+          where: { id: parseInt(business.stateId) }
+        });
+        state = stateData?.stateCode || null;
       }
     }
 
-    // Default to 'IN' if still not found, or return error
-    if (!country) {
-      return NextResponse.json({ 
-        res: "error", 
-        message: 'Country is required and could not be determined from business profile' 
-      }, { status: 400 });
-    }
+    // Default to 'IN' if still not found
+    if (!country) country = 'IN';
 
     // Fetch festivals using the service (lazy loading + caching logic)
     const festivals = await FestivalService.getFestivals(country, year, state || undefined);
