@@ -15,6 +15,11 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
       where: { id: BigInt(businessId) },
       include: {
         media: true,
+        mediaFiles: {
+          where: { mediaCategory: 'logo' },
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        },
         socialAccounts: {
           where: {
             platform: {
@@ -34,8 +39,11 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
     console.log(`[ReviewPage] Business NOT found for ID: ${businessId}`);
     return notFound();
   }
+
+  // Use primary logo (mediaId) or fallback to latest uploaded logo
+  const logoUrl = business.media?.fileUrl || business.mediaFiles[0]?.fileUrl;
   
-  console.log(`[ReviewPage] Found business: ${business.name}`);
+  console.log(`[ReviewPage] Found business: ${business.name}, Logo: ${logoUrl ? 'Yes' : 'No'}`);
 
   // Construct GMB Review Link if account exists
   // Assuming the Review Link is stored in accountName or we can construct it if we have the placeId
@@ -59,7 +67,7 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
       {/* Business Card */}
       <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-6 mb-6">
         <div className="flex flex-col items-center text-center">
-          <BusinessLogo src={business.media?.fileUrl} name={business.name} />
+          <BusinessLogo src={logoUrl} name={business.name} />
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{business.name}</h2>
           <p className="text-sm text-slate-500 mt-1">{business.tagline || 'Rate your experience with us'}</p>
         </div>
