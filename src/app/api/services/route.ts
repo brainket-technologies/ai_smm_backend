@@ -15,11 +15,11 @@ export async function GET(req: NextRequest) {
         const services = await ServiceService.getBusinessServices(businessId, search);
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             data: services
         });
     } catch (error: any) {
-        return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+        return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
     }
 }
 
@@ -41,6 +41,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(result);
     } catch (error: any) {
-        return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+        return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
     }
 }

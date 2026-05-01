@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const hasBusiness = await BusinessService.hasBusiness(auth.userId!);
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       data: {
         has_business: hasBusiness,
         user: userData
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
   } catch (error: any) {
     console.error('Profile fetch error:', error);
-    return NextResponse.json({ res: false, message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: "error", message: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -74,13 +74,13 @@ export async function PATCH(request: Request) {
     const userData = await AuthService.getFormattedUserData(auth.userId!);
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Profile updated successfully',
       data: userData
     });
 
   } catch (error: any) {
     console.error('Profile update error:', error);
-    return NextResponse.json({ res: false, message: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message || 'Internal server error' }, { status: 500 });
   }
 }

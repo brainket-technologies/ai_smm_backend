@@ -31,9 +31,9 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json({ res: true, message: 'Notification count fetched successfully', data: { count } });
+    return NextResponse.json({ res: "success", message: 'Notification count fetched successfully', data: { count } });
 
   } catch (error: any) {
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }

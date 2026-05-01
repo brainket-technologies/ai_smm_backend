@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Summary fetched successfully',
       data: {
         totalGet,
@@ -45,6 +45,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching ledger summary:', error);
-    return NextResponse.json({ res: false, message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: "error", message: 'Internal server error' }, { status: 500 });
   }
 }

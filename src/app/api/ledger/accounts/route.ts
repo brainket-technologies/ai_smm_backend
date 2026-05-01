@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         typeof value === 'bigint' ? value.toString() : value
       ));
 
-      return NextResponse.json({ res: true, message: 'Account fetched successfully', data: serializedAccount });
+      return NextResponse.json({ res: "success", message: 'Account fetched successfully', data: serializedAccount });
     }
 
     let orderBy: any = { updatedAt: 'desc' };
@@ -101,14 +101,14 @@ export async function GET(req: NextRequest) {
     ));
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Accounts fetched successfully',
       data: serializedAccounts,
     });
   } catch (error: any) {
     console.error('Error fetching ledger accounts:', error);
     return NextResponse.json({ 
-      res: false, 
+      res: "error", 
       error: 'Internal server error',
       details: error.message 
     }, { status: 500 });
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Account created successfully',
       data: {
         ...account,
@@ -202,7 +202,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Account updated successfully',
       data: {
         ...account,
@@ -234,9 +234,9 @@ export async function DELETE(req: NextRequest) {
       where: { id: BigInt(id) },
     });
 
-    return NextResponse.json({ res: true, message: 'Account deleted successfully' });
+    return NextResponse.json({ res: "success", message: 'Account deleted successfully' });
   } catch (error) {
     console.error('Error deleting ledger account:', error);
-    return NextResponse.json({ res: false, message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: "error", message: 'Internal server error' }, { status: 500 });
   }
 }

@@ -21,14 +21,14 @@ export async function GET(request: NextRequest) {
       ORDER BY name ASC
     `;
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Cities fetched successfully',
       data: cities
     });
   } catch (error: any) {
     console.error('Error fetching cities:', error);
     return NextResponse.json({ 
-      res: false, 
+      res: "error", 
       message: 'Failed to fetch cities',
       error: error.message 
     }, { status: 500 });

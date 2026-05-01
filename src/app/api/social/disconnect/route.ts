@@ -23,7 +23,7 @@ async function handleDisconnect(request: Request) {
     const platformNameKey = searchParams.get('platform') || request.headers.get('x-platform-id');
 
     if (!platformNameKey) {
-      return NextResponse.json({ res: false, message: 'Platform is required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Platform is required' }, { status: 400 });
     }
 
     const platform = await prisma.platform.findFirst({
@@ -36,7 +36,7 @@ async function handleDisconnect(request: Request) {
     });
 
     if (!platform) {
-      return NextResponse.json({ res: false, message: 'Platform not found' }, { status: 404 });
+      return NextResponse.json({ res: "error", message: 'Platform not found' }, { status: 404 });
     }
 
     // Delete the connection from the database
@@ -47,9 +47,9 @@ async function handleDisconnect(request: Request) {
       }
     });
 
-    return NextResponse.json({ res: true, message: 'Connection removed successfully' });
+    return NextResponse.json({ res: "success", message: 'Connection removed successfully' });
   } catch (error: any) {
     console.error('Error disconnecting platform:', error);
-    return NextResponse.json({ res: false, message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ res: "error", message: 'Internal server error' }, { status: 500 });
   }
 }

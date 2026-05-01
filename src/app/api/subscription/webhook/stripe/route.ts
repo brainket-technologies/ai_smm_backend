@@ -28,10 +28,10 @@ export async function POST(request: Request) {
       await PaymentService.upgradeUser(userId, tierKey, orderId);
     }
 
-    return NextResponse.json({ res: true });
+    return NextResponse.json({ res: "success" });
 
   } catch (error: any) {
     console.error('Stripe Webhook Error:', error);
-    return NextResponse.json({ res: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", error: error.message }, { status: 500 });
   }
 }

@@ -14,7 +14,7 @@ export async function PATCH(request: Request) {
     const uId = auth.userId || (userId ? BigInt(userId) : null);
 
     if (!uId) {
-      return NextResponse.json({ res: false, message: 'Missing userId' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Missing userId' }, { status: 400 });
     }
 
     if (markAll) {
@@ -38,11 +38,11 @@ export async function PATCH(request: Request) {
       
       await Promise.all(promises);
 
-      return NextResponse.json({ res: true, message: 'All marked as read' });
+      return NextResponse.json({ res: "success", message: 'All marked as read' });
     }
 
     if (!notificationId) {
-      return NextResponse.json({ res: false, message: 'Missing notificationId' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Missing notificationId' }, { status: 400 });
     }
 
     const nId = BigInt(notificationId);
@@ -62,11 +62,11 @@ export async function PATCH(request: Request) {
       }
     });
 
-    return NextResponse.json({ res: true, message: 'Marked as read' });
+    return NextResponse.json({ res: "success", message: 'Marked as read' });
 
   } catch (error: any) {
     console.error('[API Notifications Patch] Error:', error);
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }
 
@@ -82,7 +82,7 @@ export async function DELETE(request: Request) {
     const uId = auth.userId || (userId ? BigInt(userId) : null);
 
     if (!uId) {
-      return NextResponse.json({ res: false, message: 'Missing userId' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Missing userId' }, { status: 400 });
     }
 
     if (clearAll) {
@@ -102,11 +102,11 @@ export async function DELETE(request: Request) {
       );
       
       await Promise.all(promises);
-      return NextResponse.json({ res: true, message: 'All cleared' });
+      return NextResponse.json({ res: "success", message: 'All cleared' });
     }
 
     if (!notificationId) {
-      return NextResponse.json({ res: false, message: 'Missing notificationId' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Missing notificationId' }, { status: 400 });
     }
 
     await prisma.userNotificationState.upsert({
@@ -115,9 +115,9 @@ export async function DELETE(request: Request) {
       create: { userId: uId, notificationId: BigInt(notificationId), isDeleted: true }
     });
 
-    return NextResponse.json({ res: true, message: 'Notification cleared' });
+    return NextResponse.json({ res: "success", message: 'Notification cleared' });
 
   } catch (error: any) {
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }

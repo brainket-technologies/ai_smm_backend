@@ -34,10 +34,10 @@ export async function GET(request: Request) {
       mediaId: item.mediaId?.toString()
     }));
 
-    return NextResponse.json({ res: true, history: serializedHistory });
+    return NextResponse.json({ res: "success", history: serializedHistory });
   } catch (error: any) {
     console.error('[AdminNotificationHistoryAPI] Error:', error);
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }
 
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     const { title, body, imageUrl, channelId, target, topic, userId, data } = await request.json();
 
     if (!title || !body) {
-      return NextResponse.json({ res: false, message: 'Title and Body are required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Title and Body are required' }, { status: 400 });
     }
 
     let result;
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       });
 
       if (tokens.length === 0) {
-        return NextResponse.json({ res: false, message: 'No active device tokens found for this user' }, { status: 404 });
+        return NextResponse.json({ res: "error", message: 'No active device tokens found for this user' }, { status: 404 });
       }
 
       // Send to all tokens of this user
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       result = { res: successCount > 0, details: results };
     } 
     else {
-      return NextResponse.json({ res: false, message: 'Invalid target or missing parameters' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Invalid target or missing parameters' }, { status: 400 });
     }
 
     // 4. Save to History (Optional but good for tracking)
@@ -115,6 +115,6 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error('[AdminNotificationAPI] Error:', error);
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }

@@ -62,12 +62,12 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({ 
-      res: true, 
+      res: "success", 
       notifications: formattedNotifications 
     });
 
   } catch (error: any) {
     console.error('[API Notifications] Error:', error);
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { fcmToken } = body;
 
     if (!fcmToken) {
-      return NextResponse.json({ res: false, message: 'fcmToken is required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'fcmToken is required' }, { status: 400 });
     }
 
     const result = await AuthService.updateFcmToken(
@@ -26,6 +26,6 @@ export async function POST(request: Request) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('FCM Token Update Error:', error);
-    return NextResponse.json({ res: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", message: error.message }, { status: 500 });
   }
 }

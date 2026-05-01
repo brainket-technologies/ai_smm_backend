@@ -20,14 +20,14 @@ export async function POST(request: Request) {
         const result = await BusinessService.update(auth.userId!, businessCheck.businessId!.toString(), data);
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Business updated successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Business Update Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

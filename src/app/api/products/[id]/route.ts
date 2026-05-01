@@ -21,19 +21,19 @@ export async function GET(
 
         if (!product) {
             return NextResponse.json(
-                { res: false, message: 'Product not found' },
+                { res: "error", message: 'Product not found' },
                 { status: 404 }
             );
         }
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             data: product
         });
     } catch (error: any) {
         console.error('Product Details GET Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }
@@ -68,7 +68,7 @@ export async function PATCH(
     } catch (error: any) {
         console.error('Product Update PATCH Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }
@@ -98,7 +98,7 @@ export async function DELETE(
     } catch (error: any) {
         console.error('Product DELETE Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

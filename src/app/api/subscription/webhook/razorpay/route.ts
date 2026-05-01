@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       .digest('hex');
 
     if (sig !== expectedSig) {
-      return NextResponse.json({ res: false, message: 'Invalid signature' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Invalid signature' }, { status: 400 });
     }
 
     const payload = JSON.parse(body);
@@ -35,10 +35,10 @@ export async function POST(request: Request) {
       await PaymentService.upgradeUser(userId, tierKey, orderId);
     }
 
-    return NextResponse.json({ res: true });
+    return NextResponse.json({ res: "success" });
 
   } catch (error: any) {
     console.error('Razorpay Webhook Error:', error);
-    return NextResponse.json({ res: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", error: error.message }, { status: 500 });
   }
 }

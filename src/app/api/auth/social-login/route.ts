@@ -13,14 +13,14 @@ export async function POST(request: Request) {
 
         if (!login_type || !token) {
             return NextResponse.json(
-                { res: false, message: 'login_type and token are required' },
+                { res: "error", message: 'login_type and token are required' },
                 { status: 400 }
             );
         }
 
         if (login_type !== 'google' && login_type !== 'apple') {
             return NextResponse.json(
-                { res: false, message: 'Invalid login_type. Must be google or apple' },
+                { res: "error", message: 'Invalid login_type. Must be google or apple' },
                 { status: 400 }
             );
         }
@@ -39,14 +39,14 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Logged in successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Social Login Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

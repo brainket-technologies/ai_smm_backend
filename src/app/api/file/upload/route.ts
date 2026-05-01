@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
         if (!file) {
             return NextResponse.json(
-                { res: false, message: 'No file provided' },
+                { res: "error", message: 'No file provided' },
                 { status: 400 }
             );
         }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         if (file.size > MAX_SIZE) {
             return NextResponse.json(
                 { 
-                    res: false, 
+                    res: "error", 
                     message: `File too large (${(file.size / (1024 * 1024)).toFixed(2)}MB). Maximum allowed size on Vercel is 4.5MB. Please compress the image or use a smaller file.` 
                 },
                 { status: 413 }
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
         // 7. Return Success Response
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'File uploaded successfully',
             data: {
                 id: mediaId.toString(),
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('File Upload Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

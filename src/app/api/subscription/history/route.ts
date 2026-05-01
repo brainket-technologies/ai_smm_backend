@@ -28,14 +28,14 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       data: serializedTransactions
     });
 
   } catch (error: any) {
     console.error('Fetch Transactions Error:', error);
     return NextResponse.json(
-      { res: false, message: 'Internal server error' },
+      { res: "error", message: 'Internal server error' },
       { status: 500 }
     );
   }

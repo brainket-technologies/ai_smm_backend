@@ -12,14 +12,14 @@ export async function GET(req: Request) {
       ORDER BY name ASC
     `;
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Countries fetched successfully',
       data: countries
     });
   } catch (error: any) {
     console.error('Error fetching countries:', error);
     return NextResponse.json({ 
-      res: false, 
+      res: "error", 
       message: 'Failed to fetch countries',
       error: error.message 
     }, { status: 500 });

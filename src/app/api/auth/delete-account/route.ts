@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Delete Account Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

@@ -18,13 +18,13 @@ export async function GET(request: Request) {
         }));
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'CTA buttons fetched successfully',
             data: formatted
         });
     } catch (error: any) {
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

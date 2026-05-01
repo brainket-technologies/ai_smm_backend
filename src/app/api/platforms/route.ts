@@ -70,13 +70,13 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       data: formattedPlatforms
     });
   } catch (error: any) {
     console.error('Error fetching platforms:', error);
     return NextResponse.json(
-      { res: false, message: 'Internal server error' },
+      { res: "error", message: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     console.log(`[Reward] User ${auth.userId} earned ${rewardAmount} extra credits via Ad.`);
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: `Successfully earned ${rewardAmount} extra credits!`,
       data: {
         reward_amount: rewardAmount
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Reward Limit Error:', error);
     return NextResponse.json(
-      { res: false, message: 'Internal server error' },
+      { res: "error", message: 'Internal server error' },
       { status: 500 }
     );
   }

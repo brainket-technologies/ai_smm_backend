@@ -20,14 +20,14 @@ export async function GET(request: NextRequest) {
       ORDER BY name ASC
     `;
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'States fetched successfully',
       data: states
     });
   } catch (error: any) {
     console.error('Error fetching states:', error);
     return NextResponse.json({ 
-      res: false, 
+      res: "error", 
       message: 'Failed to fetch states',
       error: error.message 
     }, { status: 500 });

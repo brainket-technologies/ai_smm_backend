@@ -35,7 +35,7 @@ export async function GET(request: Request) {
         ));
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Media files fetched successfully',
             data: formattedFiles
         });
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     } catch (error: any) {
         console.error('Fetch Media Files Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

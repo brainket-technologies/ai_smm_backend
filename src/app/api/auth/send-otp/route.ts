@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
         if (!authType || !value) {
             return NextResponse.json(
-                { res: false, message: 'Value (phone/email) and type are required' },
+                { res: "error", message: 'Value (phone/email) and type are required' },
                 { status: 400 }
             );
         }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Request OTP Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

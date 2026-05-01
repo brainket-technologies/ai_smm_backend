@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
         if (!email || !password) {
             return NextResponse.json(
-                { res: false, message: 'Email and password are required' },
+                { res: "error", message: 'Email and password are required' },
                 { status: 400 }
             );
         }
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
         if (!user || !user.password) {
             return NextResponse.json(
-                { res: false, message: 'Invalid credentials' },
+                { res: "error", message: 'Invalid credentials' },
                 { status: 401 }
             );
         }
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return NextResponse.json(
-                { res: false, message: 'Invalid credentials' },
+                { res: "error", message: 'Invalid credentials' },
                 { status: 401 }
             );
         }
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
         const userData = await AuthService.getFormattedUserData(user.id);
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Logged in successfully',
             data: {
                 token,
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Login Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

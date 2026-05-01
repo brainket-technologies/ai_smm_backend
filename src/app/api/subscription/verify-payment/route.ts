@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const secret = process.env.RAZORPAY_KEY_SECRET || config.key_secret || config.keySecret || config.live?.keySecret;
 
     if (!secret) {
-      return NextResponse.json({ res: false, message: 'Razorpay secret not configured' }, { status: 500 });
+      return NextResponse.json({ res: "error", message: 'Razorpay secret not configured' }, { status: 500 });
     }
 
     // 2. Verify Signature
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      return NextResponse.json({ res: false, message: 'Invalid payment signature' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Invalid payment signature' }, { status: 400 });
     }
 
     // 3. Update Subscription (Find User from Transaction)
@@ -35,11 +35,11 @@ export async function POST(request: Request) {
     });
 
     if (!transaction) {
-      return NextResponse.json({ res: false, message: 'Order not found' }, { status: 404 });
+      return NextResponse.json({ res: "error", message: 'Order not found' }, { status: 404 });
     }
 
     if (!transaction.userId) {
-        return NextResponse.json({ res: false, message: 'User not associated with order' }, { status: 400 });
+        return NextResponse.json({ res: "error", message: 'User not associated with order' }, { status: 400 });
     }
 
     await PaymentService.upgradeUser(
@@ -49,13 +49,13 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json({ 
-      res: true, 
+      res: "success", 
       message: 'Payment verified and subscription activated',
       data: true
     });
 
   } catch (error: any) {
     console.error('Payment Verification Error:', error);
-    return NextResponse.json({ res: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ res: "error", error: error.message }, { status: 500 });
   }
 }

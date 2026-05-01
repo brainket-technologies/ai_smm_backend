@@ -14,13 +14,13 @@ export async function GET(request: Request) {
         ];
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Target genders fetched successfully',
             data: genders
         });
     } catch (error: any) {
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

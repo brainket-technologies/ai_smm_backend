@@ -12,20 +12,20 @@ export async function GET(request: Request) {
 
         if (!result) {
             return NextResponse.json(
-                { res: false, message: 'Business not found' },
+                { res: "error", message: 'Business not found' },
                 { status: 404 }
             );
         }
 
         return NextResponse.json({
-            res: true,
+            res: "success",
             message: 'Business details fetched successfully',
             data: result
         });
     } catch (error: any) {
         console.error('Business Details Error:', error);
         return NextResponse.json(
-            { res: false, message: error.message || 'Internal server error' },
+            { res: "error", message: error.message || 'Internal server error' },
             { status: 500 }
         );
     }

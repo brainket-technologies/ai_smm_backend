@@ -8,8 +8,8 @@ const execAsync = promisify(exec);
 export async function GET() {
     try {
         const { stdout, stderr } = await execAsync('npx tsx prisma/seed.ts', { cwd: process.cwd() });
-        return NextResponse.json({ res: true, stdout, stderr });
+        return NextResponse.json({ res: "success", stdout, stderr });
     } catch (e: any) {
-        return NextResponse.json({ res: false, error: e.message, stdout: e.stdout, stderr: e.stderr });
+        return NextResponse.json({ res: "error", error: e.message, stdout: e.stdout, stderr: e.stderr });
     }
 }

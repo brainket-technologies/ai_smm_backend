@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     }));
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       data: serializedReviews,
       pagination: {
         total: totalCount,

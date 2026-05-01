@@ -310,7 +310,7 @@ export async function GET(request: Request) {
     };
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'App config fetched successfully',
       data: configData,
     });
@@ -318,7 +318,7 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Fetch config error:', error);
     return NextResponse.json(
-      { res: false, message: 'Internal server error' },
+      { res: "error", message: 'Internal server error' },
       { status: 500 }
     );
   }

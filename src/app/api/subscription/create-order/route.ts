@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     const { tierKey } = await request.json();
     if (!tierKey) {
-      return NextResponse.json({ res: false, message: 'tierKey is required' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'tierKey is required' }, { status: 400 });
     }
 
     // Fetch Tier Price
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     });
 
     if (!tier || tier.tierKey === 'free') {
-      return NextResponse.json({ res: false, message: 'Invalid or free tier selected' }, { status: 400 });
+      return NextResponse.json({ res: "error", message: 'Invalid or free tier selected' }, { status: 400 });
     }
 
     const orderData = await PaymentService.createOrder(
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json({
-      res: true,
+      res: "success",
       message: 'Order created successfully',
       data: orderData
     });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Create Order Error:', error);
     return NextResponse.json(
-      { res: false, message: error.message || 'Internal server error' },
+      { res: "error", message: error.message || 'Internal server error' },
       { status: 500 }
     );
   }
