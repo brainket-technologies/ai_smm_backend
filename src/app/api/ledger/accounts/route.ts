@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
       orderBy,
     });
 
-    let formattedAccounts = accounts.map(account => {
+    const formattedAccounts = accounts.map(account => {
       let balance = 0;
       account.transactions.forEach(tx => {
         if (tx.type === 'GET') {
@@ -53,37 +53,33 @@ export async function GET(req: NextRequest) {
 
       return {
         ...account,
-        id: account.id.toString(),
-        businessId: account.businessId.toString(),
         balance,
         transactions: undefined,
-        mediaId: account.mediaId?.toString(),
-        profileImage: account.profileImage ? {
-          ...account.profileImage,
-          id: account.profileImage.id.toString(),
-          userId: account.profileImage.userId?.toString(),
-          businessId: account.profileImage.businessId?.toString(),
-          relatedId: account.profileImage.relatedId?.toString(),
-        } : null,
       };
     });
 
     // Apply Balance Filter
+    let filteredAccounts = [...formattedAccounts];
     if (filter === 'positive') {
-      formattedAccounts = formattedAccounts.filter(a => a.balance > 0);
+      filteredAccounts = filteredAccounts.filter(a => a.balance > 0);
     } else if (filter === 'negative') {
-      formattedAccounts = formattedAccounts.filter(a => a.balance < 0);
+      filteredAccounts = filteredAccounts.filter(a => a.balance < 0);
     }
 
     // Apply Manual Balance Sort if needed
     if (sort === 'balance_high') {
-      formattedAccounts.sort((a, b) => b.balance - a.balance);
+      filteredAccounts.sort((a, b) => b.balance - a.balance);
     } else if (sort === 'balance_low') {
-      formattedAccounts.sort((a, b) => a.balance - b.balance);
+      filteredAccounts.sort((a, b) => a.balance - b.balance);
     }
 
+    // Stringify BigInts
+    const serializedAccounts = JSON.parse(JSON.stringify(filteredAccounts, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+
     return NextResponse.json({
-      accounts: formattedAccounts,
+      accounts: serializedAccounts,
     });
   } catch (error) {
     console.error('Error fetching ledger accounts:', error);
