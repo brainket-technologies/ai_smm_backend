@@ -6,6 +6,8 @@ export async function GET(req: NextRequest) {
     const businessIdHeader = req.headers.get('x-business-id');
     const businessId = businessIdHeader || req.nextUrl.searchParams.get('businessId');
 
+    const type = req.nextUrl.searchParams.get('type');
+    
     if (!businessId) {
       return NextResponse.json({ error: 'x-business-id header or businessId query param is required' }, { status: 400 });
     }
@@ -14,6 +16,7 @@ export async function GET(req: NextRequest) {
       where: {
         ledgerAccount: {
           businessId: BigInt(businessId),
+          ...(type ? { type } : {}),
         },
       },
       select: {

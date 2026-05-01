@@ -1081,9 +1081,12 @@
 							{ "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/ledger/summary",
+							"raw": "{{base_url}}/api/ledger/summary?type=CUSTOMER",
 							"host": ["{{base_url}}"],
-							"path": ["api", "ledger", "summary"]
+							"path": ["api", "ledger", "summary"],
+							"query": [
+								{ "key": "type", "value": "CUSTOMER", "description": "CUSTOMER or SUPPLIER" }
+							]
 						}
 					},
 					"response": []
