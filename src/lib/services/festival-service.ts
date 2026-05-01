@@ -143,9 +143,8 @@ export class FestivalService {
     };
 
     if (state) {
-      // Calendarific often expects location as IN-UP or just UP depending on the country
-      // We will try with the provided state code
-      params.location = state;
+      // Calendarific expects location in ISO 3166-2 format (e.g., IN-UP)
+      params.location = state.includes('-') ? state : `${country}-${state}`;
     }
 
     const response = await axios.get(this.BASE_URL, { params });
