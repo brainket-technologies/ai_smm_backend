@@ -165,6 +165,7 @@ export class NotificationService {
           isActive: true,
           fcmToken: { not: null }
         },
+        distinct: ['fcmToken'],
         select: { fcmToken: true }
       });
 
