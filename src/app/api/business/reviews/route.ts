@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from "@/lib/prisma";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const headerBusinessId = req.headers.get('x-business-id');
-    const { id } = await params;
-    const businessId = headerBusinessId || id;
+    const businessId = req.headers.get('x-business-id');
 
     if (!businessId) {
-      return NextResponse.json({ message: "Business ID is required in headers or URL" }, { status: 400 });
+      return NextResponse.json({ message: "Business ID is required in 'x-business-id' header" }, { status: 400 });
     }
 
     const reviews = await prisma.review.findMany({
@@ -23,7 +18,6 @@ export async function GET(
       }
     });
 
-    // Convert BigInt to string for JSON serialization
     const serializedReviews = reviews.map(review => ({
       ...review,
       id: review.id.toString(),
