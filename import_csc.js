@@ -115,10 +115,12 @@ async function importData() {
         // Import States one by one
         if (country.states) {
           for (const state of country.states) {
+            const stateCode = state.iso2 || state.state_code || state.name.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase().substring(0, 8);
+            
             // Check if state already has cities
-            const stateCheck = await pool.query('SELECT 1 FROM cities WHERE country_code = $1 AND state_code = $2 LIMIT 1', [countryCode, state.state_code]);
+            const stateCheck = await pool.query('SELECT 1 FROM cities WHERE country_code = $1 AND state_code = $2 LIMIT 1', [countryCode, stateCode]);
             if (stateCheck.rowCount > 0) {
-              continue; // Skip state if cities already exist
+              continue;
             }
 
             let stateClient;
@@ -126,8 +128,6 @@ async function importData() {
               stateClient = await pool.connect();
               await stateClient.query('BEGIN');
 
-              const stateCode = state.state_code || state.name.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase().substring(0, 8);
-              
               await stateClient.query(`
                 INSERT INTO states (external_id, name, state_code, country_code, latitude, longitude)
                 VALUES ($1, $2, $3, $4, $5, $6)
