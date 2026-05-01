@@ -157,3 +157,27 @@ export async function validateRequest(request: Request): Promise<
     deviceType: deviceType
   };
 }
+
+/**
+ * Validates only API Key and Device Type (for public endpoints).
+ */
+export async function validatePublicRequest(request: Request): Promise<
+  | { isValid: false; response: NextResponse }
+  | { isValid: true; deviceType: string; response?: never }
+> {
+  const apiKeyCheck = validateApiKey(request);
+  if (!apiKeyCheck.isValid) return apiKeyCheck as { isValid: false; response: NextResponse };
+
+  const deviceType = request.headers.get('device-type');
+  if (!deviceType) {
+    return {
+      isValid: false,
+      response: NextResponse.json({ res: "error", message: 'device-type header is required' }, { status: 400 })
+    };
+  }
+
+  return {
+    isValid: true,
+    deviceType: deviceType
+  };
+}

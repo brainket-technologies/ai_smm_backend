@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from "@/lib/prisma";
 import { NotificationService } from "@/lib/services/notification-service";
 import { EmailProvider } from "@/lib/services/providers/email-provider";
+import { validatePublicRequest } from '@/lib/auth-utils';
 
 export async function POST(req: NextRequest) {
   try {
+    const check = await validatePublicRequest(req);
+    if (!check.isValid) return check.response;
+
     const body = await req.json();
     const { businessId, rating, customerName, comment, selectedTags } = body;
 
