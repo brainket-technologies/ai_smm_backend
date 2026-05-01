@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         "New Business Review! ⭐",
         `${customer} gave ${business.name} a ${rating}-star review.`,
         undefined,
-        "smm_reviews",
+        "smm_reviews_v2",
         {
           reviewId: review.id.toString(),
           businessId: businessId.toString(),
