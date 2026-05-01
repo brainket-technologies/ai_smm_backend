@@ -142,4 +142,40 @@ export class NotificationService {
   static async broadcast(title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
     return await this.sendToTopic('all_users', title, body, imageUrl, channelId, data);
   }
+
+  /**
+   * Send notification to a specific user (all their devices)
+   */
+  static async sendNotificationToUser(userId: bigint | string, title: string, body: string, imageUrl?: string, channelId?: string, data?: any) {
+    await this.initialize();
+    try {
+      const tokens = await prisma.deviceToken.findMany({
+        where: { 
+          userId: typeof userId === 'string' ? BigInt(userId) : userId,
+          isActive: true,
+          fcmToken: { not: null }
+        },
+        select: { fcmToken: true }
+      });
+
+      if (!tokens || tokens.length === 0) {
+        console.log(`[NotificationService] No active tokens found for user: ${userId}`);
+        return { success: false, error: 'No active tokens found' };
+      }
+
+      console.log(`[NotificationService] Sending notification to ${tokens.length} devices for user ${userId}`);
+      
+      const results = await Promise.all(
+        tokens.map(t => this.sendToToken(t.fcmToken!, title, body, imageUrl, channelId, data))
+      );
+
+      return { 
+        success: results.some(r => r.success), 
+        details: results 
+      };
+    } catch (error: any) {
+      console.error(`[NotificationService] Error sending to user ${userId}:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
 }
