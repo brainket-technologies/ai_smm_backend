@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { populateLocationNames, populateLocationNamesList } from "../utils/location-names";
 
 export class BusinessService {
   /**
@@ -100,9 +101,11 @@ export class BusinessService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return JSON.parse(JSON.stringify(businesses, (key, value) =>
+    const serializedBusinesses = JSON.parse(JSON.stringify(businesses, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
+
+    return populateLocationNamesList(serializedBusinesses);
   }
 
   /**
@@ -117,9 +120,6 @@ export class BusinessService {
     if (data.email !== undefined) updateData.email = data.email;
     if (data.website !== undefined) updateData.website = data.website;
     if (data.address !== undefined) updateData.address = data.address;
-    if (data.country !== undefined) updateData.country = data.country;
-    if (data.state !== undefined) updateData.state = data.state;
-    if (data.city !== undefined) updateData.city = data.city;
     if (data.countryId !== undefined) updateData.countryId = data.countryId;
     if (data.stateId !== undefined) updateData.stateId = data.stateId;
     if (data.cityId !== undefined) updateData.cityId = data.cityId;
@@ -191,8 +191,10 @@ export class BusinessService {
 
     if (!business) return null;
 
-    return JSON.parse(JSON.stringify(business, (key, value) =>
+    const serializedBusiness = JSON.parse(JSON.stringify(business, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
+
+    return populateLocationNames(serializedBusiness);
   }
 }

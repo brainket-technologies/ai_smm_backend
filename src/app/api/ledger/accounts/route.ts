@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateRequest } from '@/lib/auth-utils';
+import { populateLocationNamesList } from "@/lib/utils/location-names";
 
 export async function GET(req: NextRequest) {
   try {
@@ -105,10 +106,12 @@ export async function GET(req: NextRequest) {
       typeof value === 'bigint' ? value.toString() : value
     ));
 
+    const enrichedAccounts = await populateLocationNamesList(serializedAccounts);
+
     return NextResponse.json({
       res: "success",
       message: 'Accounts fetched successfully',
-      data: serializedAccounts,
+      data: enrichedAccounts,
     });
   } catch (error: any) {
     console.error('Error fetching ledger accounts:', error);
@@ -149,9 +152,6 @@ export async function POST(req: NextRequest) {
         flatBuilding,
         locality,
         pincode,
-        city,
-        state,
-        country,
         countryId,
         stateId,
         cityId,
