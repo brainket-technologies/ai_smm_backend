@@ -6,26 +6,36 @@ import { notFound } from "next/navigation";
 
 export default async function BusinessReviewPage({ params }: { params: { businessId: string } }) {
   const { businessId } = params;
+  console.log(`[ReviewPage] Fetching business for ID: ${businessId}`);
 
   // Fetch Business details and GMB social account
-  const business = await prisma.business.findUnique({
-    where: { id: BigInt(businessId) },
-    include: {
-      media: true,
-      socialAccounts: {
-        where: {
-          platform: {
-            nameKey: 'gmb'
-          },
-          isActive: true
+  let business;
+  try {
+    business = await prisma.business.findUnique({
+      where: { id: BigInt(businessId) },
+      include: {
+        media: true,
+        socialAccounts: {
+          where: {
+            platform: {
+              nameKey: 'gmb'
+            },
+            isActive: true
+          }
         }
       }
-    }
-  });
-
-  if (!business) {
+    });
+  } catch (error) {
+    console.error(`[ReviewPage] Error fetching business ${businessId}:`, error);
     return notFound();
   }
+
+  if (!business) {
+    console.log(`[ReviewPage] Business NOT found for ID: ${businessId}`);
+    return notFound();
+  }
+  
+  console.log(`[ReviewPage] Found business: ${business.name}`);
 
   // Construct GMB Review Link if account exists
   // Assuming the Review Link is stored in accountName or we can construct it if we have the placeId
