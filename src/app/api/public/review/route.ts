@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         notificationTitle,
         notificationBody,
         undefined,
-        "smm_reviews_v3",
+        business.owner?.vcardSoundEnabled ? "smm_reviews_v3" : "smm_silent_channel",
         {
           reviewId: review.id.toString(),
           businessId: businessId.toString(),
