@@ -114,7 +114,9 @@ export class FestivalService {
 
   private static async getFestivalsFromDb(country: string, year: number, state?: string, upcomingOnly: boolean = false) {
     const where: any = {
-      country,
+      country: {
+        contains: country // Match 'IN' in 'IN, US'
+      },
       year,
       OR: [
         { state: null }, // National holidays
@@ -124,7 +126,7 @@ export class FestivalService {
     if (state) {
       where.OR.push({ 
         state: { 
-          contains: state // This will match 'UP, AP' if state is 'AP'
+          contains: state 
         } 
       });
     }
@@ -171,17 +173,23 @@ export class FestivalService {
         try {
           const holidayDate = new Date(holiday.date.iso);
           
-          // Check if this festival already exists for this country/date/name
+          // Check if this festival already exists for this date/name
           const existing = await prisma.festival.findFirst({
             where: {
               name: holiday.name,
               date: holidayDate,
-              country,
             }
           });
 
           if (existing) {
             let newState = existing.state;
+            let newCountry = existing.country;
+
+            // Update Country list
+            const countries = existing.country.split(',').map(c => c.trim());
+            if (!countries.includes(country)) {
+              newCountry = [...countries, country].join(', ');
+            }
             
             if (state) {
               // Current fetch is for a specific state
@@ -206,6 +214,7 @@ export class FestivalService {
                 description: holiday.description || '',
                 type: holiday.type?.[0] || 'Holiday',
                 primaryType: holiday.primary_type || 'Holiday',
+                country: newCountry,
                 state: newState
               }
             });
