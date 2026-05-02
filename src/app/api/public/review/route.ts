@@ -59,7 +59,9 @@ export async function POST(req: NextRequest) {
           reviewId: review.id.toString(),
           businessId: businessId.toString(),
           rating: rating.toString(),
-          type: "review"
+          type: "review",
+          vcardSoundEnabled: business.owner?.vcardSoundEnabled ? "true" : "false",
+          channelId: business.owner?.vcardSoundEnabled ? "smm_reviews_v3" : "smm_silent_channel"
         },
         business.owner?.vcardSoundEnabled ? "review_notification" : undefined // Sound only if enabled
       );
