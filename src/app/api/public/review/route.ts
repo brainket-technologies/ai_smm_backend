@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
         owner: {
           select: {
             email: true,
-            id: true
+            id: true,
+            vcardSoundEnabled: true
           }
         }
       }
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
           rating: rating.toString(),
           type: "review"
         },
-        business.vcardSoundEnabled ? "review_notification" : "default" // Custom sound filename only if enabled
+        business.owner?.vcardSoundEnabled ? "review_notification" : "default" // Custom sound filename only if enabled for owner
       );
 
       // 4. Save to Database Notifications Table
