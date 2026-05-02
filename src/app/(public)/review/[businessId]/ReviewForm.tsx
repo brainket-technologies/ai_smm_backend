@@ -26,7 +26,7 @@ const RATING_MESSAGES: Record<number, string> = {
   5: "Fantastic! We're thrilled you loved it. What was the highlight?"
 };
 
-export default function ReviewForm({ businessId, businessName, gmbReviewLink }: ReviewFormProps) {
+export default function ReviewForm({ businessId, businessName, gmbReviewLink, apiKey }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
