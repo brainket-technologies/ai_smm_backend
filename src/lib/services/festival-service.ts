@@ -164,22 +164,36 @@ export class FestivalService {
         try {
           const holidayDate = new Date(holiday.date.iso);
           
+          // Check if this festival already exists for this country/date/name
+          // If we are saving a state-specific one, check if a national one (state: null) exists
+          // If we are saving a national one, check if any state-specific one exists to potentially update it or skip
+          
           const existing = await prisma.festival.findFirst({
             where: {
               name: holiday.name,
               date: holidayDate,
               country,
-              state: (state || null) as any,
+              // If state is provided, we check for both that state and national (null)
+              // If state is null, we check for national (null)
+              OR: [
+                { state: (state || null) as any },
+                { state: null }
+              ]
             }
           });
 
           if (existing) {
+            // Update existing record with latest info, but keep the more general state if possible
+            // (e.g., if existing is national (null) and current is state, keep it as national)
             await prisma.festival.update({
               where: { id: existing.id },
               data: {
                 description: holiday.description || '',
                 type: holiday.type?.[0] || 'Holiday',
                 primaryType: holiday.primary_type || 'Holiday',
+                // If the existing record was state-specific and we just found it in a national fetch, 
+                // upgrade it to national (null)
+                state: (!state && existing.state) ? null : existing.state
               }
             });
           } else {
