@@ -2821,7 +2821,7 @@
             "name": "Festivals",
             "item": [
                 {
-                    "name": "Get Festivals (Auto - from Business)",
+                    "name": "Get Festivals (Automatic context from Business)",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -2852,57 +2852,7 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/festivals?year=2026",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "festivals"
-                            ],
-                            "query": [
-                                {
-                                    "key": "year",
-                                    "value": "2026"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Festivals (Specific Country)",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "apikey",
-                                "value": "{{apikey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "device-id",
-                                "value": "{{device_id}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "device-type",
-                                "value": "{{device_type}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-business-id",
-                                "value": "{{business_id}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/festivals?year=2026&country=US",
+                            "raw": "{{base_url}}/api/festivals?year=2026&upcomingOnly=true",
                             "host": [
                                 "{{base_url}}"
                             ],
@@ -2917,65 +2867,20 @@
                                 },
                                 {
                                     "key": "country",
-                                    "value": "US"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Festivals (Specific State)",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "apikey",
-                                "value": "{{apikey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "device-id",
-                                "value": "{{device_id}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "device-type",
-                                "value": "{{device_type}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-business-id",
-                                "value": "{{business_id}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/festivals?year=2026&country=IN&state=UP",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "festivals"
-                            ],
-                            "query": [
-                                {
-                                    "key": "year",
-                                    "value": "2026"
-                                },
-                                {
-                                    "key": "country",
-                                    "value": "IN"
+                                    "value": "IN",
+                                    "description": "Optional: Override business country",
+                                    "disabled": true
                                 },
                                 {
                                     "key": "state",
-                                    "value": "UP"
+                                    "value": "UP",
+                                    "description": "Optional: Override business state",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "upcomingOnly",
+                                    "value": "true",
+                                    "description": "Filter for future festivals only"
                                 }
                             ]
                         }
