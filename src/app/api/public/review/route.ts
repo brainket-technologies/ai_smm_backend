@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
           rating: rating.toString(),
           type: "review"
         },
-        "review_notification" // Custom sound filename
+        business.vcardSoundEnabled ? "review_notification" : "default" // Custom sound filename only if enabled
       );
 
       // 4. Save to Database Notifications Table
