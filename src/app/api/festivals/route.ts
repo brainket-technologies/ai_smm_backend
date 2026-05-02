@@ -9,37 +9,35 @@ export async function GET(req: NextRequest) {
     if (!check.isValid) return check.response;
 
     const { searchParams } = req.nextUrl;
-    let country = searchParams.get('country');
-    let state = searchParams.get('state');
     let yearParam = searchParams.get('year');
     let year = yearParam ? parseInt(yearParam) : new Date().getFullYear();
     let upcomingOnly = searchParams.get('upcomingOnly') === 'true';
 
-    // Fetch business location regardless to ensure we have the context
+    // Always fetch location from the user's business
     const businessId = check.businessId;
     const business = await prisma.business.findUnique({
       where: { id: businessId },
       select: { countryId: true, stateId: true }
     });
     
+    let country = 'IN'; // Default
+    let state: string | null = null;
+
     if (business) {
-      if (!country && business.countryId) {
+      if (business.countryId) {
         const countryData = await prisma.country.findUnique({
           where: { id: parseInt(business.countryId) }
         });
-        country = countryData?.iso2 || null;
+        if (countryData) country = countryData.iso2;
       }
       
-      if (!state && business.stateId) {
+      if (business.stateId) {
         const stateData = await prisma.state.findUnique({
           where: { id: parseInt(business.stateId) }
         });
-        state = stateData?.stateCode || null;
+        if (stateData) state = stateData.stateCode;
       }
     }
-
-    // Default to 'IN' if still not found
-    if (!country) country = 'IN';
 
     // Fetch festivals using the service (lazy loading + caching logic)
     const festivals = await FestivalService.getFestivals(country, year, state || undefined, upcomingOnly);
