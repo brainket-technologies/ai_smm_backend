@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
           rating: rating.toString(),
           type: "review"
         },
-        business.owner?.vcardSoundEnabled ? "review_notification" : "default" // Custom sound filename only if enabled for owner
+        business.owner?.vcardSoundEnabled ? "review_notification" : undefined // Sound only if enabled
       );
 
       // 4. Save to Database Notifications Table

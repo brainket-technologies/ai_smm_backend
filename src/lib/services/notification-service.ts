@@ -71,12 +71,12 @@ export class NotificationService {
           body: body,
           imageUrl: imageUrl || '',
           channelId: channelId || 'smm_post_alerts',
-          sound: sound || 'default'
+          ...(sound ? { sound } : {})
         },
         android: {
           priority: 'high',
           notification: {
-            sound: sound || 'default',
+          ...(sound ? { sound } : {}),
             channelId: channelId || 'smm_post_alerts',
             imageUrl: imageUrl || undefined,
           },
@@ -85,7 +85,7 @@ export class NotificationService {
           payload: {
             aps: {
               mutableContent: imageUrl ? true : false,
-              sound: sound ? `${sound}.caf` : 'default',
+              ...(sound ? { sound: `${sound}.caf` } : {}),
             },
           },
           fcmOptions: {
@@ -123,7 +123,7 @@ export class NotificationService {
           body: body,
           imageUrl: imageUrl || '',
           channelId: channelId || 'smm_post_alerts',
-          sound: sound || 'default',
+          ...(sound ? { sound } : {}),
           click_action: 'FLUTTER_NOTIFICATION_CLICK', // Legacy but helpful
         },
         android: {
@@ -131,13 +131,13 @@ export class NotificationService {
           notification: {
             imageUrl: imageUrl || undefined,
             channelId: channelId || 'smm_post_alerts',
-            sound: sound || 'default',
+            ...(sound ? { sound } : {}),
           }
         },
         apns: {
           payload: {
             aps: {
-              sound: sound ? `${sound}.caf` : 'default',
+              ...(sound ? { sound: `${sound}.caf` } : {}),
             }
           }
         }
