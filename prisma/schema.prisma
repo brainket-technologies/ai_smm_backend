@@ -235,6 +235,7 @@ model Business {
   postalCode         String?            @map("postal_code")
   updatedAt          DateTime?          @default(now()) @map("updated_at")
   visibilityStatus   String?            @default("active") @map("visibility_status")
+  vcardSoundEnabled  Boolean?           @default(false) @map("vcard_sound_enabled")
   usageLogs          AIUsageLog[]
   businessCategories BusinessCategory[]
   audienceType       AudienceType?      @relation(fields: [audienceTypeId], references: [id])
@@ -701,6 +702,7 @@ model User {
   emailEnabled      Boolean?             @default(true) @map("email_enabled")
   smsEnabled        Boolean?             @default(false) @map("sms_enabled")
   whatsappEnabled   Boolean?             @default(false) @map("whatsapp_enabled")
+  vcardSoundEnabled Boolean?             @default(false) @map("vcard_sound_enabled")
   isDeleted         Boolean?             @default(false) @map("is_deleted")
   deletedAt         DateTime?            @map("deleted_at")
   password          String?

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const validTypes = ['push', 'email', 'sms', 'whatsapp'];
+    const validTypes = ['push', 'email', 'sms', 'whatsapp', 'vcard_sound'];
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { res: "error", message: 'Invalid toggle type' },
@@ -35,7 +35,8 @@ export async function POST(request: Request) {
       push: 'pushEnabled',
       email: 'emailEnabled',
       sms: 'smsEnabled',
-      whatsapp: 'whatsappEnabled'
+      whatsapp: 'whatsappEnabled',
+      vcard_sound: 'vcardSoundEnabled'
     };
 
     const updateData: any = {};

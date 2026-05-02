@@ -218,7 +218,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\",\n    \"number\": \"+919876543210\",\n    \"dob\": \"31/12/1990\",\n    \"bio\": \"This is my bio\",\n    \"mediaId\": \"81\"\n}",
+                            "raw": "{\n    \"name\": \"Firoz Mohammad\",\n    \"email\": \"firozm613@gmail.com\",\n    \"number\": \"+919876543210\",\n    \"dob\": \"31/12/1990\",\n    \"bio\": \"This is my bio\",\n    \"mediaId\": \"81\",\n    \"vcardSoundEnabled\": true\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1407,7 +1407,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"id\": \"8\",\n    \"name\": \"Updated Tech Store\",\n    \"tagline\": \"Better tagline\",\n    \"description\": \"Full business description here\",\n    \"email\": \"contact@techstore.com\",\n    \"phone\": \"+919876543210\",\n    \"website\": \"https://techstore.com\",\n    \"address\": \"123 Tech Street\",\n    \"country\": \"India\",\n    \"state\": \"Maharashtra\",\n    \"city\": \"Mumbai\",\n    \"countryId\": \"1\",\n    \"stateId\": \"1\",\n    \"cityId\": \"1\",\n    \"pinCode\": \"400001\",\n    \"brandColor\": \"#2ECC71\",\n    \"mediaId\": \"1\",\n    \"categoryId\": \"1\",\n    \"audienceTypeId\": \"1\",\n    \"targetRegionId\": \"1\",\n    \"gender\": \"all\",\n    \"targetAgeGroupId\": \"1\",\n    \"modelEthnicityId\": \"1\",\n    \"ctaButtonId\": \"1\"\n}",
+                            "raw": "{\n    \"id\": \"8\",\n    \"name\": \"Updated Tech Store\",\n    \"tagline\": \"Better tagline\",\n    \"description\": \"Full business description here\",\n    \"email\": \"contact@techstore.com\",\n    \"phone\": \"+919876543210\",\n    \"website\": \"https://techstore.com\",\n    \"address\": \"123 Tech Street\",\n    \"country\": \"India\",\n    \"state\": \"Maharashtra\",\n    \"city\": \"Mumbai\",\n    \"countryId\": \"1\",\n    \"stateId\": \"1\",\n    \"cityId\": \"1\",\n    \"pinCode\": \"400001\",\n    \"brandColor\": \"#2ECC71\",\n    \"mediaId\": \"1\",\n    \"categoryId\": \"1\",\n    \"audienceTypeId\": \"1\",\n    \"targetRegionId\": \"1\",\n    \"gender\": \"all\",\n    \"targetAgeGroupId\": \"1\",\n    \"modelEthnicityId\": \"1\",\n    \"ctaButtonId\": \"1\",\n    \"vcardSoundEnabled\": true\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1423,6 +1423,60 @@
                                 "api",
                                 "business",
                                 "update"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update V-Card Settings",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vcardSoundEnabled\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/business/vcard-settings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "business",
+                                "vcard-settings"
                             ]
                         }
                     },
