@@ -86,6 +86,7 @@ export default async function BusinessReviewPage({ params }: { params: Promise<{
             businessId={businessId} 
             businessName={business.name}
             gmbReviewLink={gmbReviewLink}
+            apiKey={process.env.API_KEY || ''}
           />
         </div>
       </div>

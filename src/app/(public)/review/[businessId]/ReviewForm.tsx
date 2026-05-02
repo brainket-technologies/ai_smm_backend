@@ -7,6 +7,7 @@ interface ReviewFormProps {
   businessId: string;
   businessName: string;
   gmbReviewLink: string | null;
+  apiKey: string;
 }
 
 const RATING_TAGS: Record<number, string[]> = {
@@ -48,7 +49,11 @@ export default function ReviewForm({ businessId, businessName, gmbReviewLink }: 
     try {
       const response = await fetch('/api/public/review', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': apiKey,
+          'device-type': 'web'
+        },
         body: JSON.stringify({
           businessId,
           rating,
