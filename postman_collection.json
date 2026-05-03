@@ -1530,6 +1530,120 @@
             ]
         },
         {
+            "name": "Posts",
+            "item": [
+                {
+                    "name": "Create/Schedule Post",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"caption\": \"🚀 Just launched our new summer collection! Check it out at our store. #SummerSale #Fashion\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-15T10:00:00Z\",\n    \"status\": \"SCHEDULED\"\n}",
+                            "options": { "raw": { "language": "json" } }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/posts",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Posts List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts?status=SCHEDULED&limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts"],
+                            "query": [
+                                { "key": "status", "value": "SCHEDULED" },
+                                { "key": "limit", "value": "20" }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Post Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{last_post_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts", "{{last_post_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Post",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"caption\": \"Updated caption with more details! 🍕✨\",\n    \"scheduledAt\": \"2026-05-20T10:00:00Z\"\n}",
+                            "options": { "raw": { "language": "json" } }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{last_post_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts", "{{last_post_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Post",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{last_post_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts", "{{last_post_id}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
             "name": "Settings",
             "item": [
                 {

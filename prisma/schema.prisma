@@ -247,13 +247,13 @@ model Business {
   targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
   targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
   owner              User               @relation(fields: [ownerId], references: [id])
-  mediaFiles                  MediaFile[]
-  posts                       Post[]
-  products                    Product[]
-  services                    Service[]
-  socialAccounts              SocialAccount[]
-  reviews                     Review[]
-  ledgerAccounts              LedgerAccount[]
+  mediaFiles         MediaFile[]
+  posts              Post[]
+  products           Product[]
+  services           Service[]
+  socialAccounts     SocialAccount[]
+  reviews            Review[]
+  ledgerAccounts     LedgerAccount[]
 
   @@map("businesses")
 }
@@ -333,6 +333,7 @@ model CTAButton {
   name       String     @unique
   isActive   Boolean?   @default(true) @map("is_active")
   businesses Business[]
+  posts      Post[]
 
   @@map("cta_buttons")
 }
@@ -862,8 +863,7 @@ model Post {
   id              BigInt         @id @default(autoincrement())
   businessId      BigInt         @map("business_id")
   caption         String?        @db.Text
-  ctaLabel        String?        @map("cta_label")
-  ctaUrl          String?        @map("cta_url")
+  ctaButtonId     BigInt?        @map("cta_button_id")
   status          PostStatus     @default(DRAFT)
   scheduledAt     DateTime?      @map("scheduled_at")
   publishedAt     DateTime?      @map("published_at")
@@ -871,6 +871,7 @@ model Post {
   updatedAt       DateTime       @updatedAt @map("updated_at")
   
   business        Business       @relation(fields: [businessId], references: [id])
+  ctaButton       CTAButton?     @relation(fields: [ctaButtonId], references: [id])
   media           PostMedia[]
   platformStatus  PostPlatform[]
 
