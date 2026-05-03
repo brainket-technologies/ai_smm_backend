@@ -187,6 +187,7 @@ model MediaFile {
   servicesWithThisImage       Service[]            @relation("ServiceImage")
   usersWithThisImage          User[]               @relation("UserProfileImage")
   ledgerAccountsWithThisImage LedgerAccount[]      @relation("LedgerProfileImage")
+  postMedia                   PostMedia[]
 
   @@map("media_files")
 }
@@ -246,12 +247,13 @@ model Business {
   targetAgeGroup     TargetAgeGroup?    @relation(fields: [targetAgeGroupId], references: [id])
   targetRegion       TargetRegion?      @relation(fields: [targetRegionId], references: [id])
   owner              User               @relation(fields: [ownerId], references: [id])
-  mediaFiles         MediaFile[]
-  products           Product[]
-  services           Service[]
-  socialAccounts     SocialAccount[]
-  reviews            Review[]
-  ledgerAccounts     LedgerAccount[]
+  mediaFiles                  MediaFile[]
+  posts                       Post[]
+  products                    Product[]
+  services                    Service[]
+  socialAccounts              SocialAccount[]
+  reviews                     Review[]
+  ledgerAccounts              LedgerAccount[]
 
   @@map("businesses")
 }
@@ -450,6 +452,7 @@ model Platform {
   scopes         String?
   media          MediaFile?      @relation("PlatformLogo", fields: [mediaId], references: [id])
   socialAccounts SocialAccount[]
+  postPlatforms  PostPlatform[]
 
   @@map("platforms")
 }
@@ -845,4 +848,55 @@ model FestivalFetchLog {
 
   @@unique([country, state, year])
   @@map("festival_fetch_logs")
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+  PARTIAL
+}
+
+model Post {
+  id              BigInt         @id @default(autoincrement())
+  businessId      BigInt         @map("business_id")
+  caption         String?        @db.Text
+  ctaLabel        String?        @map("cta_label")
+  ctaUrl          String?        @map("cta_url")
+  status          PostStatus     @default(DRAFT)
+  scheduledAt     DateTime?      @map("scheduled_at")
+  publishedAt     DateTime?      @map("published_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  
+  business        Business       @relation(fields: [businessId], references: [id])
+  media           PostMedia[]
+  platformStatus  PostPlatform[]
+
+  @@map("posts")
+}
+
+model PostMedia {
+  id        BigInt    @id @default(autoincrement())
+  postId    BigInt    @map("post_id")
+  mediaId   BigInt    @map("media_id")
+  order     Int       @default(0)
+  post      Post      @relation(fields: [postId], references: [id])
+  media     MediaFile @relation(fields: [mediaId], references: [id])
+
+  @@map("post_media")
+}
+
+model PostPlatform {
+  id             BigInt     @id @default(autoincrement())
+  postId         BigInt     @map("post_id")
+  platformId     BigInt     @map("platform_id")
+  status         String     @default("pending") // pending, success, failed
+  externalPostId String?    @map("external_post_id")
+  errorMessage   String?    @map("error_message") @db.Text
+  post           Post       @relation(fields: [postId], references: [id])
+  platform       Platform   @relation(fields: [platformId], references: [id])
+
+  @@map("post_platforms")
 }
