@@ -1664,6 +1664,25 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "Get CTA Buttons",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cta-buttons",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cta-buttons"]
+                        }
+                    },
+                    "response": []
                 }
             ]
         },
