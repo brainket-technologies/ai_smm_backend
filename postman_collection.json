@@ -1623,6 +1623,30 @@
                     "response": []
                 },
                 {
+                    "name": "Reschedule Post",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"scheduledAt\": \"2026-06-01T15:30:00Z\"\n}",
+                            "options": { "raw": { "language": "json" } }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{last_post_id}}/reschedule",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "posts", "{{last_post_id}}", "reschedule"]
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "Delete Post",
                     "request": {
                         "method": "DELETE",

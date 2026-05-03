@@ -180,4 +180,18 @@ export class PostService {
       return await tx.post.delete({ where: { id: postId } });
     });
   }
+
+  /**
+   * Reschedules a post by updating its scheduledAt date.
+   */
+  static async reschedulePost(id: string | bigint, scheduledAt: string | Date) {
+    const postId = BigInt(id);
+    return await prisma.post.update({
+      where: { id: postId },
+      data: {
+        scheduledAt: new Date(scheduledAt),
+        status: PostStatus.SCHEDULED,
+      },
+    });
+  }
 }
