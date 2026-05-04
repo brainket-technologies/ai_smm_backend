@@ -869,6 +869,7 @@ model Post {
   publishedAt     DateTime?      @map("published_at")
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
+  hashtags        String[]       @default([])
   
   business        Business       @relation(fields: [businessId], references: [id])
   ctaButton       CTAButton?     @relation(fields: [ctaButtonId], references: [id])

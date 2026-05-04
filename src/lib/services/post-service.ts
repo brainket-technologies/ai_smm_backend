@@ -13,8 +13,9 @@ export class PostService {
     platformIds: string[] | bigint[];
     scheduledAt?: string | Date;
     status?: PostStatus;
+    hashtags?: string[];
   }) {
-    const { businessId, caption, ctaButtonId, mediaIds, platformIds, scheduledAt, status } = data;
+    const { businessId, caption, ctaButtonId, mediaIds, platformIds, scheduledAt, status, hashtags } = data;
 
     return await prisma.$transaction(async (tx) => {
       // 1. Create the core post
@@ -25,6 +26,7 @@ export class PostService {
           ctaButtonId: ctaButtonId ? BigInt(ctaButtonId) : null,
           status: status || (scheduledAt ? PostStatus.SCHEDULED : PostStatus.DRAFT),
           scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+          hashtags: hashtags || [],
         },
       });
 
@@ -121,9 +123,10 @@ export class PostService {
     status?: PostStatus;
     mediaIds?: string[] | bigint[];
     platformIds?: string[] | bigint[];
+    hashtags?: string[];
   }) {
     const postId = BigInt(id);
-    const { caption, ctaButtonId, scheduledAt, status, mediaIds, platformIds } = data;
+    const { caption, ctaButtonId, scheduledAt, status, mediaIds, platformIds, hashtags } = data;
 
     return await prisma.$transaction(async (tx) => {
       // 1. Update core fields
@@ -134,6 +137,7 @@ export class PostService {
           ...(ctaButtonId !== undefined && { ctaButtonId: ctaButtonId ? BigInt(ctaButtonId) : null }),
           ...(scheduledAt !== undefined && { scheduledAt: scheduledAt ? new Date(scheduledAt) : null }),
           ...(status !== undefined && { status }),
+          ...(hashtags !== undefined && { hashtags }),
         },
       });
 
