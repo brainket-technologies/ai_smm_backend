@@ -72,7 +72,7 @@ export async function POST(request: Request) {
                 mimeType,
                 mediaCategory: type,
                 userId: auth.userId,
-                businessId: businessId,
+                businessId: businessId || undefined,
                 size: size,
             });
 
