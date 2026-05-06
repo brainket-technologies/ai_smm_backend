@@ -12,22 +12,15 @@ export async function GET(request: Request) {
         const auth = await validateAuth(request);
         if (!auth.isValid) return auth.response;
 
-        // 3. Get Business ID strictly from header
+        // 3. Get Business ID from header (Optional)
         const businessId = request.headers.get('X-Business-Id');
-
-        if (!businessId) {
-            return NextResponse.json(
-                { res: "error", success: false, message: 'Business ID is required in X-Business-Id header' },
-                { status: 400 }
-            );
-        }
 
         // 4. Fetch Grouped Media Categories
         const categories = await prisma.mediaFile.groupBy({
             by: ['mediaCategory'],
             where: {
                 userId: auth.userId,
-                businessId: BigInt(businessId),
+                ...(businessId && { businessId: BigInt(businessId) }),
             },
             _count: {
                 _all: true
