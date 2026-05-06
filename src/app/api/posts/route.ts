@@ -55,6 +55,8 @@ export async function GET(req: Request) {
 
     const formattedPosts = posts.map((post: any) => ({
       ...post,
+      id: post.id.toString(),
+      businessId: post.businessId.toString(),
       media: post.media.map((item: any) => ({
         id: item.id.toString(),
         postId: item.postId.toString(),
@@ -62,6 +64,17 @@ export async function GET(req: Request) {
         order: item.order,
         fileUrl: item.media?.fileUrl,
         fileType: item.media?.fileType,
+      })),
+      platformStatus: post.platformStatus.map((item: any) => ({
+        id: item.id.toString(),
+        postId: item.postId.toString(),
+        platformId: item.platformId.toString(),
+        status: item.status,
+        platform: {
+          ...item.platform,
+          id: item.platform.id.toString(),
+          iconUrl: item.platform.media?.fileUrl,
+        }
       }))
     }));
 

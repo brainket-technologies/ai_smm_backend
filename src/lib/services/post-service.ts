@@ -76,7 +76,11 @@ export class PostService {
         },
         platformStatus: {
           include: {
-            platform: true,
+            platform: {
+              include: {
+                media: true,
+              },
+            },
           },
         },
         ctaButton: true,
@@ -105,7 +109,11 @@ export class PostService {
         },
         platformStatus: {
           include: {
-            platform: true,
+            platform: {
+              include: {
+                media: true,
+              },
+            },
           },
         },
         ctaButton: true,

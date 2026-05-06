@@ -39,12 +39,30 @@ export async function GET(
       size: item.media?.size,
     }));
 
+    // Flatten platform status for easier frontend consumption
+    const formattedPlatformStatus = post.platformStatus.map((item: any) => ({
+      id: item.id.toString(),
+      postId: item.postId.toString(),
+      platformId: item.platformId.toString(),
+      status: item.status,
+      externalPostId: item.externalPostId,
+      errorMessage: item.errorMessage,
+      platform: {
+        ...item.platform,
+        id: item.platform.id.toString(),
+        iconUrl: item.platform.media?.fileUrl,
+      }
+    }));
+
     return NextResponse.json({ 
       res: "success", 
       message: "Post details fetched successfully",
       data: {
         ...post,
-        media: formattedMedia
+        id: post.id.toString(),
+        businessId: post.businessId.toString(),
+        media: formattedMedia,
+        platformStatus: formattedPlatformStatus
       } 
     });
   } catch (error: any) {
