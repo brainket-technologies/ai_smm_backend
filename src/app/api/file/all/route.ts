@@ -12,10 +12,15 @@ export async function GET(request: Request) {
         const auth = await validateAuth(request);
         if (!auth.isValid) return auth.response;
 
-        // 3. Get Query Parameters for Filtering
+        // 3. Get Query Parameters and Headers for Filtering
         const { searchParams } = new URL(request.url);
         const category = searchParams.get('type'); // type=logo, ai_generated, etc.
         const fileType = searchParams.get('file_type'); // file_type=image, video, etc.
+        
+        // Check businessId in query param first, then header
+        const queryBusinessId = searchParams.get('businessId');
+        const headerBusinessId = request.headers.get('X-Business-Id');
+        const businessId = queryBusinessId || headerBusinessId;
 
         // 4. Fetch Media Files from Database
         const mediaFiles = await prisma.mediaFile.findMany({
@@ -23,6 +28,7 @@ export async function GET(request: Request) {
                 userId: auth.userId,
                 ...(category && { mediaCategory: category }),
                 ...(fileType && { fileType: fileType }),
+                ...(businessId && { businessId: BigInt(businessId) }),
             },
             orderBy: {
                 createdAt: 'desc'

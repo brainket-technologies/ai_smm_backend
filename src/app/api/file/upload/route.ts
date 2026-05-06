@@ -13,7 +13,10 @@ export async function POST(request: Request) {
         const auth = await validateAuth(request);
         if (!auth.isValid) return auth.response;
 
-        // 3. Parse Multi-part Form Data
+        // 3. Extract Business ID (Optional)
+        const businessId = request.headers.get('X-Business-Id');
+
+        // 4. Parse Multi-part Form Data
         const formData = await request.formData();
         const type = (formData.get('type') || 'general') as MediaCategory;
         
@@ -48,7 +51,7 @@ export async function POST(request: Request) {
                 continue; // Skip too large files or handle error
             }
 
-            // 4. Prepare File Info
+            // 5. Prepare File Info
             const buffer = Buffer.from(await file.arrayBuffer());
             const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
             const mimeType = file.type;
@@ -59,16 +62,17 @@ export async function POST(request: Request) {
             if (mimeType.startsWith('image/')) fileType = 'image';
             else if (mimeType.startsWith('video/')) fileType = 'video';
 
-            // 5. Save Physical File via StorageEngine
+            // 6. Save Physical File via StorageEngine
             const fileUrl = await StorageEngine.saveFile(buffer, fileName, type, mimeType);
 
-            // 6. Register in Media Database
+            // 7. Register in Media Database
             const mediaId = await registerMedia({
                 fileUrl,
                 fileType,
                 mimeType,
                 mediaCategory: type,
                 userId: auth.userId,
+                businessId: businessId,
                 size: size,
             });
 

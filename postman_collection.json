@@ -2137,6 +2137,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -2192,6 +2197,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -2209,6 +2219,11 @@
                                     "key": "file_type",
                                     "value": "image",
                                     "description": "image, video, etc."
+                                },
+                                {
+                                    "key": "businessId",
+                                    "value": "{{business_id}}",
+                                    "description": "Filter by business ID"
                                 }
                             ],
                             "path": [
