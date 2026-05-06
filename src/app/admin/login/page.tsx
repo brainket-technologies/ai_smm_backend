@@ -10,11 +10,13 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
       const resp = await fetch("/api/auth/login", {
@@ -24,17 +26,26 @@ export default function AdminLoginPage() {
       });
       const data = await resp.json();
       
-      if (data.res === "success") {
+      // Robust check for success (works with both res: "success" and success: true)
+      if (data.res === "success" || data.success === true) {
         // Security check: Only allow Super Admin to access the admin panel
-        if (data.data.user.role !== "Super Admin") {
+        const user = data.data?.user || data.user;
+        const roleName = typeof user?.role === "string" ? user.role : user?.role?.name;
+
+        if (roleName !== "Super Admin") {
           setError("Unauthorized: Access restricted to Super Admins only.");
           setLoading(false);
           return;
         }
 
-        localStorage.setItem("admin_token", data.data.token);
-        Cookies.set("admin_token", data.data.token, { expires: 30 }); // 30 days
-        window.location.href = "/admin/dashboard";
+        setSuccessMessage("Logged in successfully! Redirecting...");
+        localStorage.setItem("admin_token", data.data.token || data.token);
+        Cookies.set("admin_token", data.data.token || data.token, { expires: 30 }); // 30 days
+        
+        // Short delay to show success message
+        setTimeout(() => {
+          window.location.href = "/admin/dashboard";
+        }, 1000);
       } else {
         setError(data.message || "Invalid credentials");
       }
@@ -94,6 +105,13 @@ export default function AdminLoginPage() {
             <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex items-center text-red-600 text-sm animate-in shake-in duration-300">
               <AlertCircle className="h-4 w-4 mr-2" />
               <span>{error}</span>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center text-emerald-600 text-sm animate-in fade-in duration-300">
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              <span>{successMessage}</span>
             </div>
           )}
 
