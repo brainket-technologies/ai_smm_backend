@@ -3,9 +3,10 @@ import { PostService } from '@/lib/services/post-service';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const businessId = request.headers.get('x-business-id');
     if (!businessId) {
       return NextResponse.json(
@@ -22,12 +23,21 @@ export async function PATCH(
       );
     }
 
-    const post = await PostService.reschedulePost(params.id, scheduledAt);
+    const post: any = await PostService.reschedulePost(id, scheduledAt);
+    
+    // Format BigInt fields to String for JSON serialization
+    const formattedPost = {
+      ...post,
+      id: post.id.toString(),
+      businessId: post.businessId.toString(),
+      ctaButtonId: post.ctaButtonId?.toString(),
+    };
+
     return NextResponse.json({
       res: 'success',
       success: true,
       message: 'Post rescheduled successfully',
-      data: post
+      data: formattedPost
     });
   } catch (error: any) {
     console.error('Error rescheduling post:', error);
