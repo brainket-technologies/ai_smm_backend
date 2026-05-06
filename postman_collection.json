@@ -1545,7 +1545,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"caption\": \"🚀 Just launched our new summer collection! Check it out at our store. #SummerSale #Fashion\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-15T10:00:00Z\",\n    \"status\": \"SCHEDULED\"\n}",
+                            "raw": "{\n    \"caption\": \"🚀 Just launched our new summer collection! Check it out at our store. #SummerSale #Fashion\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-15T10:00:00Z\",\n    \"status\": \"SCHEDULED\",\n    \"hashtags\": [\"SummerSale\", \"Fashion\"]\n}",
                             "options": { "raw": { "language": "json" } }
                         },
                         "url": {
@@ -1611,7 +1611,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"caption\": \"Updated caption with more details! 🍕✨\",\n    \"scheduledAt\": \"2026-05-20T10:00:00Z\"\n}",
+                            "raw": "{\n    \"caption\": \"Updated caption with more details! 🍕✨\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [\"123\", \"124\"],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-20T10:00:00Z\",\n    \"status\": \"DRAFT\",\n    \"hashtags\": [\"Updated\", \"Pizza\"]\n}",
                             "options": { "raw": { "language": "json" } }
                         },
                         "url": {

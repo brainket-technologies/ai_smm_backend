@@ -93,12 +93,17 @@ export async function PATCH(
       return NextResponse.json({ res: "error", message: 'Unauthorized' }, { status: 403 });
     }
 
-    const post = await PostService.updatePost(id, body);
+    const post: any = await PostService.updatePost(id, body);
 
     return NextResponse.json({ 
       res: "success", 
       message: "Post updated successfully",
-      data: post 
+      data: {
+        ...post,
+        id: post.id.toString(),
+        businessId: post.businessId.toString(),
+        ctaButtonId: post.ctaButtonId?.toString(),
+      } 
     });
   } catch (error: any) {
     console.error('[API Post Detail PATCH] Error:', error.message);
