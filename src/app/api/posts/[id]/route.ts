@@ -27,10 +27,25 @@ export async function GET(
       );
     }
 
+    // Flatten media items for easier frontend consumption
+    const formattedMedia = post.media.map((item: any) => ({
+      id: item.id.toString(),
+      postId: item.postId.toString(),
+      mediaId: item.mediaId.toString(),
+      order: item.order,
+      fileUrl: item.media?.fileUrl,
+      fileType: item.media?.fileType,
+      mimeType: item.media?.mimeType,
+      size: item.media?.size,
+    }));
+
     return NextResponse.json({ 
       res: "success", 
       message: "Post details fetched successfully",
-      data: post 
+      data: {
+        ...post,
+        media: formattedMedia
+      } 
     });
   } catch (error: any) {
     console.error('[API Post Detail GET] Error:', error.message);

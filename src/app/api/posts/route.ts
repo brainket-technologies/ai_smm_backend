@@ -53,10 +53,22 @@ export async function GET(req: Request) {
 
     const posts = await PostService.getPosts(check.businessId, status, limit);
 
+    const formattedPosts = posts.map((post: any) => ({
+      ...post,
+      media: post.media.map((item: any) => ({
+        id: item.id.toString(),
+        postId: item.postId.toString(),
+        mediaId: item.mediaId.toString(),
+        order: item.order,
+        fileUrl: item.media?.fileUrl,
+        fileType: item.media?.fileType,
+      }))
+    }));
+
     return NextResponse.json({ 
       res: "success", 
       message: "Posts fetched successfully",
-      data: posts 
+      data: formattedPosts 
     });
   } catch (error: any) {
     console.error('[API Posts GET] Error:', error.message);
