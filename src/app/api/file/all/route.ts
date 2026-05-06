@@ -91,7 +91,7 @@ export async function GET(request: Request) {
                         platform_icon: ps.platform.media?.fileUrl || null,
                         status: ps.status,
                         post_url: ps.externalPostId,
-                        scheduled_at: ps.scheduledAt ? ps.scheduledAt.toISOString() : null
+                        scheduled_at: pm.post.scheduledAt ? pm.post.scheduledAt.toISOString() : null
                     });
                 });
             });
