@@ -90,7 +90,8 @@ export async function GET(request: Request) {
                         platform_url: ps.platform.url,
                         platform_icon: ps.platform.media?.fileUrl || null,
                         status: ps.status,
-                        post_url: ps.externalPostId
+                        post_url: ps.externalPostId,
+                        scheduled_at: ps.scheduledAt ? ps.scheduledAt.toISOString() : null
                     });
                 });
             });
@@ -105,7 +106,8 @@ export async function GET(request: Request) {
                         platform_url: p.url,
                         platform_icon: p.media?.fileUrl || null,
                         status: 'active',
-                        post_url: null
+                        post_url: null,
+                        scheduled_at: null
                     });
                 }
             });
