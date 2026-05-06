@@ -47,7 +47,13 @@ export async function GET(request: Request) {
                             include: {
                                 platformStatus: {
                                     include: {
-                                        platform: true // Get all platform fields
+                                        platform: {
+                                            include: {
+                                                media: {
+                                                    select: { fileUrl: true }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -56,7 +62,9 @@ export async function GET(request: Request) {
                 },
                 platformsWithThisLogo: {
                     include: {
-                        media: false // Don't recurse
+                        media: {
+                            select: { fileUrl: true }
+                        }
                     }
                 }
             },
@@ -80,6 +88,7 @@ export async function GET(request: Request) {
                         platform: ps.platform.name,
                         platform_key: ps.platform.nameKey,
                         platform_url: ps.platform.url,
+                        platform_icon: ps.platform.media?.fileUrl || null,
                         status: ps.status,
                         post_url: ps.externalPostId
                     });
@@ -94,6 +103,7 @@ export async function GET(request: Request) {
                         platform: p.name,
                         platform_key: p.nameKey,
                         platform_url: p.url,
+                        platform_icon: p.media?.fileUrl || null,
                         status: 'active',
                         post_url: null
                     });
