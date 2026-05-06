@@ -4,13 +4,13 @@ import { validateRequest } from '@/lib/auth-utils';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const check = await validateRequest(req);
     if (!check.isValid) return check.response!;
 
-    const { id } = params;
+    const { id } = await params;
     const post = await PostService.getPostById(id);
 
     if (!post) {
@@ -43,13 +43,13 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const check = await validateRequest(req);
     if (!check.isValid) return check.response!;
 
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     const existingPost = await PostService.getPostById(id);
@@ -78,13 +78,13 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const check = await validateRequest(req);
     if (!check.isValid) return check.response!;
 
-    const { id } = params;
+    const { id } = await params;
     
     const existingPost = await PostService.getPostById(id);
     if (!existingPost) {
