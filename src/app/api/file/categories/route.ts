@@ -12,15 +12,12 @@ export async function GET(request: Request) {
         const auth = await validateAuth(request);
         if (!auth.isValid) return auth.response;
 
-        // 3. Get Business ID
-        const { searchParams } = new URL(request.url);
-        const queryBusinessId = searchParams.get('businessId');
-        const headerBusinessId = request.headers.get('X-Business-Id');
-        const businessId = queryBusinessId || headerBusinessId;
+        // 3. Get Business ID strictly from header
+        const businessId = request.headers.get('X-Business-Id');
 
         if (!businessId) {
             return NextResponse.json(
-                { res: "error", success: false, message: 'Business ID is required' },
+                { res: "error", success: false, message: 'Business ID is required in X-Business-Id header' },
                 { status: 400 }
             );
         }

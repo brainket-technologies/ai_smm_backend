@@ -17,10 +17,8 @@ export async function GET(request: Request) {
         const category = searchParams.get('type'); // type=logo, ai_generated, etc.
         const fileType = searchParams.get('file_type'); // file_type=image, video, etc.
         
-        // Check businessId in query param first, then header
-        const queryBusinessId = searchParams.get('businessId');
-        const headerBusinessId = request.headers.get('X-Business-Id');
-        const businessId = queryBusinessId || headerBusinessId;
+        // Strictly use header for businessId
+        const businessId = request.headers.get('X-Business-Id');
 
         // 4. Fetch Media Files from Database
         const mediaFiles = await prisma.mediaFile.findMany({

@@ -2219,11 +2219,6 @@
                                     "key": "file_type",
                                     "value": "image",
                                     "description": "image, video, etc."
-                                },
-                                {
-                                    "key": "businessId",
-                                    "value": "{{business_id}}",
-                                    "description": "Filter by business ID"
                                 }
                             ],
                             "path": [
@@ -2267,16 +2262,9 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/file/categories?businessId={{business_id}}",
+                            "raw": "{{base_url}}/api/file/categories",
                             "host": [
                                 "{{base_url}}"
-                            ],
-                            "query": [
-                                {
-                                    "key": "businessId",
-                                    "value": "{{business_id}}",
-                                    "description": "Filter by business ID"
-                                }
                             ],
                             "path": [
                                 "api",
