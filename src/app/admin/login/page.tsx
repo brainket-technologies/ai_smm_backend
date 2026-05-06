@@ -23,7 +23,15 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await resp.json();
-      if (data.success) {
+      
+      if (data.res === "success") {
+        // Security check: Only allow Super Admin to access the admin panel
+        if (data.data.user.role !== "Super Admin") {
+          setError("Unauthorized: Access restricted to Super Admins only.");
+          setLoading(false);
+          return;
+        }
+
         localStorage.setItem("admin_token", data.data.token);
         Cookies.set("admin_token", data.data.token, { expires: 30 }); // 30 days
         window.location.href = "/admin/dashboard";
