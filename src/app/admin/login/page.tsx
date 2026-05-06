@@ -1,16 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Persistent Login Check
+  useEffect(() => {
+    const token = Cookies.get("admin_token") || localStorage.getItem("admin_token");
+    if (token) {
+      window.location.href = "/admin/dashboard";
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
