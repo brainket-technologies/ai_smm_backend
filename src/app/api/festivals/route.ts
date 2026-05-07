@@ -43,17 +43,74 @@ export async function GET(req: NextRequest) {
     // Fetch festivals using the service (lazy loading + caching logic)
     const festivals = await FestivalService.getFestivals(country, year, state || undefined, upcomingOnly);
 
-    // Filter results if state was provided to include both national and state festivals
-    // (The service already does this, but we ensure it here)
-    const data = festivals.map(f => ({
+    // Fetch posts for this business to show in the planner
+    const posts = await prisma.post.findMany({
+      where: {
+        businessId: businessId,
+        status: {
+          in: ['SCHEDULED', 'PUBLISHED', 'PARTIAL']
+        }
+      },
+      include: {
+        media: {
+          include: {
+            media: true
+          }
+        },
+        platformStatus: {
+          include: {
+            platform: true
+          }
+        }
+      },
+      orderBy: {
+        scheduledAt: 'asc'
+      }
+    });
+
+    const festivalData = festivals.map(f => ({
       ...f,
-      id: f.id.toString() // Stringify BigInt
+      id: f.id.toString()
+    }));
+
+    const postData = posts.map(p => ({
+      ...p,
+      id: p.id.toString(),
+      businessId: p.businessId.toString(),
+      ctaButtonId: p.ctaButtonId?.toString(),
+      media: p.media.map(m => ({
+        ...m,
+        id: m.id.toString(),
+        postId: m.postId.toString(),
+        mediaId: m.mediaId.toString(),
+        media: {
+          ...m.media,
+          id: m.media.id.toString(),
+          userId: m.media.userId?.toString(),
+          businessId: m.media.businessId?.toString(),
+          relatedId: m.media.relatedId?.toString()
+        }
+      })),
+      platformStatus: p.platformStatus.map(ps => ({
+        ...ps,
+        id: ps.id.toString(),
+        postId: ps.postId.toString(),
+        platformId: ps.platformId.toString(),
+        platform: {
+          ...ps.platform,
+          id: ps.platform.id.toString(),
+          mediaId: ps.platform.mediaId?.toString()
+        }
+      }))
     }));
 
     return NextResponse.json({
       res: "success",
-      message: 'Festivals fetched successfully',
-      data: data
+      message: 'Planner data fetched successfully',
+      data: {
+        festivals: festivalData,
+        posts: postData
+      }
     });
   } catch (error: any) {
     console.error('Error in festivals route:', error);
