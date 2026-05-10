@@ -214,6 +214,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -263,6 +268,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -302,6 +312,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -352,6 +367,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -400,6 +420,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -455,6 +480,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -503,6 +533,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -586,6 +621,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -631,6 +671,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -670,6 +715,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1314,6 +1364,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -1363,6 +1418,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -1402,6 +1462,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1537,21 +1602,50 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "body": {
                             "mode": "raw",
                             "raw": "{\n    \"caption\": \"🚀 Just launched our new summer collection! Check it out at our store. #SummerSale #Fashion\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-15T10:00:00Z\",\n    \"status\": \"SCHEDULED\",\n    \"hashtags\": [\"SummerSale\", \"Fashion\"]\n}",
-                            "options": { "raw": { "language": "json" } }
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
                         },
                         "url": {
                             "raw": "{{base_url}}/api/posts",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts"
+                            ]
                         }
                     },
                     "response": []
@@ -1561,19 +1655,50 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts?status=SCHEDULED&limit=20",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts"],
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts"
+                            ],
                             "query": [
-                                { "key": "status", "value": "SCHEDULED" },
-                                { "key": "limit", "value": "20" }
+                                {
+                                    "key": "status",
+                                    "value": "SCHEDULED"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
                             ]
                         }
                     },
@@ -1584,16 +1709,42 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts", "{{last_post_id}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{{last_post_id}}"
+                            ]
                         }
                     },
                     "response": []
@@ -1603,21 +1754,51 @@
                     "request": {
                         "method": "PATCH",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "body": {
                             "mode": "raw",
                             "raw": "{\n    \"caption\": \"Updated caption with more details! 🍕✨\",\n    \"ctaButtonId\": \"1\",\n    \"mediaIds\": [\"123\", \"124\"],\n    \"platformIds\": [\"1\", \"2\"],\n    \"scheduledAt\": \"2026-05-20T10:00:00Z\",\n    \"status\": \"DRAFT\",\n    \"hashtags\": [\"Updated\", \"Pizza\"]\n}",
-                            "options": { "raw": { "language": "json" } }
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
                         },
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts", "{{last_post_id}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{{last_post_id}}"
+                            ]
                         }
                     },
                     "response": []
@@ -1627,21 +1808,52 @@
                     "request": {
                         "method": "PATCH",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "body": {
                             "mode": "raw",
                             "raw": "{\n    \"scheduledAt\": \"2026-06-01T15:30:00Z\"\n}",
-                            "options": { "raw": { "language": "json" } }
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
                         },
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}/reschedule",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts", "{{last_post_id}}", "reschedule"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{{last_post_id}}",
+                                "reschedule"
+                            ]
                         }
                     },
                     "response": []
@@ -1651,16 +1863,42 @@
                     "request": {
                         "method": "DELETE",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "posts", "{{last_post_id}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{{last_post_id}}"
+                            ]
                         }
                     },
                     "response": []
@@ -1670,16 +1908,41 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/cta-buttons",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "cta-buttons"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "cta-buttons"
+                            ]
                         }
                     },
                     "response": []
@@ -2304,6 +2567,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "url": {
@@ -2342,6 +2610,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2392,6 +2665,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -2441,6 +2719,11 @@
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
                             }
                         ],
                         "body": {
@@ -2489,6 +2772,11 @@
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2691,17 +2979,48 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/ledger/accounts?id=1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "ledger", "accounts"],
-                            "query": [{ "key": "id", "value": "1" }]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "ledger",
+                                "accounts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
                         }
                     }
                 },
@@ -2710,17 +3029,48 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
-                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
-                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
-                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/ledger/transactions?id=1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "ledger", "transactions"],
-                            "query": [{ "key": "id", "value": "1" }]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "ledger",
+                                "transactions"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
                         }
                     }
                 },
@@ -3223,15 +3573,39 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}",
+                                        "type": "text"
+                                    }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/credits/balance",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "credits", "balance"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "credits",
+                                        "balance"
+                                    ]
                                 }
                             }
                         },
@@ -3240,15 +3614,39 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}",
+                                        "type": "text"
+                                    }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/credits/reward-ad",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "credits", "reward-ad"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "credits",
+                                        "reward-ad"
+                                    ]
                                 }
                             }
                         }
@@ -3262,15 +3660,39 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}",
+                                        "type": "text"
+                                    }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/config/themes",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "config", "themes"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "config",
+                                        "themes"
+                                    ]
                                 }
                             }
                         },
@@ -3279,21 +3701,47 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    }
                                 ],
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n        \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
-                                    "options": { "raw": { "language": "json" } }
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
                                 },
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/studio/image",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "studio", "image"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "studio",
+                                        "image"
+                                    ]
                                 }
                             }
                         }
@@ -3307,15 +3755,39 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}",
+                                        "type": "text"
+                                    }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/config/quick-actions",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "config", "quick-actions"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "config",
+                                        "quick-actions"
+                                    ]
                                 }
                             }
                         },
@@ -3324,21 +3796,47 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    }
                                 ],
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n        \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
-                                    "options": { "raw": { "language": "json" } }
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
                                 },
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/assistant/chat",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "assistant", "chat"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "assistant",
+                                        "chat"
+                                    ]
                                 }
                             }
                         },
@@ -3347,21 +3845,47 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    }
                                 ],
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n        \"actionKey\": \"viral_hashtags\",\n    \"message\": \"Give me some for a coffee shop\"\n}",
-                                    "options": { "raw": { "language": "json" } }
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
                                 },
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/assistant/chat",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "assistant", "chat"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "assistant",
+                                        "chat"
+                                    ]
                                 }
                             }
                         },
@@ -3370,21 +3894,47 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    }
                                 ],
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n        \"type\": \"caption\",\n    \"platform\": \"Instagram\",\n    \"topic\": \"Summer Sale\"\n}",
-                                    "options": { "raw": { "language": "json" } }
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
                                 },
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/assistant/content",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "assistant", "content"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "assistant",
+                                        "content"
+                                    ]
                                 }
                             }
                         },
@@ -3393,15 +3943,39 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "device-id", "value": "{{device_id}}" },
-                                    { "key": "device-type", "value": "{{device_type}}" }
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "apikey",
+                                        "value": "{{apikey}}"
+                                    },
+                                    {
+                                        "key": "device-id",
+                                        "value": "{{device_id}}"
+                                    },
+                                    {
+                                        "key": "device-type",
+                                        "value": "{{device_type}}"
+                                    },
+                                    {
+                                        "key": "x-business-id",
+                                        "value": "{{business_id}}",
+                                        "type": "text"
+                                    }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/assistant/sessions",
-                                    "host": ["{{base_url}}"],
-                                    "path": ["api", "ai", "assistant", "sessions"]
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "ai",
+                                        "assistant",
+                                        "sessions"
+                                    ]
                                 }
                             }
                         }
@@ -3412,28 +3986,28 @@
     ],
     "variable": [
         {
-                "key": "base_url",
-                "value": "https://ai-smm-backend.vercel.app"
+            "key": "base_url",
+            "value": "https://ai-smm-backend.vercel.app"
         },
         {
-                "key": "apikey",
-                "value": "brandboost_ai_key_789"
+            "key": "apikey",
+            "value": "brandboost_ai_key_789"
         },
         {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs"
+            "key": "token",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs"
         },
         {
-                "key": "business_id",
-                "value": "8"
+            "key": "business_id",
+            "value": "8"
         },
         {
-                "key": "device_id",
-                "value": "SP1A.210812.016"
+            "key": "device_id",
+            "value": "SP1A.210812.016"
         },
         {
-                "key": "device_type",
-                "value": "android"
+            "key": "device_type",
+            "value": "android"
         }
-]
+    ]
 }
