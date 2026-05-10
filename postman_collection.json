@@ -2564,6 +2564,63 @@
                     "response": []
                 },
                 {
+                    "name": "Get Ledger Report",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "apikey",
+                                "value": "{{apikey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-id",
+                                "value": "{{device_id}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "device-type",
+                                "value": "{{device_type}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-business-id",
+                                "value": "{{business_id}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/ledger/report?type=CUSTOMER&period=Monthly",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "ledger",
+                                "report"
+                            ],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "CUSTOMER",
+                                    "description": "CUSTOMER or SUPPLIER"
+                                },
+                                {
+                                    "key": "period",
+                                    "value": "Monthly",
+                                    "description": "Weekly, Monthly, Yearly"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "Get Ledger Accounts",
                     "request": {
                         "method": "GET",
