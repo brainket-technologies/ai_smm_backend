@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { validateRequest } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const validation = await validateRequest(request);
+    if (!validation.isValid) return (validation as any).response;
     const themes = await prisma.aIImageTheme.findMany({
       where: { isActive: true },
       orderBy: { createdAt: "asc" }

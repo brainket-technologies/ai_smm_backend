@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { validateAuth, validateApiKey } from "@/lib/auth-utils";
+import { validateRequest } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
 import { AIContextBuilder } from "@/lib/services/ai-context-builder";
 import { PromptBuilder } from "@/lib/services/prompt-builder";
@@ -12,15 +12,13 @@ import { registerMedia } from "@/lib/media";
 export async function POST(request: Request) {
   try {
     // 1. Validations
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
+    const validation = await validateRequest(request);
+    if (!validation.isValid) return (validation as any).response;
 
-    const auth = await validateAuth(request);
-    if (!auth.isValid) return auth.response;
+    const { userId: uId, businessId: bId } = validation;
 
     const body = await request.json();
     const { 
-      businessId, 
       themeKey, 
       focusType, // 'business' | 'product' | 'service'
       focusId, 
@@ -29,12 +27,9 @@ export async function POST(request: Request) {
       customInstructions 
     } = body;
 
-    if (!businessId || !themeKey || !platform) {
+    if (!themeKey || !platform) {
       return NextResponse.json({ success: false, message: "Missing required fields." }, { status: 400 });
     }
-
-    const bId = BigInt(businessId);
-    const uId = auth.userId!;
 
     // 2. Check Credits/Access
     const access = await AICreditService.checkAccess(uId, 'ai_images_daily');

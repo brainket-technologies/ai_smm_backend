@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { validateAuth, validateApiKey } from "@/lib/auth-utils";
+import { validateRequest } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
 import { AIContextBuilder } from "@/lib/services/ai-context-builder";
 import { AIProviderFactory } from "@/lib/services/providers/ai-provider-factory";
@@ -9,26 +9,17 @@ import { AIAssistantService } from "@/lib/services/ai-assistant-service";
 export async function POST(request: Request) {
   try {
     // 1. Validations
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
+    const validation = await validateRequest(request);
+    if (!validation.isValid) return (validation as any).response;
 
-    const auth = await validateAuth(request);
-    if (!auth.isValid) return auth.response;
+    const { userId: uId, businessId: bId } = validation;
 
     const body = await request.json();
     const { 
       sessionId, 
-      businessId, 
       message,
       actionKey // Optional: triggered from a quick action card
     } = body;
-
-    if (!message && !actionKey) {
-      return NextResponse.json({ success: false, message: "No message provided." }, { status: 400 });
-    }
-
-    const uId = auth.userId!;
-    const bId = businessId ? BigInt(businessId) : null;
 
     // 2. Check Credits/Access
     const access = await AICreditService.checkAccess(uId, 'ai_chats_daily');
