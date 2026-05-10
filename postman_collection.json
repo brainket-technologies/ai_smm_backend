@@ -3224,7 +3224,9 @@
                                 "method": "GET",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" }
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": { "raw": "{{base_url}}/api/ai/credits/balance" }
                             }
@@ -3235,7 +3237,9 @@
                                 "method": "POST",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" }
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": { "raw": "{{base_url}}/api/ai/credits/reward-ad" }
                             }
@@ -3251,7 +3255,9 @@
                                 "method": "GET",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" }
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": { "raw": "{{base_url}}/api/ai/config/themes" }
                             }
@@ -3263,11 +3269,13 @@
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
                                     { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
+                                    "raw": "{\n    \"businessId\": \"{{business_id}}\",\n    \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": { "raw": "{{base_url}}/api/ai/studio/image" }
@@ -3284,7 +3292,9 @@
                                 "method": "GET",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" }
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": { "raw": "{{base_url}}/api/ai/config/quick-actions" }
                             }
@@ -3296,28 +3306,51 @@
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
                                     { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
+                                    "raw": "{\n    \"businessId\": \"{{business_id}}\",\n    \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": { "raw": "{{base_url}}/api/ai/assistant/chat" }
                             }
                         },
                         {
-                            "name": "Generate Content (Quick Action)",
+                            "name": "Chat with Quick Action",
                             "request": {
                                 "method": "POST",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
                                     { "key": "apikey", "value": "{{apikey}}" },
-                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"actionKey\": \"viral_hashtags\",\n    \"platform\": \"Instagram\"\n}",
+                                    "raw": "{\n    \"businessId\": \"{{business_id}}\",\n    \"actionKey\": \"viral_hashtags\",\n    \"message\": \"Give me some for a coffee shop\"\n}",
+                                    "options": { "raw": { "language": "json" } }
+                                },
+                                "url": { "raw": "{{base_url}}/api/ai/assistant/chat" }
+                            }
+                        },
+                        {
+                            "name": "Generate Content (Direct)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"businessId\": \"{{business_id}}\",\n    \"type\": \"caption\",\n    \"platform\": \"Instagram\",\n    \"topic\": \"Summer Sale\"\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": { "raw": "{{base_url}}/api/ai/assistant/content" }
@@ -3329,7 +3362,9 @@
                                 "method": "GET",
                                 "header": [
                                     { "key": "Authorization", "value": "Bearer {{token}}" },
-                                    { "key": "apikey", "value": "{{apikey}}" }
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": { "raw": "{{base_url}}/api/ai/assistant/sessions" }
                             }
