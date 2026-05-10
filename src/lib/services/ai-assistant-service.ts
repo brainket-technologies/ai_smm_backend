@@ -4,9 +4,12 @@ export class AIAssistantService {
   /**
    * List all chat sessions for a user.
    */
-  static async listSessions(userId: bigint) {
+  static async listSessions(userId: bigint, businessId?: bigint) {
     return await prisma.aIAssistantSession.findMany({
-      where: { userId },
+      where: { 
+        userId,
+        businessId: businessId || null
+      },
       orderBy: { updatedAt: "desc" },
     });
   }

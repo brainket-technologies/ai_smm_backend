@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { validateAuth, validateApiKey } from "@/lib/auth-utils";
+import { validateRequest } from "@/lib/auth-utils";
 import { AIAssistantService } from "@/lib/services/ai-assistant-service";
 
 export async function GET(request: Request) {
   try {
-    const apiCheck = validateApiKey(request);
-    if (!apiCheck.isValid) return apiCheck.response;
+    const validation = await validateRequest(request);
+    if (!validation.isValid) return (validation as any).response;
 
-    const auth = await validateAuth(request);
-    if (!auth.isValid) return auth.response;
+    const { userId, businessId } = validation;
 
-    const sessions = await AIAssistantService.listSessions(auth.userId!);
+    const sessions = await AIAssistantService.listSessions(userId, businessId);
 
     return NextResponse.json({
       success: true,

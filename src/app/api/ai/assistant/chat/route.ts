@@ -115,3 +115,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: error.message || "Internal server error" }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const validation = await validateRequest(request);
+    if (!validation.isValid) return (validation as any).response;
+
+    const { userId: uId } = validation;
+    const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get('sessionId');
+
+    if (!sessionId) {
+      return NextResponse.json({ success: false, message: "Session ID required" }, { status: 400 });
+    }
+
+    const history = await AIAssistantService.getMessages(BigInt(sessionId), uId);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        sessionId,
+        history: history.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+      }
+    });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
