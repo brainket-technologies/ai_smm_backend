@@ -16,17 +16,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -65,17 +65,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -109,17 +109,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -153,17 +153,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -197,22 +197,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -246,22 +246,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -286,22 +286,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -335,22 +335,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -384,22 +384,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -438,22 +438,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -487,22 +487,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -535,17 +535,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -569,22 +569,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -614,22 +614,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -654,22 +654,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -708,22 +708,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -753,27 +753,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -806,22 +806,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -851,22 +851,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -891,27 +891,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -945,27 +945,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -995,27 +995,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1045,27 +1045,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1098,27 +1098,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1148,27 +1148,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1193,27 +1193,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1247,27 +1247,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1297,22 +1297,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -1346,22 +1346,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -1386,22 +1386,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -1435,27 +1435,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1489,27 +1489,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -1537,11 +1537,11 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "body": {
                             "mode": "raw",
@@ -1561,11 +1561,11 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts?status=SCHEDULED&limit=20",
@@ -1584,11 +1584,11 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}",
@@ -1603,11 +1603,11 @@
                     "request": {
                         "method": "PATCH",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "body": {
                             "mode": "raw",
@@ -1627,11 +1627,11 @@
                     "request": {
                         "method": "PATCH",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "body": {
                             "mode": "raw",
@@ -1651,11 +1651,11 @@
                     "request": {
                         "method": "DELETE",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/posts/{{last_post_id}}",
@@ -1670,11 +1670,11 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/cta-buttons",
@@ -1696,17 +1696,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1730,17 +1730,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1764,17 +1764,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1804,17 +1804,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1838,17 +1838,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1872,17 +1872,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1906,17 +1906,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1940,17 +1940,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -1974,17 +1974,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -2008,17 +2008,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -2047,17 +2047,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -2081,17 +2081,17 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             }
                         ],
@@ -2120,27 +2120,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2180,27 +2180,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2237,27 +2237,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2287,22 +2287,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -2326,22 +2326,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -2375,22 +2375,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -2424,22 +2424,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -2473,22 +2473,22 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             }
                         ],
@@ -2518,27 +2518,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2570,27 +2570,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2627,27 +2627,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2691,11 +2691,11 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/ledger/accounts?id=1",
@@ -2710,11 +2710,11 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            { "key": "apikey", "value": "brandboost_ai_key_789", "type": "text" },
-                            { "key": "device-id", "value": "SP1A.210812.016", "type": "text" },
-                            { "key": "device-type", "value": "android", "type": "text" },
-                            { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs", "type": "text" },
-                            { "key": "x-business-id", "value": "8", "type": "text" }
+                            { "key": "apikey", "value": "{{apikey}}", "type": "text" },
+                            { "key": "device-id", "value": "{{device_id}}", "type": "text" },
+                            { "key": "device-type", "value": "{{device_type}}", "type": "text" },
+                            { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+                            { "key": "x-business-id", "value": "{{business_id}}", "type": "text" }
                         ],
                         "url": {
                             "raw": "{{base_url}}/api/ledger/transactions?id=1",
@@ -2731,27 +2731,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2785,27 +2785,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2839,27 +2839,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2890,27 +2890,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2941,27 +2941,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -2997,27 +2997,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -3041,27 +3041,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -3091,27 +3091,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -3150,27 +3150,27 @@
                         "header": [
                             {
                                 "key": "apikey",
-                                "value": "brandboost_ai_key_789",
+                                "value": "{{apikey}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-id",
-                                "value": "SP1A.210812.016",
+                                "value": "{{device_id}}",
                                 "type": "text"
                             },
                             {
                                 "key": "device-type",
-                                "value": "android",
+                                "value": "{{device_type}}",
                                 "type": "text"
                             },
                             {
                                 "key": "Authorization",
-                                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs",
+                                "value": "Bearer {{token}}",
                                 "type": "text"
                             },
                             {
                                 "key": "x-business-id",
-                                "value": "8",
+                                "value": "{{business_id}}",
                                 "type": "text"
                             }
                         ],
@@ -3223,10 +3223,10 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/credits/balance",
@@ -3240,10 +3240,10 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/credits/reward-ad",
@@ -3262,10 +3262,10 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/config/themes",
@@ -3279,11 +3279,11 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "x-business-id", "value": "8" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
@@ -3307,10 +3307,10 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/config/quick-actions",
@@ -3324,11 +3324,11 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "x-business-id", "value": "8" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
@@ -3347,11 +3347,11 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "x-business-id", "value": "8" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
@@ -3370,11 +3370,11 @@
                             "request": {
                                 "method": "POST",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "x-business-id", "value": "8" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "body": {
                                     "mode": "raw",
@@ -3393,10 +3393,10 @@
                             "request": {
                                 "method": "GET",
                                 "header": [
-                                    { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs" },
-                                    { "key": "apikey", "value": "brandboost_ai_key_789" },
-                                    { "key": "device-id", "value": "SP1A.210812.016" },
-                                    { "key": "device-type", "value": "android" }
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "device-id", "value": "{{device_id}}" },
+                                    { "key": "device-type", "value": "{{device_type}}" }
                                 ],
                                 "url": {
                                     "raw": "{{base_url}}/api/ai/assistant/sessions",
@@ -3412,28 +3412,28 @@
     ],
     "variable": [
         {
-            "key": "base_url",
-            "value": "https://ai-smm-backend.vercel.app"
+                "key": "base_url",
+                "value": "https://ai-smm-backend.vercel.app"
         },
         {
-            "key": "apikey",
-            "value": "brandboost_ai_key_789"
+                "key": "apikey",
+                "value": "brandboost_ai_key_789"
         },
         {
-            "key": "token",
-            "value": "YOUR_JWT_TOKEN_HERE"
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzIiwidmVyc2lvbiI6MiwiZGV2aWNlSWQiOiJTUDFBLjIxMDgxMi4wMTYiLCJpYXQiOjE3Nzc5OTI3NTYsImV4cCI6MTc4MDU4NDc1Nn0.UiGQ42YK34HTdcf4IlwHCGpPhwzWqw5b03OABidswXs"
         },
         {
-            "key": "business_id",
-            "value": "1"
+                "key": "business_id",
+                "value": "8"
         },
         {
-            "key": "device_id",
-            "value": "unique_device_id_123"
+                "key": "device_id",
+                "value": "SP1A.210812.016"
         },
         {
-            "key": "device_type",
-            "value": "android"
+                "key": "device_type",
+                "value": "android"
         }
-    ]
+]
 }
