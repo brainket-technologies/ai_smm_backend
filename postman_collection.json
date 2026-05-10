@@ -3211,6 +3211,132 @@
                     "response": []
                 }
             ]
+        },
+        {
+            "name": "AI Module",
+            "item": [
+                {
+                    "name": "Credits",
+                    "item": [
+                        {
+                            "name": "Get Balance",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" }
+                                ],
+                                "url": { "raw": "{{base_url}}/api/ai/credits/balance" }
+                            }
+                        },
+                        {
+                            "name": "Reward Ad Credits",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" }
+                                ],
+                                "url": { "raw": "{{base_url}}/api/ai/credits/reward-ad" }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Studio",
+                    "item": [
+                        {
+                            "name": "Get Themes",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" }
+                                ],
+                                "url": { "raw": "{{base_url}}/api/ai/config/themes" }
+                            }
+                        },
+                        {
+                            "name": "Generate Studio Image",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
+                                    "options": { "raw": { "language": "json" } }
+                                },
+                                "url": { "raw": "{{base_url}}/api/ai/studio/image" }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Assistant",
+                    "item": [
+                        {
+                            "name": "Get Quick Actions",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" }
+                                ],
+                                "url": { "raw": "{{base_url}}/api/ai/config/quick-actions" }
+                            }
+                        },
+                        {
+                            "name": "Chat with Assistant",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
+                                    "options": { "raw": { "language": "json" } }
+                                },
+                                "url": { "raw": "{{base_url}}/api/ai/assistant/chat" }
+                            }
+                        },
+                        {
+                            "name": "Generate Content (Quick Action)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" },
+                                    { "key": "x-business-id", "value": "{{business_id}}" }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"actionKey\": \"viral_hashtags\",\n    \"platform\": \"Instagram\"\n}",
+                                    "options": { "raw": { "language": "json" } }
+                                },
+                                "url": { "raw": "{{base_url}}/api/ai/assistant/content" }
+                            }
+                        },
+                        {
+                            "name": "Get Sessions",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    { "key": "Authorization", "value": "Bearer {{token}}" },
+                                    { "key": "apikey", "value": "{{apikey}}" }
+                                ],
+                                "url": { "raw": "{{base_url}}/api/ai/assistant/sessions" }
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "variable": [

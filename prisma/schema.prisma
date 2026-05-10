@@ -31,6 +31,75 @@ model AIGeneratedContent {
   @@map("ai_generated_content")
 }
 
+model AIAssistantSession {
+  id         BigInt                @id @default(autoincrement())
+  userId     BigInt                @map("user_id")
+  businessId BigInt?               @map("business_id")
+  title      String
+  createdAt  DateTime?             @default(now()) @map("created_at")
+  updatedAt  DateTime?             @default(now()) @map("updated_at")
+  messages   AIAssistantMessage[]
+  user       User                  @relation(fields: [userId], references: [id])
+  business   Business?             @relation(fields: [businessId], references: [id])
+
+  @@map("ai_assistant_sessions")
+}
+
+model AIAssistantMessage {
+  id        BigInt             @id @default(autoincrement())
+  sessionId BigInt             @map("session_id")
+  role      String             // 'user' | 'assistant'
+  content   String             @db.Text
+  createdAt DateTime?          @default(now()) @map("created_at")
+  session   AIAssistantSession @relation(fields: [sessionId], references: [id])
+
+  @@map("ai_assistant_messages")
+}
+
+model AICreditWallet {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @unique @map("user_id")
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("ai_credit_wallets")
+}
+
+model AICreditTransaction {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  amount    Int      // Positive for credit, negative for debit
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("ai_credit_transactions")
+}
+
+model AIImageTheme {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @unique
+  nameKey   String   @unique @map("name_key")
+  prompt    String   @db.Text
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("ai_image_themes")
+}
+
+model AIQuickAction {
+  id          BigInt   @id @default(autoincrement())
+  title       String
+  description String?
+  icon        String?
+  actionKey   String   @unique @map("action_key")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("ai_quick_actions")
+}
+
 model AIModel {
   id                BigInt               @id @default(autoincrement())
   modelKey          String               @unique @map("model_key")
@@ -254,6 +323,7 @@ model Business {
   socialAccounts     SocialAccount[]
   reviews            Review[]
   ledgerAccounts     LedgerAccount[]
+  assistantSessions  AIAssistantSession[]
 
   @@map("businesses")
 }
@@ -730,6 +800,9 @@ model User {
   currency          Currency?            @relation(fields: [currencyCode], references: [code])
   profileMedia      MediaFile?           @relation("UserProfileImage", fields: [mediaId], references: [id])
   role              Role?                @relation(fields: [roleId], references: [id])
+  assistantSessions AIAssistantSession[]
+  creditWallet      AICreditWallet?
+  creditTransactions AICreditTransaction[]
 
   @@map("users")
 }
