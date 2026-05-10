@@ -103,8 +103,10 @@ export async function POST(request: Request) {
         }
     });
 
+    let newBalance = await AICreditService.getBalance(uId);
     if (access.method === 'credit') {
-        await AICreditService.deductCredits(uId, 1, "AI Assistant Chat");
+        const deducted = await AICreditService.deductCredits(uId, 1, "AI Assistant Chat");
+        if (deducted !== null) newBalance = deducted;
     }
 
     return NextResponse.json({
@@ -112,7 +114,8 @@ export async function POST(request: Request) {
       data: {
         sessionId: currentSessionId.toString(),
         response: aiRes.text,
-        history: [...chatHistory, { role: 'user', content: userPrompt }, { role: 'assistant', content: aiRes.text }]
+        history: [...chatHistory, { role: 'user', content: userPrompt }, { role: 'assistant', content: aiRes.text }],
+        newBalance
       }
     });
 

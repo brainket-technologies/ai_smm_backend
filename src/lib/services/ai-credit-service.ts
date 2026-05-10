@@ -43,11 +43,11 @@ export class AICreditService {
   /**
    * Deduct credits from user's wallet.
    */
-  static async deductCredits(userId: bigint, amount: number, reason: string): Promise<boolean> {
+  static async deductCredits(userId: bigint, amount: number, reason: string): Promise<number | null> {
     const balance = await this.getBalance(userId);
-    if (balance < amount) return false;
+    if (balance < amount) return null;
 
-    await prisma.aICreditWallet.update({
+    const wallet = await prisma.aICreditWallet.update({
       where: { userId },
       data: { balance: { decrement: amount } },
     });
@@ -60,7 +60,7 @@ export class AICreditService {
       },
     });
 
-    return true;
+    return wallet.balance;
   }
 
   /**

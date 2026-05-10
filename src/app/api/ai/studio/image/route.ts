@@ -131,8 +131,10 @@ export async function POST(request: Request) {
         }
     });
 
+    let newBalance = await AICreditService.getBalance(uId);
     if (access.method === 'credit') {
-        await AICreditService.deductCredits(uId, 1, "AI Image Generation");
+        const deducted = await AICreditService.deductCredits(uId, 1, "AI Image Generation");
+        if (deducted !== null) newBalance = deducted;
     }
 
     return NextResponse.json({
@@ -140,7 +142,8 @@ export async function POST(request: Request) {
         data: {
             id: mediaId.toString(),
             url: finalUrl,
-            prompt: prompt
+            prompt: prompt,
+            newBalance
         }
     });
 

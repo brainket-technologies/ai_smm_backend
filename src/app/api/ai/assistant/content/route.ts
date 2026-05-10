@@ -70,8 +70,10 @@ export async function POST(request: Request) {
         }
     });
 
+    let newBalance = await AICreditService.getBalance(uId);
     if (access.method === 'credit') {
-        await AICreditService.deductCredits(uId, 1, `AI ${type} Generation`);
+        const deducted = await AICreditService.deductCredits(uId, 1, `AI ${type} Generation`);
+        if (deducted !== null) newBalance = deducted;
     }
 
     return NextResponse.json({
@@ -79,7 +81,8 @@ export async function POST(request: Request) {
         data: {
             text: aiRes.text,
             prompt: prompt,
-            usage: aiRes.usage
+            usage: aiRes.usage,
+            newBalance
         }
     });
 
