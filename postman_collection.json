@@ -32,7 +32,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"businessId\": \"8\",\n    \"rating\": 5,\n    \"customerName\": \"John Doe\",\n    \"comment\": \"Excellent service!\",\n    \"selectedTags\": [\"Friendly Staff\", \"Fast Delivery\"]\n}",
+                            "raw": "{\n        \"rating\": 5,\n    \"customerName\": \"John Doe\",\n    \"comment\": \"Excellent service!\",\n    \"selectedTags\": [\"Friendly Staff\", \"Fast Delivery\"]\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -3287,7 +3287,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"businessId\": \"8\",\n    \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
+                                    "raw": "{\n        \"themeKey\": \"modern_minimal\",\n    \"platform\": \"Instagram\",\n    \"focusType\": \"business\",\n    \"switches\": {\n        \"logo\": true,\n        \"price\": false,\n        \"watermark\": true\n    }\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": {
@@ -3332,7 +3332,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"businessId\": \"8\",\n    \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
+                                    "raw": "{\n        \"message\": \"How can I improve my reach?\",\n    \"sessionId\": null\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": {
@@ -3355,7 +3355,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"businessId\": \"8\",\n    \"actionKey\": \"viral_hashtags\",\n    \"message\": \"Give me some for a coffee shop\"\n}",
+                                    "raw": "{\n        \"actionKey\": \"viral_hashtags\",\n    \"message\": \"Give me some for a coffee shop\"\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": {
@@ -3378,7 +3378,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"businessId\": \"8\",\n    \"type\": \"caption\",\n    \"platform\": \"Instagram\",\n    \"topic\": \"Summer Sale\"\n}",
+                                    "raw": "{\n        \"type\": \"caption\",\n    \"platform\": \"Instagram\",\n    \"topic\": \"Summer Sale\"\n}",
                                     "options": { "raw": { "language": "json" } }
                                 },
                                 "url": {
