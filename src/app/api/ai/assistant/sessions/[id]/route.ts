@@ -13,7 +13,7 @@ export async function DELETE(
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 
-    await AIAssistantService.deleteSession(BigInt(params.id), auth.userId);
+    await AIAssistantService.deleteSession(BigInt(params.id), auth.userId!);
 
     return NextResponse.json({
       success: true,

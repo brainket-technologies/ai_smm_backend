@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 
-    const sessions = await AIAssistantService.listSessions(auth.userId);
+    const sessions = await AIAssistantService.listSessions(auth.userId!);
 
     return NextResponse.json({
       success: true,

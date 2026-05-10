@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 
-    const uId = auth.userId;
+    const uId = auth.userId!;
 
     // 2. Check if Rewarded Ads are enabled in Global Config
     const featureFlag = await prisma.appFeatureFlag.findUnique({

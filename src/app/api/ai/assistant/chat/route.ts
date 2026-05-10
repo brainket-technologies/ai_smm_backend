@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: "No message provided." }, { status: 400 });
     }
 
-    const uId = auth.userId;
+    const uId = auth.userId!;
     const bId = businessId ? BigInt(businessId) : null;
 
     // 2. Check Credits/Access

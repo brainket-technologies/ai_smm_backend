@@ -13,7 +13,7 @@ export async function GET(
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 
-    const messages = await AIAssistantService.getMessages(BigInt(params.id), auth.userId);
+    const messages = await AIAssistantService.getMessages(BigInt(params.id), auth.userId!);
 
     return NextResponse.json({
       success: true,

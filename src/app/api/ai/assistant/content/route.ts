@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const bId = BigInt(businessId);
-    const uId = auth.userId;
+    const uId = auth.userId!;
 
     // 2. Check Credits/Access
     const access = await AICreditService.checkAccess(uId, 'ai_chats_daily');

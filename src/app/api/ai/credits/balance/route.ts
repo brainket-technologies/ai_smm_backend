@@ -10,7 +10,8 @@ export async function GET(request: Request) {
     const auth = await validateAuth(request);
     if (!auth.isValid) return auth.response;
 
-    const balance = await AICreditService.getBalance(auth.userId);
+    const userId = auth.userId!;
+    const balance = await AICreditService.getBalance(userId);
 
     return NextResponse.json({
       success: true,
